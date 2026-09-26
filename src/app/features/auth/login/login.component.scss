@@ -1,0 +1,98 @@
+@use '../../../../styles/admin-theme' as *;
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $admin-bg;
+}
+
+.login-card {
+  width: 340px;
+  background: #fff;
+  border-radius: $admin-radius-lg;
+  box-shadow: $admin-shadow;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    color: $admin-primary;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: $admin-text-muted;
+    font-size: 12px;
+    margin: 4px 0 20px;
+  }
+
+  label {
+    font-size: 12px;
+    color: $admin-text-dark;
+    margin-bottom: 6px;
+  }
+
+  input {
+    border: 1px solid $admin-border;
+    border-radius: $admin-radius-sm;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 4px;
+    outline: none;
+
+    &:focus {
+      border-color: $admin-primary;
+    }
+  }
+
+  .field-error {
+    color: $admin-danger;
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+
+  .form-error {
+    background: rgba(239, 68, 68, 0.08);
+    color: $admin-danger;
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: $admin-radius-sm;
+    margin-bottom: 12px;
+  }
+
+  .btn-primary {
+    background: $admin-primary;
+    color: #fff;
+    border: none;
+    border-radius: $admin-radius-sm;
+    padding: 11px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+
+    &:hover { background: $admin-primary-dark; }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  .btn-demo {
+    background: none;
+    border: 1px dashed $admin-border;
+    color: $admin-text-muted;
+    border-radius: $admin-radius-sm;
+    padding: 9px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-top: 10px;
+
+    &:hover {
+      border-color: $admin-primary;
+      color: $admin-primary;
+    }
+  }
+}
