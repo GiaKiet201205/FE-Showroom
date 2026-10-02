@@ -16,7 +16,9 @@
       <mat-spinner diameter="40"></mat-spinner>
     </div>
   } @else if (items.length === 0) {
-    <p class="empty-state">Chưa có dữ liệu. Hãy kết nối backend và thử tải lại.</p>
+    <p class="empty-state">
+      Chưa có dữ liệu. Hãy kết nối backend và thử tải lại.
+    </p>
   } @else {
     <div class="card-grid">
       @for (item of items; track item.id) {

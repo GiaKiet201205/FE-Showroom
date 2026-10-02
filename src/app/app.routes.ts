@@ -1,10 +1,15 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
+import { SignInComponent } from './features/auth/pages/sign-in/sign-in.component';
 
 export const routes: Routes = [
   {
-    path: '',
-    loadComponent: () =>
-      import('./features/home/home.component').then((m) => m.HomeComponent)
+    path: 'sign-in',
+    component: SignInComponent,
   },
-  { path: '**', redirectTo: '' }
+
+  {
+    path: '',
+    redirectTo: 'sign-in',
+    pathMatch: 'full',
+  },
 ];
