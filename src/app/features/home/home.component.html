@@ -1,269 +1,148 @@
 <header class="header">
-
   <!-- ================= NAVBAR ================= -->
 
   <nav class="navbar">
-
     <a routerLink="/" id="brand">
       <div id="logo">
-        <img src="/images/logo.svg" alt="Logo">
+        <img src="/images/logo.svg" alt="Logo" />
       </div>
 
-      <span id="brand-title">
-        AutoDrive
-      </span>
+      <span id="brand-title"> AutoDrive </span>
     </a>
 
     <div id="nav-list">
-      <a routerLink="/" class="active">
-        Home
-      </a>
+      <a routerLink="/" class="active"> Home </a>
 
-      <a routerLink="/cars">
-        Cars
-      </a>
+      <a routerLink="/cars"> Cars </a>
 
-      <a routerLink="/brands">
-        Brands
-      </a>
+      <a routerLink="/brands"> Brands </a>
 
-      <a routerLink="/compare">
-        Compare
-      </a>
+      <a routerLink="/compare"> Compare </a>
 
-      <a routerLink="/services">
-        Services
-      </a>
+      <a routerLink="/services"> Services </a>
 
-      <a routerLink="/about">
-        About
-      </a>
+      <a routerLink="/about"> About </a>
 
-      <a routerLink="/contact">
-        Contact
-      </a>
+      <a routerLink="/contact"> Contact </a>
     </div>
 
     <div id="info">
-
-      <button
-        class="icon-button"
-        aria-label="Search"
-      >
+      <button class="icon-button" aria-label="Search">
         <i class="fa-solid fa-magnifying-glass"></i>
       </button>
 
-      <button
-        class="icon-button"
-        aria-label="Wishlist"
-      >
+      <button class="icon-button" aria-label="Wishlist">
         <i class="fa-regular fa-heart"></i>
       </button>
 
-      <img
-        src="/images/avt.jpg"
-        alt="User avatar"
-        class="avatar"
-      >
+      <img src="/images/avt.jpg" alt="User avatar" class="avatar" />
 
-      <a
-        routerLink="/sign-in"
-        class="sign-in-button"
-      >
-        Sign In
-      </a>
-
+      <a routerLink="/sign-in" class="sign-in-button"> Sign In </a>
     </div>
-
   </nav>
-
 
   <!-- ================= HERO ================= -->
 
   <section id="hero">
-
     <div class="hero-overlay"></div>
 
     <div class="hero-content">
-
-      <h1 id="hero-title">
-        Find Your Perfect Car
-      </h1>
+      <h1 id="hero-title">Find Your Perfect Car</h1>
 
       <p id="hero-description">
-        Browse over 50,000 certified new and used premium vehicles
-        from trusted luxury dealership network.
+        Browse over 50,000 certified new and used premium vehicles from trusted
+        luxury dealership network.
       </p>
-
 
       <!-- FILTER -->
 
       <div id="filter-bar">
-
         <div class="filter-item">
+          <label for="make"> MAKE </label>
 
-          <label for="make">
-            MAKE
-          </label>
+          <select id="make" name="make" [(ngModel)]="selectedMake">
+            <option value="">All Makes</option>
 
-          <select
-            id="make"
-            name="make"
-            [(ngModel)]="selectedMake"
-          >
-            <option value="">
-              All Makes
-            </option>
-
-            <option
-              *ngFor="let make of makes"
-              [value]="make"
-            >
+            <option *ngFor="let make of makes" [value]="make">
               {{ make }}
             </option>
-
           </select>
-
         </div>
 
-
         <div class="filter-item">
+          <label for="model"> MODEL </label>
 
-          <label for="model">
-            MODEL
-          </label>
+          <select id="model" name="model" [(ngModel)]="selectedModel">
+            <option value="">All Models</option>
 
-          <select
-            id="model"
-            name="model"
-            [(ngModel)]="selectedModel"
-          >
-            <option value="">
-              All Models
-            </option>
-
-            <option
-              *ngFor="let model of models"
-              [value]="model"
-            >
+            <option *ngFor="let model of models" [value]="model">
               {{ model }}
             </option>
-
           </select>
-
         </div>
-
 
         <div class="filter-item">
+          <label for="price"> PRICE RANGE </label>
 
-          <label for="price">
-            PRICE RANGE
-          </label>
+          <select id="price" name="price" [(ngModel)]="selectedPrice">
+            <option value="">All Price Ranges</option>
 
-          <select
-            id="price"
-            name="price"
-            [(ngModel)]="selectedPrice"
-          >
-            <option value="">
-              All Price Ranges
-            </option>
-
-            <option
-              *ngFor="let price of priceRanges"
-              [value]="price.value"
-            >
+            <option *ngFor="let price of priceRanges" [value]="price.value">
               {{ price.label }}
             </option>
-
           </select>
-
         </div>
 
-
-        <button
-          id="btn-filter"
-          type="button"
-          (click)="browseCars()"
-        >
+        <button id="btn-filter" type="button" (click)="browseCars()">
           Browse Cars
         </button>
-
       </div>
-
     </div>
-
   </section>
-
 </header>
-
 
 <!-- ================================================== -->
 <!-- MAIN -->
 <!-- ================================================== -->
 
 <main>
-
   <!-- ================= BODY TYPE ================= -->
 
   <section class="section container">
-
-    <h2>
-      Browse by Body Type
-    </h2>
+    <h2>Browse by Body Type</h2>
 
     <div class="body-type-list">
-
       <button
         class="body-type-card"
         *ngFor="let type of bodyTypes"
         (click)="filterByBodyType(type.name)"
       >
-
         <i class="body-icon" [class]="type.icon + ' body-icon'"></i>
 
         <span>
           {{ type.name }}
         </span>
-
       </button>
-
     </div>
-
   </section>
-
 
   <!-- ================= FEATURED ================= -->
 
   <section class="section container">
-
     <div class="section-header">
+      <h2>Featured Premium Vehicles</h2>
 
-      <h2>
-        Featured Premium Vehicles
-      </h2>
-
-      <a routerLink="/cars">
-        View All Inventory
-      </a>
-
+      <a routerLink="/cars"> View All Inventory </a>
     </div>
 
-
     <div class="vehicle-grid">
-
       <article
         class="vehicle-card"
         *ngFor="let vehicle of vehicles"
         (click)="viewVehicle(vehicle.id)"
       >
-
         <div class="vehicle-image">
-
-          <img
-            [src]="vehicle.image"
-            [alt]="vehicle.name"
-          >
+          <img [src]="vehicle.image" [alt]="vehicle.name" />
 
           <button
             type="button"
@@ -273,12 +152,9 @@
           >
             <i class="fa-regular fa-heart"></i>
           </button>
-
         </div>
 
-
         <div class="vehicle-content">
-
           <h3>
             {{ vehicle.name }}
           </h3>
@@ -288,31 +164,20 @@
           </p>
 
           <strong>
-            {{ vehicle.price | currency:'USD':'symbol':'1.0-0' }}
+            {{ vehicle.price | currency: "USD" : "symbol" : "1.0-0" }}
           </strong>
-
         </div>
-
       </article>
-
     </div>
-
   </section>
-
 
   <!-- ================= BENEFITS ================= -->
 
   <section class="benefits">
-
     <div class="container benefits-grid">
-
-      <article
-        class="benefit-item"
-        *ngFor="let benefit of benefits"
-      >
-
+      <article class="benefit-item" *ngFor="let benefit of benefits">
         <div class="benefit-icon">
-           <i [class]="benefit.icon"></i> 
+          <i [class]="benefit.icon"></i>
         </div>
 
         <h3>
@@ -322,70 +187,46 @@
         <p>
           {{ benefit.description }}
         </p>
-
       </article>
-
     </div>
-
   </section>
-
 
   <!-- ================= CTA ================= -->
 
   <section class="cta">
-
-    <h2>
-      Ready to drive your dream car?
-    </h2>
+    <h2>Ready to drive your dream car?</h2>
 
     <p>
       Contact our advisors today for customized vehicle configuration
-      <br>
+      <br />
       and nationwide home-delivery options.
     </p>
 
-    <a
-      routerLink="/contact"
-      class="cta-button"
-    >
-      Speak to an Advisor
-    </a>
-
+    <a routerLink="/contact" class="cta-button"> Speak to an Advisor </a>
   </section>
-
 </main>
-
 
 <!-- ================================================== -->
 <!-- FOOTER -->
 <!-- ================================================== -->
 
 <footer>
-
   <div class="container footer-grid">
-
     <div class="footer-brand">
-
       <div class="footer-logo">
-
         <div id="footer-logo-icon">
-          <img src="/images/logo.svg" alt="Logo">
+          <img src="/images/logo.svg" alt="Logo" />
         </div>
 
-        <strong>
-          AutoDrive
-        </strong>
-
+        <strong> AutoDrive </strong>
       </div>
 
       <p>
-        Premium modern marketplace for selective drivers.
-        Find verified top tier luxury, daily commute
-        and commercial vehicles.
+        Premium modern marketplace for selective drivers. Find verified top tier
+        luxury, daily commute and commercial vehicles.
       </p>
 
       <div class="social-list">
-
         <a href="#" aria-label="Facebook">
           <i class="fa-brands fa-facebook-f"></i>
         </a>
@@ -401,106 +242,55 @@
         <a href="#" aria-label="LinkedIn">
           <i class="fa-brands fa-linkedin-in"></i>
         </a>
-
       </div>
-
     </div>
-
 
     <div class="footer-column">
+      <h4>About Us</h4>
 
-      <h4>
-        About Us
-      </h4>
+      <a href="#"> Our Story </a>
 
-      <a href="#">
-        Our Story
-      </a>
+      <a href="#"> Careers </a>
 
-      <a href="#">
-        Careers
-      </a>
+      <a href="#"> Press </a>
 
-      <a href="#">
-        Press
-      </a>
-
-      <a href="#">
-        Contact
-      </a>
-
+      <a href="#"> Contact </a>
     </div>
-
 
     <div class="footer-column">
+      <h4>Services</h4>
 
-      <h4>
-        Services
-      </h4>
+      <a href="#"> Financing </a>
 
-      <a href="#">
-        Financing
-      </a>
+      <a href="#"> Insurance </a>
 
-      <a href="#">
-        Insurance
-      </a>
+      <a href="#"> Inspection </a>
 
-      <a href="#">
-        Inspection
-      </a>
-
-      <a href="#">
-        Trade-In
-      </a>
-
+      <a href="#"> Trade-In </a>
     </div>
-
 
     <div class="newsletter">
-
-      <h4>
-        Newsletter
-      </h4>
+      <h4>Newsletter</h4>
 
       <p>
         Subscribe to get latest inventory drops and special financing rates.
       </p>
 
       <div class="newsletter-form">
+        <input type="email" placeholder="Your email address" />
 
-        <input
-          type="email"
-          placeholder="Your email address"
-        >
-
-        <button type="button">
-          Subscribe
-        </button>
-
+        <button type="button">Subscribe</button>
       </div>
-
     </div>
-
   </div>
-
 
   <div class="container footer-bottom">
-
-    <span>
-      © 2026 AutoDrive Inc. All rights reserved.
-    </span>
+    <span> © 2026 AutoDrive Inc. All rights reserved. </span>
 
     <div>
-      <a href="#">
-        Privacy Policy
-      </a>
+      <a href="#"> Privacy Policy </a>
 
-      <a href="#">
-        Terms of Service
-      </a>
+      <a href="#"> Terms of Service </a>
     </div>
-
   </div>
-
 </footer>
