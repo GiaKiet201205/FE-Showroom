@@ -1,0 +1,57 @@
+<div class="auth-page">
+  <header class="site-header">
+    <div class="logo" aria-label="AutoDrive">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7.5" stroke="currentColor" stroke-width="2" /><path d="m9.5 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      </span>
+      <span>AutoDrive</span>
+    </div>
+  </header>
+
+  <main class="hero">
+    <section class="auth-card" aria-labelledby="sign-up-title">
+      <span class="brand-mark card-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="7.5" stroke="currentColor" stroke-width="2" /><path d="m9.5 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+      </span>
+      <h1 id="sign-up-title">Create Account</h1>
+      <p class="subtitle">Join AutoDrive today and start browsing</p>
+
+      <div class="field">
+        <label for="full-name">Full Name</label>
+        <input id="full-name" type="text" autocomplete="name" placeholder="John Doe" />
+      </div>
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input id="email" type="email" autocomplete="email" placeholder="name@example.com" />
+      </div>
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input id="phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+      </div>
+      <div class="field password-field">
+        <label for="password">Password</label>
+        <div class="password-control">
+          <input id="password" [type]="showPassword ? 'text' : 'password'" autocomplete="new-password" placeholder="••••••••" />
+          <button class="visibility-button" type="button" (click)="showPassword = !showPassword" [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2.5 12s3.5-5 9.5-5 9.5 5 9.5 5-3.5 5-9.5 5-9.5-5-9.5-5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8" /></svg>
+          </button>
+        </div>
+        <div class="strength-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <p class="strength-label">Strong password</p>
+      </div>
+      <div class="field confirm-field">
+        <label for="confirm-password">Confirm Password</label>
+        <input id="confirm-password" type="password" autocomplete="new-password" placeholder="••••••••" />
+      </div>
+
+      <label class="terms"><input type="checkbox" checked /><span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span></label>
+      <button class="primary-button" type="button">Create Account</button>
+      <div class="divider"><span>OR</span></div>
+      <button class="secondary-button" type="button">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.5" /><path d="m9.5 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" /></svg>
+        Sign up with Google
+      </button>
+      <p class="footer-link">Already have an account? <a routerLink="/sign-in">Sign In</a></p>
+    </section>
+  </main>
+</div>
