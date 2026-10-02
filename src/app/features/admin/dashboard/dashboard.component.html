@@ -1,0 +1,188 @@
+<div class="dashboard">
+  <div class="breadcrumb">Main / Overview</div>
+  <h1 class="page-title">Dashboard Overview</h1>
+
+  @if (loading()) {
+    <div class="loading">Đang tải dữ liệu...</div>
+  } @else if (overview()) {
+    @let data = overview()!;
+    <!-- Welcome banner -->
+    <section class="welcome-banner">
+      <div>
+        <h2>Welcome Back, {{ auth.currentUser()?.fullName }}!</h2>
+        <p>Here is a general summary of your dealership performance. Active sales and test drives have risen by 12% today.</p>
+      </div>
+      <button class="btn-ghost" routerLink="/admin/orders">View Active Campaigns</button>
+    </section>
+
+    <!-- Stat cards -->
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon car"><mat-icon>directions_car</mat-icon></div>
+        <div class="stat-label">TOTAL CARS</div>
+        <div class="stat-value">{{ formatCompactNumber(data.stats.totalCars) }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.totalCarsGrowth < 0">
+          {{ data.stats.totalCarsGrowth > 0 ? '+' : '' }}{{ data.stats.totalCarsGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon users"><mat-icon>group</mat-icon></div>
+        <div class="stat-label">TOTAL USERS</div>
+        <div class="stat-value">{{ formatCompactNumber(data.stats.totalUsers) }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.totalUsersGrowth < 0">
+          {{ data.stats.totalUsersGrowth > 0 ? '+' : '' }}{{ data.stats.totalUsersGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon test-drive"><mat-icon>event_available</mat-icon></div>
+        <div class="stat-label">TEST DRIVES</div>
+        <div class="stat-value">{{ data.stats.totalTestDrives }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.totalTestDrivesGrowth < 0">
+          {{ data.stats.totalTestDrivesGrowth > 0 ? '+' : '' }}{{ data.stats.totalTestDrivesGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon sales"><mat-icon>shopping_cart</mat-icon></div>
+        <div class="stat-label">TOTAL SALES</div>
+        <div class="stat-value">{{ data.stats.totalSales }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.totalSalesGrowth < 0">
+          {{ data.stats.totalSalesGrowth > 0 ? '+' : '' }}{{ data.stats.totalSalesGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon revenue"><mat-icon>attach_money</mat-icon></div>
+        <div class="stat-label">REVENUE</div>
+        <div class="stat-value">{{ formatCurrency(data.stats.revenue) }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.revenueGrowth < 0">
+          {{ data.stats.revenueGrowth > 0 ? '+' : '' }}{{ data.stats.revenueGrowth }}% vs last month
+        </div>
+      </div>
+    </section>
+
+    <!-- Chart + categories -->
+    <section class="chart-row">
+      <div class="panel chart-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Sales &amp; Revenue Trends</div>
+            <div class="panel-sub">Monthly data trajectory for FY2024</div>
+          </div>
+          <div class="legend">
+            <span class="legend-dot revenue"></span> Revenue
+            <span class="legend-dot target"></span> Sales Target
+          </div>
+        </div>
+
+        <div class="bar-chart">
+          @for (point of data.salesTrend; track point.month) {
+            <div class="bar-col">
+              <div class="bar" [style.height.%]="barHeight(point.revenue)"></div>
+              <div class="bar-month">{{ point.month }}</div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="panel category-panel">
+        <div class="panel-title">Vehicle Categories</div>
+        <div class="panel-sub">Inventory split by type</div>
+
+        <div class="category-list">
+          @for (cat of data.vehicleCategories; track cat.name) {
+            <div class="category-item">
+              <div class="category-top">
+                <span>{{ cat.name }}</span>
+                <span class="category-count">{{ cat.unitCount }} units ({{ cat.percentage }}%)</span>
+              </div>
+              <div class="progress-track">
+                <div
+                  class="progress-fill"
+                  [style.width.%]="cat.percentage"
+                  [style.background]="cat.color"
+                ></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Activities + listings -->
+    <section class="two-col-row">
+      <div class="panel">
+        <div class="panel-title">Recent Activities</div>
+        <div class="activity-list">
+          @for (act of data.recentActivities; track act.id) {
+            <div class="activity-item">
+              <div class="avatar-circle small">{{ act.actorName.charAt(0) }}</div>
+              <div>
+                <div class="activity-text">
+                  <strong>{{ act.actorName }}</strong> {{ act.description }}
+                </div>
+                <div class="activity-time">{{ act.createdAt }}</div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Recent Vehicle Listings</div>
+        <div class="listing-list">
+          @for (item of data.recentListings; track item.id) {
+            <div class="listing-item">
+              <div class="listing-thumb"><mat-icon>directions_car</mat-icon></div>
+              <div class="listing-info">
+                <div class="listing-name">{{ item.name }}</div>
+                <div class="listing-price">${{ item.price | number }}</div>
+              </div>
+              <span class="status-badge" [class]="item.status">{{ item.status }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Upcoming test drives table -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Upcoming Test Drives</div>
+        <button class="btn-outline" routerLink="/admin/test-drives">View Calendar</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Vehicle</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Location</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (td of data.upcomingTestDrives; track td.id) {
+              <tr>
+                <td class="customer-cell">
+                  <div class="avatar-circle small">{{ td.customerName.charAt(0) }}</div>
+                  {{ td.customerName }}
+                </td>
+                <td>{{ td.vehicleName }}</td>
+                <td>{{ td.date }}</td>
+                <td>{{ td.time }}</td>
+                <td>{{ td.location }}</td>
+                <td><span class="status-badge" [class]="td.status">{{ td.status }}</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>
