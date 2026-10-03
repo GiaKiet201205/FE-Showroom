@@ -17,12 +17,9 @@ export class DashboardComponent implements OnInit {
   private dashboardService = inject(DashboardService);
   auth = inject(AuthService);
 
-  // Signal cho state của trang: phù hợp vì đây là dữ liệu đọc 1 lần,
-  // không phải luồng sự kiện liên tục -> không cần giữ dạng Observable trong template.
   overview = signal<DashboardOverview | null>(null);
   loading = signal(true);
 
-  // computed: giá trị chiều cao cột chart tính lại tự động mỗi khi overview đổi
   maxRevenue = computed(() => {
     const trend = this.overview()?.salesTrend ?? [];
     return Math.max(...trend.map((p) => p.revenue), 1);
@@ -39,7 +36,6 @@ export class DashboardComponent implements OnInit {
   }
 
   barHeight(revenue: number): number {
-    // Chuyển doanh thu thành chiều cao % cho cột chart CSS thuần (không dùng lib chart ngoài)
     const max = this.maxRevenue();
     return Math.round((revenue / max) * 100);
   }
