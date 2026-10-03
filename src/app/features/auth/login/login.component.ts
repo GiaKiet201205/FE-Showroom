@@ -1,8 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+
+// Tài khoản Admin cố định (chưa có backend thật).
+// Muốn đổi email/mật khẩu, chỉ cần sửa 2 dòng này.
+const FIXED_ADMIN_EMAIL = 'admin@giakiet.com';
+const FIXED_ADMIN_PASSWORD = 'admin123';
 
 @Component({
   selector: 'app-login',
@@ -15,12 +20,10 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   submitting = false;
   errorMessage = '';
 
-  // Reactive Form có validate: email đúng định dạng, password tối thiểu 6 ký tự
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]]
@@ -45,23 +48,17 @@ export class LoginComponent {
     this.submitting = true;
     this.errorMessage = '';
 
-    this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => this.redirectAfterLogin(),
-      error: () => {
-        this.submitting = false;
-        this.errorMessage = 'Email hoặc mật khẩu không đúng, hoặc backend chưa sẵn sàng.';
-      }
-    });
-  }
+    const { email, password } = this.form.getRawValue();
 
-  /** Dùng để xem trước giao diện admin khi API /auth/login chưa có. */
-  loginAsDemo(): void {
-    this.auth.loginAsDemoAdmin();
-    this.redirectAfterLogin();
-  }
+    // So khớp với tài khoản Admin cố định — đúng cả 2 mới cho vào.
+    if (email !== FIXED_ADMIN_EMAIL || password !== FIXED_ADMIN_PASSWORD) {
+      this.submitting = false;
+      this.errorMessage = 'Email hoặc mật khẩu không đúng.';
+      return;
+    }
 
-  private redirectAfterLogin(): void {
-    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo') || '/admin/dashboard';
-    this.router.navigateByUrl(redirectTo);
+    this.auth.loginAsAdmin();
+    this.submitting = false;
+    this.router.navigateByUrl('/admin/dashboard');
   }
 }

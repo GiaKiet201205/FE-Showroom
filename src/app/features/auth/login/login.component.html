@@ -4,7 +4,7 @@
     <p class="subtitle">Đăng nhập khu vực quản trị</p>
 
     <label>Email</label>
-    <input type="email" formControlName="email" placeholder="admin@autodrive.dev" />
+    <input type="email" formControlName="email" placeholder="Vui lòng nhập email Admin" />
     @if (emailInvalid) {
       <span class="field-error">Vui lòng nhập email hợp lệ.</span>
     }
@@ -21,10 +21,6 @@
 
     <button type="submit" class="btn-primary" [disabled]="submitting">
       {{ submitting ? 'Đang đăng nhập...' : 'Đăng nhập' }}
-    </button>
-
-    <button type="button" class="btn-demo" (click)="loginAsDemo()">
-      Xem trước giao diện Admin (demo, không cần backend)
     </button>
   </form>
 </div>
