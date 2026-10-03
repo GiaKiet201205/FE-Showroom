@@ -7,71 +7,95 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./features/auth/login/login.component').then((m) => m.LoginComponent)
+      import('./features/auth/login/login.component').then(
+        (m) => m.LoginComponent,
+      ),
   },
 
   {
     path: 'admin',
     canActivate: [adminGuard],
     loadComponent: () =>
-      import('./features/admin/layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
+      import('./features/admin/layout/admin-layout.component').then(
+        (m) => m.AdminLayoutComponent,
+      ),
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/admin/dashboard/dashboard.component').then((m) => m.DashboardComponent)
+          import('./features/admin/dashboard/dashboard.component').then(
+            (m) => m.DashboardComponent,
+          ),
       },
       {
         path: 'vehicles',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Quản lý Xe', icon: 'directions_car' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Quản lý Xe', icon: 'directions_car' },
       },
       {
         path: 'users',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Quản lý Người dùng', icon: 'group' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Quản lý Người dùng', icon: 'group' },
       },
       {
         path: 'test-drives',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Lịch lái thử', icon: 'event_available' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Lịch lái thử', icon: 'event_available' },
       },
       {
         path: 'brands',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Thương hiệu', icon: 'sell' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Thương hiệu', icon: 'sell' },
       },
       {
         path: 'sellers',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Người bán', icon: 'storefront' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Người bán', icon: 'storefront' },
       },
       {
         path: 'orders',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Đơn hàng', icon: 'shopping_cart' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Đơn hàng', icon: 'shopping_cart' },
       },
       {
         path: 'reports',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Báo cáo', icon: 'description' }
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Báo cáo', icon: 'description' },
       },
       {
         path: 'settings',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-        data: { title: 'Cài đặt', icon: 'settings' }
-      }
-    ]
+          import('./shared/components/coming-soon/coming-soon.component').then(
+            (m) => m.ComingSoonComponent,
+          ),
+        data: { title: 'Cài đặt', icon: 'settings' },
+      },
+    ],
   },
 
-  { path: '**', redirectTo: 'admin/dashboard' }
+  { path: '**', redirectTo: 'admin/dashboard' },
 ];
+
+//change route
