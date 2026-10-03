@@ -1,0 +1,121 @@
+<div class="vehicles-page">
+  <div class="breadcrumb">Main / Vehicles</div>
+  <h1 class="page-title">Vehicle Management</h1>
+
+  <section class="catalog-header">
+    <div>
+      <div class="catalog-title">Active Catalog</div>
+      <div class="catalog-sub">Manage list details, availability and details of cars</div>
+    </div>
+    <button class="btn-primary">
+      <mat-icon>add_circle</mat-icon>
+      Add New Vehicle
+    </button>
+  </section>
+
+  <section class="filter-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search vehicles..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        (keyup.enter)="onFilterChange()"
+      />
+    </div>
+
+    <select class="filter-select" [ngModel]="brandFilter()" (ngModelChange)="brandFilter.set($event); onFilterChange()">
+      <option value="all">Brand (All)</option>
+      @for (b of brandOptions; track b) {
+        <option [value]="b">{{ b }}</option>
+      }
+    </select>
+
+    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+      <option value="all">Status (All)</option>
+      <option value="available">Available</option>
+      <option value="reserved">Reserved</option>
+      <option value="sold">Sold</option>
+      <option value="draft">Draft</option>
+    </select>
+
+    <select class="filter-select" [ngModel]="yearFilter()" (ngModelChange)="yearFilter.set($event); onFilterChange()">
+      <option value="all">Year (All)</option>
+      @for (y of yearOptions; track y) {
+        <option [value]="y">{{ y }}</option>
+      }
+    </select>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrapper">
+      <table class="vehicle-table">
+        <thead>
+          <tr>
+            <th class="col-check"><input type="checkbox" /></th>
+            <th>PREVIEW</th>
+            <th>BRAND</th>
+            <th>MODEL</th>
+            <th>YEAR</th>
+            <th>PRICE</th>
+            <th>MILEAGE</th>
+            <th>COLOR</th>
+            <th>STATUS</th>
+            <th class="col-actions">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr><td colspan="9" class="loading-cell">Đang tải dữ liệu...</td></tr>
+          } @else {
+            @for (v of vehicles(); track v.id) {
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>
+                  <div class="thumb">
+                    @if (v.imageUrl) {
+                      <img [src]="v.imageUrl" [alt]="v.brand" />
+                    } @else {
+                      <mat-icon>directions_car</mat-icon>
+                    }
+                  </div>
+                </td>
+                <td class="cell-brand">{{ v.brand }}</td>
+                <td class="cell-muted">{{ v.model }}</td>
+                <td class="cell-muted">{{ v.year }}</td>
+                <td class="cell-price">${{ v.price | number }}</td>
+                <td class="cell-muted">{{ v.mileage | number }} mi</td>
+                <td class="cell-muted">{{ v.color }}</td>
+                <td><span class="status-badge" [class]="v.status">{{ v.status }}</span></td>
+                <td class="col-actions">
+                  <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+                  <button class="icon-btn delete" title="Xoá" (click)="deleteVehicle(v)"><mat-icon>delete</mat-icon></button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-bar">
+      <div class="pagination-info">
+        Showing {{ (page() - 1) * pageSize + 1 }}-{{ rangeEnd() }} of {{ total() }} vehicles
+      </div>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
+        @for (p of [1, 2, 3]; track p) {
+          @if (p <= totalPages()) {
+            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
+          }
+        }
+        @if (totalPages() > 4) {
+          <span class="page-dots">...</span>
+          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        }
+        <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
+      </div>
+    </div>
+  </section>
+</div>
