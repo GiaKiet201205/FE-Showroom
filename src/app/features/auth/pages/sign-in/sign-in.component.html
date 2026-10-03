@@ -1,0 +1,128 @@
+<div class="sign-in-page">
+  <header class="site-header">
+    <div class="logo" aria-label="AutoDrive">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle
+            cx="12"
+            cy="12"
+            r="7.5"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <path
+            d="m9.5 9.5 5 5m0-5-5 5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </span>
+      <span>AutoDrive</span>
+    </div>
+  </header>
+
+  <main class="hero">
+    <section class="login-card" aria-labelledby="sign-in-title">
+      <span class="brand-mark card-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle
+            cx="12"
+            cy="12"
+            r="7.5"
+            stroke="currentColor"
+            stroke-width="2"
+          />
+          <path
+            d="m9.5 9.5 5 5m0-5-5 5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+      </span>
+
+      <h1 id="sign-in-title">Welcome Back</h1>
+      <p class="subtitle">Sign in to your account to continue</p>
+
+      <div class="field">
+        <label for="email">Email Address</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          placeholder="name@example.com"
+        />
+      </div>
+
+      <div class="field password-field">
+        <label for="password">Password</label>
+        <div class="password-control">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            autocomplete="current-password"
+            placeholder="••••••••"
+          />
+          <button
+            class="visibility-button"
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M2.5 12s3.5-5 9.5-5 9.5 5 9.5 5-3.5 5-9.5 5-9.5-5-9.5-5Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <circle
+                cx="12"
+                cy="12"
+                r="2.5"
+                stroke="currentColor"
+                stroke-width="1.8"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="remember-me"
+          ><input type="checkbox" checked /> Remember me</label
+        >
+        <a routerLink="/forgot-password">Forgot Password?</a>
+      </div>
+
+      <button class="sign-in-button" type="button">Sign In</button>
+
+      <div class="divider"><span>OR</span></div>
+
+      <button class="google-button" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="#4285F4"
+            d="M21.6 12.2c0-.7-.1-1.3-.2-1.9H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.8 3-4.3 3-7.4Z"
+          />
+          <path
+            fill="#34A853"
+            d="M12 22c2.7 0 5-1 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.2H3.1v2.6A10 10 0 0 0 12 22Z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3.1a10 10 0 0 0 0 9l3.3-2.6Z"
+          />
+          <path
+            fill="#EA4335"
+            d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A9.5 9.5 0 0 0 12 2a10 10 0 0 0-8.9 5.5l3.3 2.6C7.2 7.8 9.4 6 12 6Z"
+          />
+        </svg>
+        Continue with Google
+      </button>
+
+      <p class="signup">Don't have an account? <a routerLink="/sign-up">Sign Up</a></p>
+    </section>
+  </main>
+</div>

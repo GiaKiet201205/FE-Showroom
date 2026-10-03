@@ -1,5 +1,8 @@
-import { Routes } from '@angular/router';
-import { adminGuard } from './core/guards/admin.guard';
+import { Route, Routes } from '@angular/router';
+import { SignInComponent } from './features/auth/pages/sign-in/sign-in.component';
+import { SignUpComponent } from './features/auth/pages/sign-up/sign-up.component';
+import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password.component';
+import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'admin/dashboard' },
@@ -10,8 +13,17 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then(
         (m) => m.LoginComponent,
       ),
+    path: 'sign-in',
+    component: SignInComponent,
   },
+  { path: 'sign-up', component: SignUpComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
 
+  // {
+  //   path: '',
+  //   redirectTo: '',
+  //   pathMatch: 'full',
+  // },
   {
     path: 'admin',
     canActivate: [adminGuard],
@@ -96,6 +108,9 @@ export const routes: Routes = [
   },
 
   { path: '**', redirectTo: 'admin/dashboard' },
+    path: '',
+    component: HomeComponent,
+  },
 ];
 
 //change route
