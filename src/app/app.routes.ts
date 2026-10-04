@@ -5,7 +5,7 @@ import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/f
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'admin/dashboard' },
+  { path: '', pathMatch: 'full', redirectTo: 'home' },
 
   {
     path: 'login',
@@ -23,11 +23,14 @@ export const routes: Routes = [
       import('./features/home/home.component').then((m) => m.HomeComponent),
   },
 
-  // {
-  //   path: '',
-  //   redirectTo: '',
-  //   pathMatch: 'full',
-  // },
+  {
+    path: 'loginadmin',
+    loadComponent: () =>
+      import('./features/auth/login/login.component').then(
+        (m) => m.LoginComponent,
+      ),
+  },
+
   {
     path: 'admin',
     canActivate: [adminGuard],
@@ -111,8 +114,5 @@ export const routes: Routes = [
     ],
   },
 
-  { path: '**', redirectTo: 'admin/dashboard' },
+  { path: '**', redirectTo: '' },
 ];
-
-//change route
-//change route 2
