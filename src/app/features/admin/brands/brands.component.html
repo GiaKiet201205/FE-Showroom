@@ -1,0 +1,83 @@
+<div class="brands-page">
+  <div class="breadcrumb">Main / Brands</div>
+  <h1 class="page-title">Brand Management</h1>
+
+  <section class="catalog-header">
+    <div>
+      <div class="catalog-title">Brand Catalog</div>
+      <div class="catalog-sub">Manage list details, availability and verified manufacturing status</div>
+    </div>
+    <button class="btn-primary">
+      <mat-icon>add_circle</mat-icon>
+      Add Brand
+    </button>
+  </section>
+
+  <section class="filter-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search brands..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        (keyup.enter)="onFilterChange()"
+      />
+    </div>
+
+    <select class="filter-select" [ngModel]="regionFilter()" (ngModelChange)="regionFilter.set($event); onFilterChange()">
+      <option value="all">Region: All Regions</option>
+      <option value="Germany">Germany</option>
+      <option value="Japan">Japan</option>
+      <option value="United States">United States</option>
+    </select>
+  </section>
+
+  @if (loading()) {
+    <div class="loading-state">Đang tải dữ liệu...</div>
+  } @else {
+    <section class="brand-grid">
+      @for (b of brands(); track b.id) {
+        <div class="brand-card">
+          <div class="brand-card-top">
+            <div class="brand-logo"><mat-icon>directions_car</mat-icon></div>
+            <span class="status-badge" [class]="b.status">{{ b.status }}</span>
+          </div>
+
+          <div class="brand-name">{{ b.name }}</div>
+          <div class="brand-origin">Origin: <strong>{{ b.origin }}</strong></div>
+
+          <div class="brand-footer">
+            <div>
+              <div class="footer-label">LISTED VEHICLES</div>
+              <div class="footer-value">{{ b.listedVehicles }} Active Units</div>
+            </div>
+            <div class="footer-actions">
+              <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+              <button class="icon-btn delete" title="Xoá" (click)="deleteBrand(b)"><mat-icon>delete</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+  }
+
+  <div class="pagination-bar">
+    <div class="pagination-info">
+      Showing {{ (page() - 1) * pageSize + 1 }}-{{ (page() - 1) * pageSize + brands().length }} of {{ total() }} brands
+    </div>
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
+      @for (p of [1, 2, 3]; track p) {
+        @if (p <= totalPages()) {
+          <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
+        }
+      }
+      @if (totalPages() > 4) {
+        <span class="page-dots">...</span>
+        <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+      }
+      <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
+    </div>
+  </div>
+</div>

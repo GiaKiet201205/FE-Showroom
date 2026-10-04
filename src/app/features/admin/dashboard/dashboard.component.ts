@@ -2,7 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { DashboardService } from '../../../core/services/dashboard.service';
+import { DashboardService } from '../../../core/services/dashboard/dashboard.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { DashboardOverview } from '../../../core/models/dashboard.model';
 

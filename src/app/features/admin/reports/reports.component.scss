@@ -1,0 +1,143 @@
+@use '../../../../styles/admin-theme' as *;
+
+.breadcrumb { font-size: 12px; color: $admin-text-muted; margin-bottom: 4px; }
+.page-title { font-size: 22px; font-weight: 700; color: $admin-text-dark; margin: 0 0 20px; }
+.loading-state { text-align: center; color: $admin-text-muted; padding: 60px 0; }
+
+.range-tabs {
+  display: flex; align-items: center; gap: 4px;
+  background: $admin-card-bg; border-radius: $admin-radius-md;
+  padding: 6px; box-shadow: $admin-shadow; margin-bottom: 20px; width: fit-content;
+}
+
+.tab-btn {
+  background: none; border: none; padding: 8px 16px; font-size: 13px;
+  color: $admin-text-muted; border-radius: $admin-radius-sm; cursor: pointer;
+  &:hover { background: $admin-bg; }
+  &.active { background: $admin-text-dark; color: #fff; font-weight: 600; }
+  &.custom-range { border-left: 1px solid $admin-border; margin-left: 4px; padding-left: 16px; color: $admin-text-dark; }
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+
+  @media (max-width: 1000px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-card {
+  background: $admin-card-bg;
+  border-radius: $admin-radius-md;
+  padding: 16px;
+  box-shadow: $admin-shadow;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 12px;
+}
+
+.stat-icon {
+  grid-row: 1 / span 3;
+  align-self: center;
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+  color: $admin-primary; background: rgba(91, 75, 245, 0.1);
+
+  &.cars { color: $admin-info; background: rgba(59, 130, 246, 0.1); font-size: 18px; }
+  &.avg { color: $admin-success; background: rgba(34, 197, 94, 0.1); }
+  &.conv { color: $admin-danger; background: rgba(239, 68, 68, 0.1); }
+}
+
+.stat-label { font-size: 10px; letter-spacing: 0.4px; color: $admin-text-muted; align-self: end; }
+.stat-value { font-size: 20px; font-weight: 700; color: $admin-text-dark; }
+.stat-growth { font-size: 11px; color: $admin-success; align-self: start; &.negative { color: $admin-danger; } }
+
+.panel {
+  background: $admin-card-bg; border-radius: $admin-radius-md;
+  padding: 20px; box-shadow: $admin-shadow; margin-bottom: 20px; margin-top: 20px;
+}
+
+.panel-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.panel-title { font-size: 14px; font-weight: 700; color: $admin-text-dark; }
+.panel-sub { font-size: 11px; color: $admin-text-muted; margin-top: 2px; }
+.revenue-total { font-size: 15px; font-weight: 700; color: $admin-primary; }
+
+.chart-row {
+  display: grid; grid-template-columns: 2fr 1fr; gap: 20px;
+  @media (max-width: 1100px) { grid-template-columns: 1fr; }
+}
+
+.bar-chart { display: flex; align-items: flex-end; gap: 14px; height: 160px; padding-top: 10px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 8px; }
+.bar { width: 60%; min-height: 4px; border-radius: 6px 6px 0 0; background: $admin-primary; }
+.bar-month { font-size: 10px; color: $admin-text-muted; }
+
+.category-list { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+.category-top { display: flex; justify-content: space-between; font-size: 12px; color: $admin-text-dark; margin-bottom: 6px; }
+.category-count { color: $admin-text-muted; }
+.progress-track { height: 6px; border-radius: 999px; background: $admin-bg; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 999px; }
+
+.two-col-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  @media (max-width: 1000px) { grid-template-columns: 1fr; }
+  .panel { margin-bottom: 0; }
+}
+
+.seller-list { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.seller-item { display: flex; align-items: center; gap: 12px; }
+
+.seller-rank {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: $admin-bg; color: $admin-text-muted;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.seller-info { flex: 1; min-width: 0; }
+.seller-name { font-size: 13px; font-weight: 600; color: $admin-text-dark; }
+.seller-meta { font-size: 11px; color: $admin-text-muted; margin-top: 2px; }
+
+.tier-badge {
+  font-size: 10px; font-weight: 600; padding: 4px 10px;
+  border-radius: 999px; background: rgba(34, 197, 94, 0.12);
+  color: $admin-success; white-space: nowrap;
+}
+
+.brand-bar-chart {
+  display: flex; align-items: flex-end; justify-content: space-around;
+  gap: 14px; height: 140px; padding-top: 10px; margin-top: 8px;
+}
+
+.brand-col { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 8px; flex: 1; }
+.brand-bar { width: 70%; min-height: 4px; border-radius: 6px 6px 0 0; }
+.brand-label { font-size: 10px; color: $admin-text-muted; }
+
+.table-wrapper { overflow-x: auto; margin-top: 8px; }
+
+.funnel-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  th {
+    text-align: left; font-size: 10px; letter-spacing: 0.4px;
+    color: $admin-text-muted; font-weight: 600; padding: 12px 14px;
+    border-bottom: 1px solid $admin-border; white-space: nowrap;
+  }
+  td {
+    padding: 12px 14px; border-bottom: 1px solid $admin-border;
+    color: $admin-text-dark; white-space: nowrap; vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: $admin-bg; }
+}
+
+.cell-strong { font-weight: 600; }
+.cell-muted { color: $admin-text-muted; }
+.cell-revenue { font-weight: 700; color: $admin-primary; }
+
+.conv-badge {
+  font-size: 10px; font-weight: 600; padding: 4px 10px;
+  border-radius: 999px; background: rgba(34, 197, 94, 0.12); color: $admin-success;
+}
