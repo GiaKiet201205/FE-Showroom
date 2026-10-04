@@ -2,56 +2,51 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
-import { Vehicle } from '../../../core/models/vehicle.model';
+import { SellerService } from '../../../core/services/seller/seller.service';
+import { Seller, SellerStats } from '../../../core/models/seller.model';
 
 @Component({
-  selector: 'app-admin-vehicles',
+  selector: 'app-admin-sellers',
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule],
-  templateUrl: './vehicles.component.html',
-  styleUrl: './vehicles.component.scss'
+  templateUrl: './sellers.component.html',
+  styleUrl: './sellers.component.scss'
 })
-export class AdminVehiclesComponent implements OnInit {
-  private vehicleService = inject(VehicleService);
+export class AdminSellersComponent implements OnInit {
+  private sellerService = inject(SellerService);
 
-  vehicles = signal<Vehicle[]>([]);
+  sellers = signal<Seller[]>([]);
+  stats = signal<SellerStats | null>(null);
   total = signal(0);
   loading = signal(true);
 
   searchTerm = signal('');
-  brandFilter = signal('all');
   statusFilter = signal('all');
-  yearFilter = signal('all');
 
   page = signal(1);
-  pageSize = 10;
+  pageSize = 8;
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
 
-  brandOptions = ['Tesla', 'BMW', 'Mercedes-Benz', 'Audi', 'Toyota', 'Porsche', 'Ford', 'Lexus'];
-  yearOptions = [2023, 2022, 2021, 2020];
-
   ngOnInit(): void {
-    this.loadVehicles();
+    this.loadSellers();
   }
 
-  loadVehicles(): void {
+  loadSellers(): void {
     this.loading.set(true);
-    this.vehicleService
+    this.sellerService
       .getList({
         search: this.searchTerm(),
-        brand: this.brandFilter() === 'all' ? undefined : this.brandFilter(),
         status: this.statusFilter() === 'all' ? undefined : this.statusFilter(),
-        year: this.yearFilter() === 'all' ? undefined : this.yearFilter(),
         page: this.page(),
         pageSize: this.pageSize
       })
       .subscribe({
         next: (res) => {
-          this.vehicles.set(res.items);
+          this.sellers.set(res.items);
           this.total.set(res.total);
+          this.stats.set(res.stats);
           this.loading.set(false);
         },
         error: () => this.loading.set(false)
@@ -60,20 +55,12 @@ export class AdminVehiclesComponent implements OnInit {
 
   onFilterChange(): void {
     this.page.set(1);
-    this.loadVehicles();
+    this.loadSellers();
   }
 
   goToPage(p: number): void {
     if (p < 1 || p > this.totalPages()) return;
     this.page.set(p);
-    this.loadVehicles();
-  }
-
-  deleteVehicle(vehicle: Vehicle): void {
-    if (!confirm(`Xoá xe "${vehicle.brand} ${vehicle.model}"?`)) return;
-    this.vehicleService.delete(vehicle.id).subscribe({
-      next: () => this.loadVehicles(),
-      error: () => this.loadVehicles()
-    });
+    this.loadSellers();
   }
 }

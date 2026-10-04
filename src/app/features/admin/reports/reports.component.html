@@ -1,0 +1,164 @@
+<div class="reports-page">
+  <div class="breadcrumb">Main / Reports</div>
+  <h1 class="page-title">Reports &amp; Analytics</h1>
+
+  <section class="range-tabs">
+    @for (tab of rangeTabs; track tab.value) {
+      <button
+        class="tab-btn"
+        [class.active]="selectedRange() === tab.value"
+        (click)="selectRange(tab.value)"
+      >
+        {{ tab.label }}
+      </button>
+    }
+    <button class="tab-btn custom-range">Custom Range ▾</button>
+  </section>
+
+  @if (loading()) {
+    <div class="loading-state">Đang tải dữ liệu...</div>
+  } @else if (overview()) {
+    @let data = overview()!;
+
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon revenue">$</div>
+        <div class="stat-label">TOTAL REVENUE</div>
+        <div class="stat-value">{{ formatCurrency(data.stats.totalRevenue) }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.totalRevenueGrowth < 0">
+          {{ data.stats.totalRevenueGrowth > 0 ? '+' : '' }}{{ data.stats.totalRevenueGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon cars">🚗</div>
+        <div class="stat-label">CARS SOLD</div>
+        <div class="stat-value">{{ data.stats.carsSold | number }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.carsSoldGrowth < 0">
+          {{ data.stats.carsSoldGrowth > 0 ? '+' : '' }}{{ data.stats.carsSoldGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon avg">$</div>
+        <div class="stat-label">AVG SALE PRICE</div>
+        <div class="stat-value">${{ data.stats.avgSalePrice | number }}</div>
+        <div class="stat-growth" [class.negative]="data.stats.avgSalePriceGrowth < 0">
+          {{ data.stats.avgSalePriceGrowth > 0 ? '+' : '' }}{{ data.stats.avgSalePriceGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon conv">▤</div>
+        <div class="stat-label">CONVERSION RATE</div>
+        <div class="stat-value">{{ data.stats.conversionRate }}%</div>
+        <div class="stat-growth" [class.negative]="data.stats.conversionRateGrowth < 0">
+          {{ data.stats.conversionRateGrowth > 0 ? '+' : '' }}{{ data.stats.conversionRateGrowth }}% vs last month
+        </div>
+      </div>
+    </section>
+
+    <section class="chart-row">
+      <div class="panel chart-panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Monthly Revenue Stream</div>
+            <div class="panel-sub">Aggregate dealership volume FY2024</div>
+          </div>
+          <div class="revenue-total">${{ data.totalRevenueLabel | number }}</div>
+        </div>
+
+        <div class="bar-chart">
+          @for (point of data.revenueTrend; track point.month) {
+            <div class="bar-col">
+              <div class="bar" [style.height.%]="barHeight(point.revenue)"></div>
+              <div class="bar-month">{{ point.month }}</div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="panel category-panel">
+        <div class="panel-title">Vehicle Categories</div>
+        <div class="panel-sub">Inventory share &amp; volume</div>
+
+        <div class="category-list">
+          @for (cat of data.vehicleCategories; track cat.name) {
+            <div class="category-item">
+              <div class="category-top">
+                <span>{{ cat.name }}</span>
+                <span class="category-count">{{ cat.unitCount }} units ({{ cat.percentage }}%)</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="cat.percentage" [style.background]="cat.color"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="two-col-row">
+      <div class="panel">
+        <div class="panel-title">Top Performing Sellers</div>
+        <div class="seller-list">
+          @for (s of data.topSellers; track s.rank) {
+            <div class="seller-item">
+              <div class="seller-rank">{{ s.rank }}</div>
+              <div class="seller-info">
+                <div class="seller-name">{{ s.name }}</div>
+                <div class="seller-meta">{{ s.unitsSold }} units Sold · {{ formatCurrency(s.revenue) }} Revenue</div>
+              </div>
+              <span class="tier-badge">{{ s.tier }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Sales by Major Brand</div>
+        <div class="brand-bar-chart">
+          @for (b of data.salesByBrand; track b.brand) {
+            <div class="brand-col">
+              <div class="brand-bar" [style.height.%]="brandBarHeight(b.units)" [style.background]="b.color"></div>
+              <div class="brand-label">{{ b.brand }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">Vehicle Sales Funnel Conversion</div>
+
+      <div class="table-wrapper">
+        <table class="funnel-table">
+          <thead>
+            <tr>
+              <th>VEHICLE MODEL</th>
+              <th>VIEWS</th>
+              <th>INQUIRIES</th>
+              <th>TEST DRIVES</th>
+              <th>SALES</th>
+              <th>REVENUE</th>
+              <th>CONVERSION %</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of data.funnel; track row.vehicleModel) {
+              <tr>
+                <td class="cell-strong">{{ row.vehicleModel }}</td>
+                <td class="cell-muted">{{ row.views | number }}</td>
+                <td class="cell-muted">{{ row.inquiries | number }}</td>
+                <td class="cell-muted">{{ row.testDrives }}</td>
+                <td class="cell-muted">{{ row.sales }}</td>
+                <td class="cell-revenue">{{ formatCurrency(row.revenue) }}</td>
+                <td><span class="conv-badge">{{ row.conversionPct }}%</span></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+</div>
