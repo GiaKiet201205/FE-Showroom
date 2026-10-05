@@ -1,0 +1,140 @@
+<div class="users-page">
+  <div class="breadcrumb">Main / Users</div>
+  <h1 class="page-title">User Management</h1>
+
+  @if (stats(); as s) {
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon total"><mat-icon>group</mat-icon></div>
+        <div class="stat-label">TOTAL USERS</div>
+        <div class="stat-value">{{ (s.totalUsers / 1000).toFixed(1) }}K</div>
+        <div class="stat-growth" [class.negative]="s.totalUsersGrowth < 0">
+          {{ s.totalUsersGrowth > 0 ? '+' : '' }}{{ s.totalUsersGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon active"><mat-icon>person</mat-icon></div>
+        <div class="stat-label">ACTIVE USERS</div>
+        <div class="stat-value">{{ (s.activeUsers / 1000).toFixed(1) }}K</div>
+        <div class="stat-growth" [class.negative]="s.activeUsersGrowth < 0">
+          {{ s.activeUsersGrowth > 0 ? '+' : '' }}{{ s.activeUsersGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon new"><mat-icon>event</mat-icon></div>
+        <div class="stat-label">NEW THIS MONTH</div>
+        <div class="stat-value">{{ s.newThisMonth | number }}</div>
+        <div class="stat-growth" [class.negative]="s.newThisMonthGrowth < 0">
+          {{ s.newThisMonthGrowth > 0 ? '+' : '' }}{{ s.newThisMonthGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon blocked"><mat-icon>person_off</mat-icon></div>
+        <div class="stat-label">BLOCKED USERS</div>
+        <div class="stat-value">{{ s.blockedUsers }}</div>
+        <div class="stat-growth" [class.negative]="s.blockedUsersGrowth < 0">
+          {{ s.blockedUsersGrowth > 0 ? '+' : '' }}{{ s.blockedUsersGrowth }}% vs last month
+        </div>
+      </div>
+    </section>
+  }
+
+  <section class="filter-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search users by name, email..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        (keyup.enter)="onFilterChange()"
+      />
+    </div>
+
+    <select class="filter-select" [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event); onFilterChange()">
+      <option value="all">Role: All</option>
+      <option value="admin">Admin</option>
+      <option value="seller">Seller</option>
+      <option value="user">User</option>
+    </select>
+
+    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+      <option value="all">Status: All</option>
+      <option value="active">Active</option>
+      <option value="pending">Pending</option>
+      <option value="blocked">Blocked</option>
+    </select>
+
+    <button class="btn-primary">
+      <mat-icon>add_circle</mat-icon>
+      Add Internal User
+    </button>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrapper">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>FULL NAME</th>
+            <th>EMAIL ADDRESS</th>
+            <th>PHONE</th>
+            <th>REGISTRATION DATE</th>
+            <th>ROLE</th>
+            <th>STATUS</th>
+            <th class="col-actions">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr><td colspan="7" class="loading-cell">Đang tải dữ liệu...</td></tr>
+          } @else {
+            @for (u of users(); track u.id) {
+              <tr>
+                <td class="cell-name">
+                  <div class="avatar-circle">{{ u.fullName.charAt(0) }}</div>
+                  <span>{{ u.fullName }}</span>
+                </td>
+                <td class="cell-muted">{{ u.email }}</td>
+                <td class="cell-muted">{{ u.phone }}</td>
+                <td class="cell-muted">{{ u.registeredAt }}</td>
+                <td><span class="role-badge" [class]="u.role">{{ u.role }}</span></td>
+                <td><span class="status-badge" [class]="u.status">{{ u.status }}</span></td>
+                <td class="col-actions">
+                  <button class="icon-btn view" title="Xem"><mat-icon>visibility</mat-icon></button>
+                  <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+                  <button class="icon-btn lock" title="Khoá/Mở khoá" (click)="toggleBlock(u)">
+                    <mat-icon>{{ u.status === 'blocked' ? 'lock' : 'lock_open' }}</mat-icon>
+                  </button>
+                  <button class="icon-btn delete" title="Xoá" (click)="deleteUser(u)"><mat-icon>delete</mat-icon></button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-bar">
+      <div class="pagination-info">
+        Showing {{ (page() - 1) * pageSize + 1 }}-{{ rangeEnd() }} of {{ total() }} users
+      </div>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
+        @for (p of [1, 2, 3]; track p) {
+          @if (p <= totalPages()) {
+            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
+          }
+        }
+        @if (totalPages() > 4) {
+          <span class="page-dots">...</span>
+          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        }
+        <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
+      </div>
+    </div>
+  </section>
+</div>

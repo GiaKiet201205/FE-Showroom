@@ -1,0 +1,125 @@
+@use '../../../../styles/admin-theme' as *;
+
+.breadcrumb { font-size: 12px; color: $admin-text-muted; margin-bottom: 4px; }
+.page-title { font-size: 22px; font-weight: 700; color: $admin-text-dark; margin: 0 0 20px; }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+
+  @media (max-width: 1000px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat-card {
+  background: $admin-card-bg;
+  border-radius: $admin-radius-md;
+  padding: 16px;
+  box-shadow: $admin-shadow;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto;
+  column-gap: 12px;
+}
+
+.stat-icon {
+  grid-row: 1 / span 3;
+  align-self: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $admin-primary;
+  background: rgba(91, 75, 245, 0.1);
+
+  &.verified { color: $admin-success; background: rgba(34, 197, 94, 0.1); }
+  &.pending { color: $admin-warning; background: rgba(245, 158, 11, 0.1); }
+  &.suspended { color: $admin-danger; background: rgba(239, 68, 68, 0.1); }
+}
+
+.stat-label { font-size: 10px; letter-spacing: 0.4px; color: $admin-text-muted; align-self: end; }
+.stat-value { font-size: 20px; font-weight: 700; color: $admin-text-dark; }
+.stat-growth { font-size: 11px; color: $admin-success; align-self: start; &.negative { color: $admin-danger; } }
+
+.filter-bar {
+  display: flex; align-items: center; gap: 12px;
+  background: $admin-card-bg; border-radius: $admin-radius-md;
+  padding: 14px 16px; box-shadow: $admin-shadow; margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: $admin-bg; border-radius: $admin-radius-sm;
+  padding: 8px 12px; flex: 1; min-width: 220px; color: $admin-text-muted;
+  input { border: none; background: transparent; outline: none; font-size: 13px; width: 100%; }
+}
+
+.filter-select {
+  border: 1px solid $admin-border; border-radius: $admin-radius-sm;
+  padding: 8px 10px; font-size: 13px; color: $admin-text-dark;
+  background: #fff; cursor: pointer;
+}
+
+.sort-select { margin-left: auto; }
+
+.panel { background: $admin-card-bg; border-radius: $admin-radius-md; box-shadow: $admin-shadow; overflow: hidden; }
+.table-wrapper { overflow-x: auto; }
+
+.seller-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  th {
+    text-align: left; font-size: 10px; letter-spacing: 0.4px;
+    color: $admin-text-muted; font-weight: 600; padding: 14px 16px;
+    border-bottom: 1px solid $admin-border; white-space: nowrap;
+  }
+  td {
+    padding: 14px 16px; border-bottom: 1px solid $admin-border;
+    color: $admin-text-dark; white-space: nowrap; vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: $admin-bg; }
+}
+
+.loading-cell { text-align: center; color: $admin-text-muted; padding: 40px 0 !important; }
+
+.cell-name { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.cell-muted { color: $admin-text-muted; }
+.cell-strong { font-weight: 600; }
+
+.avatar-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: $admin-primary; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; flex-shrink: 0;
+}
+
+.status-badge {
+  font-size: 10px; font-weight: 600; padding: 4px 10px;
+  border-radius: 999px; text-transform: capitalize;
+  &.verified { background: rgba(34, 197, 94, 0.12); color: $admin-success; }
+  &.pending { background: rgba(245, 158, 11, 0.12); color: $admin-warning; }
+  &.suspended { background: rgba(239, 68, 68, 0.12); color: $admin-danger; }
+}
+
+.pagination-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px; border-top: 1px solid $admin-border; flex-wrap: wrap; gap: 10px;
+}
+.pagination-info { font-size: 12px; color: $admin-text-muted; }
+.pagination-controls { display: flex; align-items: center; gap: 6px; }
+
+.page-btn {
+  border: 1px solid $admin-border; background: #fff; color: $admin-text-dark;
+  font-size: 12px; padding: 6px 12px; border-radius: $admin-radius-sm; cursor: pointer;
+  &:hover:not(:disabled) { background: $admin-bg; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &.active { background: $admin-primary; border-color: $admin-primary; color: #fff; }
+}
+
+.page-dots { color: $admin-text-muted; font-size: 12px; padding: 0 4px; }

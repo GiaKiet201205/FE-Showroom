@@ -1,0 +1,152 @@
+<div class="test-drives-page">
+  <div class="breadcrumb">Main / Test Drives</div>
+  <h1 class="page-title">Test Drive Management</h1>
+
+  <section class="section-header">
+    <div>
+      <div class="section-title">Active Schedule</div>
+      <div class="section-sub">Manage and coordinate consumer testing appointments</div>
+    </div>
+    <button class="btn-primary">
+      <mat-icon>add_circle</mat-icon>
+      Schedule Test Drive
+    </button>
+  </section>
+
+  @if (stats(); as s) {
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon total"><mat-icon>event_note</mat-icon></div>
+        <div class="stat-label">TOTAL BOOKINGS</div>
+        <div class="stat-value">{{ s.totalBookings | number }}</div>
+        <div class="stat-growth" [class.negative]="s.totalBookingsGrowth < 0">
+          {{ s.totalBookingsGrowth > 0 ? '+' : '' }}{{ s.totalBookingsGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pending"><mat-icon>event_available</mat-icon></div>
+        <div class="stat-label">PENDING</div>
+        <div class="stat-value">{{ s.pending }}</div>
+        <div class="stat-growth" [class.negative]="s.pendingGrowth < 0">
+          {{ s.pendingGrowth > 0 ? '+' : '' }}{{ s.pendingGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon confirmed"><mat-icon>event_available</mat-icon></div>
+        <div class="stat-label">CONFIRMED</div>
+        <div class="stat-value">{{ s.confirmed | number }}</div>
+        <div class="stat-growth" [class.negative]="s.confirmedGrowth < 0">
+          {{ s.confirmedGrowth > 0 ? '+' : '' }}{{ s.confirmedGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon completed"><mat-icon>event_available</mat-icon></div>
+        <div class="stat-label">COMPLETED</div>
+        <div class="stat-value">{{ s.completed }}</div>
+        <div class="stat-growth" [class.negative]="s.completedGrowth < 0">
+          {{ s.completedGrowth > 0 ? '+' : '' }}{{ s.completedGrowth }}% vs last month
+        </div>
+      </div>
+    </section>
+  }
+
+  <section class="filter-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search bookings..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        (keyup.enter)="onFilterChange()"
+      />
+    </div>
+
+    <select class="filter-select" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event); onFilterChange()">
+      <option value="all">Date: Oct 2024</option>
+      <option value="2024-11">Date: Nov 2024</option>
+      <option value="2024-12">Date: Dec 2024</option>
+    </select>
+
+    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+      <option value="all">Status: All</option>
+      <option value="confirmed">Confirmed</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+
+    <select class="filter-select sort-select">
+      <option>Sort by: Preferred Date</option>
+    </select>
+  </section>
+
+  <section class="panel">
+    <div class="table-wrapper">
+      <table class="td-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>CUSTOMER</th>
+            <th>VEHICLE</th>
+            <th>PREFERRED DATE</th>
+            <th>TIME SLOT</th>
+            <th>LOCATION</th>
+            <th>STATUS</th>
+            <th class="col-actions">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr><td colspan="8" class="loading-cell">Đang tải dữ liệu...</td></tr>
+          } @else {
+            @for (b of bookings(); track b.id) {
+              <tr>
+                <td class="cell-id">{{ b.id }}</td>
+                <td class="cell-customer">
+                  <div class="avatar-circle">{{ b.customerName.charAt(0) }}</div>
+                  <span>{{ b.customerName }}</span>
+                </td>
+                <td class="cell-vehicle">
+                  <div class="vehicle-thumb"><mat-icon>directions_car</mat-icon></div>
+                  <span>{{ b.vehicleName }}</span>
+                </td>
+                <td class="cell-muted">{{ b.preferredDate }}</td>
+                <td class="cell-muted">{{ b.timeSlot }}</td>
+                <td class="cell-muted">{{ b.location }}</td>
+                <td><span class="status-badge" [class]="b.status">{{ b.status }}</span></td>
+                <td class="col-actions">
+                  <button class="icon-btn view" title="Chi tiết"><mat-icon>track_changes</mat-icon></button>
+                  <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+                  <button class="icon-btn delete" title="Huỷ lịch" (click)="deleteBooking(b)"><mat-icon>delete</mat-icon></button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-bar">
+      <div class="pagination-info">
+        Showing {{ (page() - 1) * pageSize + 1 }}-{{ rangeEnd() }} of {{ total() }} bookings
+      </div>
+      <div class="pagination-controls">
+        <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
+        @for (p of [1, 2, 3]; track p) {
+          @if (p <= totalPages()) {
+            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
+          }
+        }
+        @if (totalPages() > 4) {
+          <span class="page-dots">...</span>
+          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        }
+        <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
+      </div>
+    </div>
+  </section>
+</div>

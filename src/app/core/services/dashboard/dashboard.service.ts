@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
-import { DashboardOverview } from '../models/dashboard.model';
+import { DashboardOverview } from '../../models/dashboard.model';
 import { MOCK_DASHBOARD_OVERVIEW } from './dashboard.mock';
 
 /**

@@ -29,11 +29,7 @@ export class AuthService {
     );
   }
 
-  /**
-   * Đăng nhập demo khi chưa có backend thật, giúp xem trước giao diện admin.
-   * Xoá hàm này khi API /auth/login đã sẵn sàng.
-   */
-  loginAsDemoAdmin(): void {
+  loginAsAdmin(): void {
     this.setSession({
       accessToken: 'demo-token',
       user: {

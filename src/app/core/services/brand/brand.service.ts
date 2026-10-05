@@ -1,38 +1,34 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
-import { Vehicle, VehicleListResult } from '../models/vehicle.model';
-import { MOCK_VEHICLES, MOCK_VEHICLES_TOTAL } from './vehicle.mock';
+import { BrandListResult } from '../../models/brand.model';
+import { MOCK_BRANDS, MOCK_BRANDS_TOTAL } from './brand.mock';
 
-export interface VehicleQuery {
+export interface BrandQuery {
   search?: string;
-  brand?: string;
-  status?: string;
-  year?: string;
+  region?: string;
   page: number;
   pageSize: number;
 }
 
 @Injectable({ providedIn: 'root' })
-export class VehicleService {
+export class BrandService {
   private http = inject(HttpClient);
-  private endpoint = '/admin/vehicles';
+  private endpoint = '/admin/brands';
 
-  getList(query: VehicleQuery): Observable<VehicleListResult> {
+  getList(query: BrandQuery): Observable<BrandListResult> {
     const params = {
       search: query.search ?? '',
-      brand: query.brand ?? '',
-      status: query.status ?? '',
-      year: query.year ?? '',
+      region: query.region ?? '',
       page: String(query.page),
       pageSize: String(query.pageSize)
     };
 
-    return this.http.get<VehicleListResult>(this.endpoint, { params }).pipe(
+    return this.http.get<BrandListResult>(this.endpoint, { params }).pipe(
       catchError(() =>
         of({
-          items: MOCK_VEHICLES,
-          total: MOCK_VEHICLES_TOTAL,
+          items: MOCK_BRANDS,
+          total: MOCK_BRANDS_TOTAL,
           page: query.page,
           pageSize: query.pageSize
         })

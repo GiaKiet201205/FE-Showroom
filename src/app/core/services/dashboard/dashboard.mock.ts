@@ -1,4 +1,4 @@
-import { DashboardOverview } from '../models/dashboard.model';
+import { DashboardOverview } from '../../models/dashboard.model';
 
 export const MOCK_DASHBOARD_OVERVIEW: DashboardOverview = {
   stats: {
