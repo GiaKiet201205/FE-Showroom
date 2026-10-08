@@ -1,0 +1,377 @@
+@use '../../../../styles/variables' as *;
+
+
+// =====================================================
+// PAGE
+// =====================================================
+
+.compare-page {
+  min-height: 730px;
+
+  padding:
+    48px
+    0
+    55px;
+
+  background: #f5f7fa;
+}
+
+
+.compare-container {
+  width: min(
+    1080px,
+    calc(100% - 48px)
+  );
+
+  margin: 0 auto;
+
+
+  > h1 {
+    margin:
+      0
+      0
+      32px;
+
+    color: #111827;
+
+    font-size: 32px;
+    font-weight: 750;
+
+    letter-spacing: -0.5px;
+  }
+}
+
+
+// =====================================================
+// GRID
+// =====================================================
+
+.compare-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      var(--column-count, 3),
+      minmax(0, 1fr)
+    );
+
+  gap: 22px;
+
+  align-items: stretch;
+}
+
+
+// =====================================================
+// CARD
+// =====================================================
+
+.compare-card {
+  padding: 20px;
+
+  background: white;
+
+  border:
+    2px solid
+    transparent;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 5px 18px
+    rgba(15, 23, 42, 0.04);
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
+
+
+  &:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+      0 10px 28px
+      rgba(15, 23, 42, 0.08);
+  }
+
+
+  &.featured {
+    border-color: $primary;
+  }
+}
+
+
+// =====================================================
+// CARD HEADER
+// =====================================================
+
+.card-header {
+  min-height: 30px;
+
+  margin-bottom: 14px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.vehicle-title {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+
+  h2 {
+    overflow: hidden;
+
+    margin: 0;
+
+    color: #111827;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+
+.vehicle-number {
+  flex-shrink: 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  font-weight: 600;
+}
+
+
+// =====================================================
+// REMOVE
+// =====================================================
+
+.remove-button {
+  flex-shrink: 0;
+
+  padding: 3px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+
+
+  &:hover {
+    color: #ef4444;
+
+    transform: scale(1.1);
+  }
+}
+
+
+// =====================================================
+// IMAGE
+// =====================================================
+
+.vehicle-image {
+  height: 145px;
+
+  margin-bottom: 19px;
+
+  overflow: hidden;
+
+  border-radius: 7px;
+
+  background: #e2e8f0;
+
+
+  img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition:
+      transform
+      0.3s;
+  }
+}
+
+
+.compare-card:hover {
+
+  .vehicle-image {
+
+    img {
+      transform: scale(1.025);
+    }
+
+  }
+
+}
+
+
+// =====================================================
+// SPECIFICATIONS
+// =====================================================
+
+.specifications {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+.spec-row {
+  min-height: 32px;
+
+  padding:
+    0
+    1px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid
+    #dbe3ee;
+
+
+  span {
+    color: #64748b;
+
+    font-size: 12px;
+  }
+
+
+  strong {
+    max-width: 65%;
+
+    color: #111827;
+
+    font-size: 12px;
+    font-weight: 650;
+
+    text-align: right;
+
+
+    &.highlight {
+      color: $primary;
+    }
+  }
+}
+
+
+// =====================================================
+// EMPTY
+// =====================================================
+
+.empty-compare {
+  min-height: 400px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  color: #64748b;
+
+  text-align: center;
+
+
+  > i {
+    margin-bottom: 20px;
+
+    color: #cbd5e1;
+
+    font-size: 55px;
+  }
+
+
+  h2 {
+    margin:
+      0
+      0
+      8px;
+
+    color: #111827;
+  }
+
+
+  p {
+    margin: 0;
+  }
+}
+
+
+// =====================================================
+// TABLET
+// =====================================================
+
+@media (max-width: 1000px) {
+
+  .compare-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+// =====================================================
+// MOBILE
+// =====================================================
+
+@media (max-width: 650px) {
+
+  .compare-page {
+    padding-top: 32px;
+  }
+
+
+  .compare-container {
+
+    > h1 {
+      margin-bottom: 24px;
+
+      font-size: 27px;
+    }
+
+  }
+
+
+  .compare-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .vehicle-image {
+    height: 190px;
+  }
+
+}

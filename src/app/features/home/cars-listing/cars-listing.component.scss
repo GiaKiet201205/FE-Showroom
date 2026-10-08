@@ -1,0 +1,616 @@
+$primary: #2563eb;
+
+$dark: #08182d;
+
+$text: #111827;
+$text-secondary: #64748b;
+
+$border: #e2e8f0;
+
+$background: #f5f7fa;
+
+$white: #ffffff;
+
+
+// =====================================================
+// PAGE
+// =====================================================
+
+.cars-page {
+  min-height: 900px;
+
+  padding: 42px 0 70px;
+
+  background: $background;
+}
+
+
+.cars-container {
+  width: min(
+    1180px,
+    calc(100% - 48px)
+  );
+
+  margin: auto;
+
+  display: grid;
+
+  grid-template-columns:
+    280px
+    1fr;
+
+  gap: 28px;
+}
+
+
+// =====================================================
+// FILTER SIDEBAR
+// =====================================================
+
+.filter-sidebar {
+  align-self: start;
+
+  padding: 25px 22px;
+
+  background: $white;
+
+  border-radius: 12px;
+
+  h2 {
+    margin:
+      0
+      0
+      26px;
+
+    font-size: 18px;
+  }
+}
+
+
+.filter-group {
+  margin-bottom: 24px;
+
+  .filter-title {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  select {
+    width: 100%;
+
+    height: 38px;
+
+    padding: 0 10px;
+
+    border:
+      1px solid
+      $border;
+
+    border-radius: 6px;
+
+    outline: none;
+
+    background: white;
+
+    color: $text;
+  }
+}
+
+
+// =====================================================
+// CONDITION
+// =====================================================
+
+.condition-tabs {
+  padding: 3px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  background: #f1f5f9;
+
+  border-radius: 6px;
+
+  button {
+    height: 30px;
+
+    border: none;
+
+    border-radius: 4px;
+
+    background: transparent;
+
+    color: #64748b;
+
+    &.active {
+      background: white;
+
+      color: $text;
+
+      font-weight: 600;
+
+      box-shadow:
+        0 1px 4px
+        rgba(15, 23, 42, 0.08);
+    }
+  }
+}
+
+
+// =====================================================
+// PRICE
+// =====================================================
+
+.price-label {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin-bottom: 7px;
+
+  font-size: 13px;
+}
+
+
+input[type="range"] {
+  width: 100%;
+
+  accent-color: $primary;
+}
+
+
+// =====================================================
+// YEARS
+// =====================================================
+
+.year-inputs {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    1fr;
+
+  gap: 10px;
+
+  input {
+    width: 100%;
+
+    height: 36px;
+
+    padding: 0 10px;
+
+    border:
+      1px solid
+      $border;
+
+    border-radius: 6px;
+
+    outline: none;
+  }
+}
+
+
+// =====================================================
+// CHECKBOX
+// =====================================================
+
+.checkbox-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 12px;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  input {
+    width: 16px;
+    height: 16px;
+
+    accent-color: $primary;
+  }
+}
+
+
+// =====================================================
+// CONTENT
+// =====================================================
+
+.cars-content {
+  min-width: 0;
+}
+
+
+// =====================================================
+// TOOLBAR
+// =====================================================
+
+.cars-toolbar {
+  min-height: 60px;
+
+  margin-bottom: 20px;
+
+  padding: 0 18px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  background: $white;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+}
+
+
+.toolbar-right {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+
+.sort {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-right: 8px;
+
+  span {
+    color: $text-secondary;
+  }
+
+  select {
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: $text;
+
+    font-weight: 600;
+  }
+}
+
+
+.view-button {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+
+  border-radius: 5px;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  &.active {
+    color: $primary;
+  }
+}
+
+
+// =====================================================
+// CAR GRID
+// =====================================================
+
+.cars-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 20px;
+}
+
+
+// =====================================================
+// CAR CARD
+// =====================================================
+
+.car-card {
+  overflow: hidden;
+
+  background: $white;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 14px
+    rgba(15, 23, 42, 0.05);
+
+  transition: 0.2s;
+
+  &:hover {
+    transform:
+      translateY(-3px);
+
+    box-shadow:
+      0 10px 25px
+      rgba(15, 23, 42, 0.1);
+  }
+}
+
+
+.car-image {
+  position: relative;
+
+  height: 180px;
+
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+  }
+}
+
+
+.favorite-button {
+  position: absolute;
+
+  top: 12px;
+  right: 12px;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: white;
+
+  color: #0f172a;
+
+  transition: 0.2s;
+
+
+  &:hover {
+    color: #ef4444;
+
+    transform: scale(1.08);
+  }
+
+
+  &.active {
+    color: #ef4444;
+  }
+}
+
+
+// =====================================================
+// CAR INFO
+// =====================================================
+
+.car-info {
+  padding: 16px;
+
+  h3 {
+    margin: 0 0 4px;
+
+    font-size: 17px;
+
+    color: $text;
+  }
+}
+
+
+.car-year {
+  margin: 0;
+
+  color: $text-secondary;
+
+  font-size: 13px;
+}
+
+
+// =====================================================
+// PROPERTIES
+// =====================================================
+
+.car-properties {
+  margin-top: 14px;
+  padding-top: 14px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  border-top:
+    1px solid
+    $border;
+
+  div {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    span {
+      color: #94a3b8;
+
+      font-size: 9px;
+
+      font-weight: 600;
+    }
+
+    strong {
+      font-size: 12px;
+    }
+  }
+}
+
+
+// =====================================================
+// CARD FOOTER
+// =====================================================
+
+.car-footer {
+  margin-top: 55px;
+
+  padding-top: 14px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  border-top:
+    1px solid
+    $border;
+
+
+  .price {
+    color: $primary;
+
+    font-size: 21px;
+  }
+
+
+  .details-button {
+    padding:
+      9px
+      14px;
+
+    border: none;
+
+    border-radius: 5px;
+
+    background: $dark;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+
+    &:hover {
+      background: $primary;
+    }
+  }
+}
+
+
+// =====================================================
+// PAGINATION
+// =====================================================
+
+.pagination {
+  margin-top: 30px;
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  button {
+    min-width: 36px;
+    height: 36px;
+
+    border:
+      1px solid
+      $border;
+
+    border-radius: 5px;
+
+    background: white;
+
+    color: $text;
+
+    font-weight: 600;
+
+    &.active {
+      border-color: $primary;
+
+      background: $primary;
+
+      color: white;
+    }
+  }
+}
+
+
+// =====================================================
+// TABLET
+// =====================================================
+
+@media (max-width: 1100px) {
+
+  .cars-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+// =====================================================
+// MOBILE
+// =====================================================
+
+@media (max-width: 800px) {
+
+  .cars-container {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .filter-sidebar {
+    width: 100%;
+  }
+
+
+  .cars-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .cars-toolbar {
+    gap: 15px;
+
+    padding:
+      14px
+      18px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+}

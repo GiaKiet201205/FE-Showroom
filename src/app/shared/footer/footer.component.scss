@@ -1,0 +1,268 @@
+// =====================================================
+// FOOTER
+// =====================================================
+$primary: #2563eb;
+$primary-hover: #1d4ed8;
+$dark: #08182d;
+$white: #ffffff;
+$text-secondary: #64748b;
+
+footer {
+  padding: 55px 24px 20px;
+
+  background: $dark;
+
+  color: $white;
+
+    * {
+    box-sizing: border-box;
+    }
+
+    a {
+    text-decoration: none;
+    }
+
+  .footer-grid {
+    display: grid;
+
+    grid-template-columns:
+      2fr
+      1fr
+      1fr
+      1.7fr;
+
+    gap: 80px;
+  }
+
+  // --------------------------
+  // Brand
+  // --------------------------
+
+  .footer-brand {
+    .footer-logo {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      margin-bottom: 20px;
+
+      #footer-logo-icon {
+        width: 30px;
+        height: 30px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: $primary;
+
+        border-radius: 6px;
+
+        font-size: 20px;
+      }
+    }
+
+    > p {
+      color: #94a3b8;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+    }
+
+    .social-list {
+      display: flex;
+
+      gap: 12px;
+
+      margin-top: 20px;
+
+      a {
+        width: 30px;
+        height: 30px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: #182b45;
+
+        color: #cbd5e1;
+
+        border-radius: 50%;
+
+        font-size: 12px;
+
+        transition: 0.2s;
+
+        &:hover {
+          background: $primary;
+          color: $white;
+        }
+      }
+    }
+  }
+
+  // --------------------------
+  // Footer column
+  // --------------------------
+
+  .footer-column {
+    display: flex;
+    flex-direction: column;
+
+    gap: 13px;
+
+    h4 {
+      margin: 0 0 4px;
+
+      font-size: 14px;
+    }
+
+    a {
+      color: #94a3b8;
+
+      font-size: 13px;
+
+      transition: 0.2s;
+
+      &:hover {
+        color: $white;
+      }
+    }
+  }
+
+  // --------------------------
+  // Newsletter
+  // --------------------------
+
+  .newsletter {
+    h4 {
+      margin: 0 0 4px;
+
+      font-size: 14px;
+    }
+
+    p {
+      color: #94a3b8;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+    }
+
+    .newsletter-form {
+      display: flex;
+
+      margin-top: 18px;
+
+      input {
+        flex: 1;
+
+        min-width: 0;
+
+        padding: 12px 14px;
+
+        border: none;
+        border-radius: 5px 0 0 5px;
+
+        outline: none;
+
+        background: #15263f;
+
+        color: $white;
+
+        &::placeholder {
+          color: #7c8ba1;
+        }
+      }
+
+      button {
+        padding: 0 17px;
+
+        border: none;
+        border-radius: 0 5px 5px 0;
+
+        background: $primary;
+
+        color: $white;
+
+        transition: 0.2s;
+
+        &:hover {
+          background: $primary-hover;
+        }
+      }
+    }
+  }
+
+  // --------------------------
+  // Footer bottom
+  // --------------------------
+
+  .footer-bottom {
+    margin-top: 55px;
+    padding-top: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid #1d3049;
+
+    color: #6f8096;
+
+    font-size: 12px;
+
+    div {
+      display: flex;
+
+      gap: 30px;
+    }
+
+    a {
+      color: #6f8096;
+
+      transition: 0.2s;
+
+      &:hover {
+        color: $white;
+      }
+    }
+  }
+}
+
+// =====================================================
+// RESPONSIVE - TABLET
+// =====================================================
+
+@media (max-width: 1100px) {
+  footer {
+    .footer-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+// =====================================================
+// RESPONSIVE - MOBILE
+// =====================================================
+
+@media (max-width: 800px) {
+  footer {
+    .footer-grid {
+      grid-template-columns: 1fr;
+
+      gap: 40px;
+    }
+
+    .footer-bottom {
+      flex-direction: column;
+
+      align-items: flex-start;
+
+      gap: 20px;
+    }
+  }
+}

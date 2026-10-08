@@ -1,0 +1,411 @@
+<main class="contact-page">
+
+  <div class="contact-container">
+
+    <!-- ========================================= -->
+    <!-- TITLE -->
+    <!-- ========================================= -->
+
+    <h1>
+      Get in Touch
+    </h1>
+
+
+    <!-- ========================================= -->
+    <!-- SUCCESS -->
+    <!-- ========================================= -->
+
+    <div
+      class="success-message"
+      *ngIf="submitted"
+    >
+
+      <i class="fa-solid fa-circle-check"></i>
+
+      <span>
+        Your message has been sent successfully.
+        Our team will contact you shortly.
+      </span>
+
+      <button
+        type="button"
+        (click)="submitted = false"
+        aria-label="Close"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- MAIN GRID -->
+    <!-- ========================================= -->
+
+    <section class="contact-grid">
+
+
+      <!-- ======================================= -->
+      <!-- FORM -->
+      <!-- ======================================= -->
+
+      <div class="contact-card form-card">
+
+        <h2>
+          Send Us a Message
+        </h2>
+
+
+        <form
+          #form="ngForm"
+          (ngSubmit)="sendMessage()"
+        >
+
+
+          <!-- FULL NAME -->
+
+          <div class="form-group">
+
+            <label for="fullName">
+              Full Name
+            </label>
+
+            <input
+              id="fullName"
+
+              name="fullName"
+
+              type="text"
+
+              [(ngModel)]="contactForm.fullName"
+
+              #fullName="ngModel"
+
+              placeholder="Your name"
+
+              required
+            >
+
+            <small
+              class="error"
+              *ngIf="
+                fullName.invalid &&
+                fullName.touched
+              "
+            >
+              Full name is required.
+            </small>
+
+          </div>
+
+
+          <!-- EMAIL -->
+
+          <div class="form-group">
+
+            <label for="email">
+              Email
+            </label>
+
+            <input
+              id="email"
+
+              name="email"
+
+              type="email"
+
+              [(ngModel)]="contactForm.email"
+
+              #email="ngModel"
+
+              placeholder="your.email@example.com"
+
+              required
+              email
+            >
+
+            <small
+              class="error"
+              *ngIf="
+                email.invalid &&
+                email.touched
+              "
+            >
+              Please enter a valid email address.
+            </small>
+
+          </div>
+
+
+          <!-- PHONE -->
+
+          <div class="form-group">
+
+            <label for="phone">
+              Phone
+            </label>
+
+            <input
+              id="phone"
+
+              name="phone"
+
+              type="tel"
+
+              [(ngModel)]="contactForm.phone"
+
+              #phone="ngModel"
+
+              placeholder="+1 (555) 000-0000"
+
+              required
+            >
+
+            <small
+              class="error"
+              *ngIf="
+                phone.invalid &&
+                phone.touched
+              "
+            >
+              Phone number is required.
+            </small>
+
+          </div>
+
+
+          <!-- SUBJECT -->
+
+          <div class="form-group">
+
+            <label for="subject">
+              Subject
+            </label>
+
+            <select
+              id="subject"
+
+              name="subject"
+
+              [(ngModel)]="
+                contactForm.subject
+              "
+            >
+
+              <option
+                *ngFor="
+                  let subject of subjects
+                "
+
+                [value]="subject.value"
+              >
+                {{ subject.label }}
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- MESSAGE -->
+
+          <div class="form-group">
+
+            <label for="message">
+              Message
+            </label>
+
+            <textarea
+              id="message"
+
+              name="message"
+
+              [(ngModel)]="
+                contactForm.message
+              "
+
+              #message="ngModel"
+
+              placeholder="Type your message here..."
+
+              required
+            ></textarea>
+
+            <small
+              class="error"
+              *ngIf="
+                message.invalid &&
+                message.touched
+              "
+            >
+              Message is required.
+            </small>
+
+          </div>
+
+
+          <!-- BUTTON -->
+
+          <button
+            class="send-button"
+
+            type="submit"
+
+            [disabled]="form.invalid"
+          >
+            Send Message
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <!-- ======================================= -->
+      <!-- RIGHT SIDE -->
+      <!-- ======================================= -->
+
+      <aside class="contact-side">
+
+
+        <!-- CONTACT INFORMATION -->
+
+        <section class="contact-card info-card">
+
+          <h2>
+            Contact Information
+          </h2>
+
+
+          <div class="info-list">
+
+
+            <div class="info-item">
+
+              <i class="fa-solid fa-location-dot"></i>
+
+              <span>
+                9440 Santa Monica Blvd,
+                Beverly Hills, CA 90210
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <i class="fa-solid fa-phone"></i>
+
+              <span>
+                +1 (310) 555-0199
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <i class="fa-regular fa-envelope"></i>
+
+              <span>
+                concierge&#64;autodrive.com
+              </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+              <i class="fa-regular fa-clock"></i>
+
+              <span>
+                Mon - Sat: 9:00 AM - 6:00 PM
+                • Sun: Closed
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- MAP -->
+
+        <section class="map-card">
+
+          <img
+            src="/images/map.jpg"
+            alt="AutoDrive location map"
+          >
+
+        </section>
+
+      </aside>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- FAQ -->
+    <!-- ========================================= -->
+
+    <section class="faq-section">
+
+      <h2>
+        Frequently Asked Questions
+      </h2>
+
+
+      <div class="faq-list">
+
+        <article
+          class="faq-item"
+
+          *ngFor="
+            let faq of faqs;
+            let i = index
+          "
+        >
+
+          <button
+            class="faq-question"
+
+            type="button"
+
+            (click)="toggleFaq(i)"
+          >
+
+            <span>
+              {{ faq.question }}
+            </span>
+
+            <i
+              class="fa-solid fa-chevron-down"
+
+              [class.open]="faq.open"
+            ></i>
+
+          </button>
+
+
+          <div
+            class="faq-answer"
+            *ngIf="faq.open"
+          >
+
+            <p>
+              {{ faq.answer }}
+            </p>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>

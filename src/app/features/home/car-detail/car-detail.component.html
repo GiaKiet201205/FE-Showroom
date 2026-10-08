@@ -1,0 +1,332 @@
+<main
+  class="detail-page"
+  *ngIf="car; else notFound"
+>
+
+  <div class="detail-container">
+
+    <!-- ========================================= -->
+    <!-- HEADING -->
+    <!-- ========================================= -->
+
+    <section class="detail-header">
+
+      <div class="title-area">
+
+        <div class="listing-info">
+
+          <span class="verified-badge">
+            VERIFIED NEW
+          </span>
+
+          <span class="listing-id">
+            Listing ID: #{{ car.listingId }}
+          </span>
+
+        </div>
+
+
+        <h1>
+          {{ car.name }} ({{ car.year }})
+        </h1>
+
+      </div>
+
+
+      <div class="price-area">
+
+        <span>
+          MSRP Price
+        </span>
+
+        <strong>
+          {{ car.price | currency:'USD':'symbol':'1.0-0' }}
+        </strong>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ========================================= -->
+
+    <div class="detail-grid">
+
+
+      <!-- ======================================= -->
+      <!-- LEFT -->
+      <!-- ======================================= -->
+
+      <div class="detail-left">
+
+
+        <!-- GALLERY -->
+
+        <section class="gallery">
+
+          <div class="main-image">
+
+            <img
+              [src]="selectedImage"
+              [alt]="car.name"
+            >
+
+          </div>
+
+
+          <div class="thumbnail-list">
+
+            <button
+              *ngFor="let image of car.images"
+              class="thumbnail"
+              [class.active]="selectedImage === image"
+              (click)="selectImage(image)"
+            >
+
+              <img
+                [src]="image"
+                [alt]="car.name"
+              >
+
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- TECHNICAL SPECIFICATIONS -->
+        <!-- ===================================== -->
+
+        <section class="specifications">
+
+          <h2>
+            Technical Specifications
+          </h2>
+
+
+          <div class="spec-grid">
+
+            <div
+              class="spec-item"
+              *ngFor="let spec of car.specifications"
+            >
+
+              <span>
+                {{ spec.label }}
+              </span>
+
+              <strong>
+                {{ spec.value }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ===================================== -->
+        <!-- VEHICLE OVERVIEW -->
+        <!-- ===================================== -->
+
+        <section class="overview">
+
+          <h2>
+            Vehicle Overview
+          </h2>
+
+          <p>
+            {{ car.description }}
+          </p>
+
+        </section>
+
+      </div>
+
+
+      <!-- ======================================= -->
+      <!-- RIGHT -->
+      <!-- ======================================= -->
+
+      <aside class="detail-right">
+
+
+        <!-- SELLER -->
+
+        <section class="seller-card">
+
+          <h3>
+            Seller Information
+          </h3>
+
+
+          <div class="seller-profile">
+
+            <img
+              [src]="car.seller.avatar"
+              [alt]="car.seller.name"
+            >
+
+
+            <div>
+
+              <strong>
+                {{ car.seller.name }}
+              </strong>
+
+
+              <div class="seller-rating">
+
+                <i class="fa-solid fa-star"></i>
+
+                <span>
+                  {{ car.seller.rating }}
+                  ({{ car.seller.reviews }} Reviews)
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="seller-contact">
+
+            <div>
+
+              <i class="fa-solid fa-location-dot"></i>
+
+              <span>
+                {{ car.seller.address }}
+              </span>
+
+            </div>
+
+
+            <div>
+
+              <i class="fa-solid fa-phone"></i>
+
+              <span>
+                {{ car.seller.phone }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="action-buttons">
+
+          <button
+            class="primary-button"
+            (click)="scheduleTestDrive()"
+          >
+            Schedule Test Drive
+          </button>
+
+
+          <button
+            class="outline-button"
+            (click)="contactDealer()"
+          >
+            Contact Dealer
+          </button>
+
+
+          <button
+            class="favorite-action"
+
+            [class.active]="
+              favoriteService.isFavorite(car.id)
+            "
+
+            (click)="toggleFavorite()"
+          >
+
+            <i
+              [class]="
+                favoriteService.isFavorite(car.id)
+                  ? 'fa-solid fa-heart'
+                  : 'fa-regular fa-heart'
+              "
+            ></i>
+
+            {{
+              favoriteService.isFavorite(car.id)
+                ? 'Remove from Favorites'
+                : 'Add to Favorites'
+            }}
+
+          </button>
+
+        </div>
+
+
+        <!-- ===================================== -->
+        <!-- HIGHLIGHTS -->
+        <!-- ===================================== -->
+
+        <section class="highlights-card">
+
+          <h3>
+            Included Highlights
+          </h3>
+
+
+          <ul>
+
+            <li
+              *ngFor="let highlight of car.highlights"
+            >
+
+              <i class="fa-regular fa-circle-check"></i>
+
+              <span>
+                {{ highlight }}
+              </span>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- ============================================= -->
+<!-- NOT FOUND -->
+<!-- ============================================= -->
+
+<ng-template #notFound>
+
+  <div class="not-found">
+
+    <h2>
+      Vehicle not found
+    </h2>
+
+    <p>
+      The vehicle you're looking for does not exist.
+    </p>
+
+  </div>
+
+</ng-template>

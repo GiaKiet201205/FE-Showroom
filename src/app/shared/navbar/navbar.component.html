@@ -1,0 +1,109 @@
+<nav class="navbar">
+
+  <a routerLink="/" id="brand">
+    <div id="logo">
+      <img src="/images/logo.svg" alt="Logo">
+    </div>
+
+    <span id="brand-title">
+      AutoDrive
+    </span>
+  </a>
+
+
+  <div id="nav-list">
+
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      Home
+    </a>
+
+    <a
+      routerLink="/cars"
+      routerLinkActive="active"
+    >
+      Cars
+    </a>
+
+    <a
+      routerLink="/brands"
+      routerLinkActive="active"
+    >
+      Brands
+    </a>
+
+    <a
+      routerLink="/compare"
+      routerLinkActive="active"
+    >
+      Compare
+    </a>
+
+    <a
+      routerLink="/services"
+      routerLinkActive="active"
+    >
+      Services
+    </a>
+
+    <a
+      routerLink="/about"
+      routerLinkActive="active"
+    >
+      About
+    </a>
+
+    <a
+      routerLink="/contact"
+      routerLinkActive="active"
+    >
+      Contact
+    </a>
+
+  </div>
+
+
+  <div id="info">
+
+    <button
+      class="icon-button"
+      aria-label="Search"
+    >
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+    <a
+      routerLink="/favorites"
+      routerLinkActive="active-icon"
+      class="icon-button favorite-nav"
+      aria-label="Wishlist"
+    >
+
+      <i class="fa-regular fa-heart"></i>
+
+    </a>
+
+    <a
+      routerLink="/profile"
+      class="avatar-link"
+    >
+      <img
+        src="/images/avt.jpg"
+        alt="User avatar"
+        class="avatar"
+      />
+    </a>
+
+    <a
+      routerLink="/sign-in"
+      class="sign-in-button"
+    >
+      Sign In
+    </a>
+
+  </div>
+
+</nav>

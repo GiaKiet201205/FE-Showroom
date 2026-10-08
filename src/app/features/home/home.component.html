@@ -1,105 +1,62 @@
-<header class="header">
-  <!-- ================= NAVBAR ================= -->
 
-  <nav class="navbar">
-    <a routerLink="/" id="brand">
-      <div id="logo">
-        <img src="/images/logo.svg" alt="Logo" />
+<!-- ================= HERO ================= -->
+
+<section id="hero">
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <h1 id="hero-title">Find Your Perfect Car</h1>
+
+    <p id="hero-description">
+      Browse over 50,000 certified new and used premium vehicles from trusted
+      luxury dealership network.
+    </p>
+
+    <!-- FILTER -->
+
+    <div id="filter-bar">
+      <div class="filter-item">
+        <label for="make"> MAKE </label>
+
+        <select id="make" name="make" [(ngModel)]="selectedMake">
+          <option value="">All Makes</option>
+
+          <option *ngFor="let make of makes" [value]="make">
+            {{ make }}
+          </option>
+        </select>
       </div>
 
-      <span id="brand-title"> AutoDrive </span>
-    </a>
+      <div class="filter-item">
+        <label for="model"> MODEL </label>
 
-    <div id="nav-list">
-      <a routerLink="/" class="active"> Home </a>
+        <select id="model" name="model" [(ngModel)]="selectedModel">
+          <option value="">All Models</option>
 
-      <a routerLink="/cars"> Cars </a>
-
-      <a routerLink="/brands"> Brands </a>
-
-      <a routerLink="/compare"> Compare </a>
-
-      <a routerLink="/services"> Services </a>
-
-      <a routerLink="/about"> About </a>
-
-      <a routerLink="/contact"> Contact </a>
-    </div>
-
-    <div id="info">
-      <button class="icon-button" aria-label="Search">
-        <i class="fa-solid fa-magnifying-glass"></i>
-      </button>
-
-      <button class="icon-button" aria-label="Wishlist">
-        <i class="fa-regular fa-heart"></i>
-      </button>
-
-      <img src="/images/avt.jpg" alt="User avatar" class="avatar" />
-
-      <a routerLink="/sign-in" class="sign-in-button"> Sign In </a>
-    </div>
-  </nav>
-
-  <!-- ================= HERO ================= -->
-
-  <section id="hero">
-    <div class="hero-overlay"></div>
-
-    <div class="hero-content">
-      <h1 id="hero-title">Find Your Perfect Car</h1>
-
-      <p id="hero-description">
-        Browse over 50,000 certified new and used premium vehicles from trusted
-        luxury dealership network.
-      </p>
-
-      <!-- FILTER -->
-
-      <div id="filter-bar">
-        <div class="filter-item">
-          <label for="make"> MAKE </label>
-
-          <select id="make" name="make" [(ngModel)]="selectedMake">
-            <option value="">All Makes</option>
-
-            <option *ngFor="let make of makes" [value]="make">
-              {{ make }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-item">
-          <label for="model"> MODEL </label>
-
-          <select id="model" name="model" [(ngModel)]="selectedModel">
-            <option value="">All Models</option>
-
-            <option *ngFor="let model of models" [value]="model">
-              {{ model }}
-            </option>
-          </select>
-        </div>
-
-        <div class="filter-item">
-          <label for="price"> PRICE RANGE </label>
-
-          <select id="price" name="price" [(ngModel)]="selectedPrice">
-            <option value="">All Price Ranges</option>
-
-            <option *ngFor="let price of priceRanges" [value]="price.value">
-              {{ price.label }}
-            </option>
-          </select>
-        </div>
-
-        <button id="btn-filter" type="button" (click)="browseCars()">
-          Browse Cars
-        </button>
+          <option *ngFor="let model of models" [value]="model">
+            {{ model }}
+          </option>
+        </select>
       </div>
+
+      <div class="filter-item">
+        <label for="price"> PRICE RANGE </label>
+
+        <select id="price" name="price" [(ngModel)]="selectedPrice">
+          <option value="">All Price Ranges</option>
+
+          <option *ngFor="let price of priceRanges" [value]="price.value">
+            {{ price.label }}
+          </option>
+        </select>
+      </div>
+
+      <button id="btn-filter" type="button" (click)="browseCars()">
+        Browse Cars
+      </button>
     </div>
-  </section>
-</header>
+  </div>
+</section>
 
 <!-- ================================================== -->
 <!-- MAIN -->
@@ -206,91 +163,3 @@
   </section>
 </main>
 
-<!-- ================================================== -->
-<!-- FOOTER -->
-<!-- ================================================== -->
-
-<footer>
-  <div class="container footer-grid">
-    <div class="footer-brand">
-      <div class="footer-logo">
-        <div id="footer-logo-icon">
-          <img src="/images/logo.svg" alt="Logo" />
-        </div>
-
-        <strong> AutoDrive </strong>
-      </div>
-
-      <p>
-        Premium modern marketplace for selective drivers. Find verified top tier
-        luxury, daily commute and commercial vehicles.
-      </p>
-
-      <div class="social-list">
-        <a href="#" aria-label="Facebook">
-          <i class="fa-brands fa-facebook-f"></i>
-        </a>
-
-        <a href="#" aria-label="X">
-          <i class="fa-brands fa-x-twitter"></i>
-        </a>
-
-        <a href="#" aria-label="Instagram">
-          <i class="fa-brands fa-instagram"></i>
-        </a>
-
-        <a href="#" aria-label="LinkedIn">
-          <i class="fa-brands fa-linkedin-in"></i>
-        </a>
-      </div>
-    </div>
-
-    <div class="footer-column">
-      <h4>About Us</h4>
-
-      <a href="#"> Our Story </a>
-
-      <a href="#"> Careers </a>
-
-      <a href="#"> Press </a>
-
-      <a href="#"> Contact </a>
-    </div>
-
-    <div class="footer-column">
-      <h4>Services</h4>
-
-      <a href="#"> Financing </a>
-
-      <a href="#"> Insurance </a>
-
-      <a href="#"> Inspection </a>
-
-      <a href="#"> Trade-In </a>
-    </div>
-
-    <div class="newsletter">
-      <h4>Newsletter</h4>
-
-      <p>
-        Subscribe to get latest inventory drops and special financing rates.
-      </p>
-
-      <div class="newsletter-form">
-        <input type="email" placeholder="Your email address" />
-
-        <button type="button">Subscribe</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="container footer-bottom">
-    <span> © 2026 AutoDrive Inc. All rights reserved. </span>
-
-    <div>
-      <a href="#"> Privacy Policy </a>
-
-      <a href="#"> Terms of Service </a>
-    </div>
-  </div>
-</footer>

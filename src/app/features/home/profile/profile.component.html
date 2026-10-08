@@ -1,0 +1,378 @@
+<main class="profile-page">
+
+  <div class="profile-container">
+
+    <!-- ========================================= -->
+    <!-- PROFILE HEADER -->
+    <!-- ========================================= -->
+
+    <section class="profile-header">
+
+      <div class="profile-avatar">
+
+        <img
+          [src]="user.avatar"
+          [alt]="user.name"
+        >
+
+      </div>
+
+
+      <div class="profile-heading">
+
+        <h1>
+          {{ user.name }}
+        </h1>
+
+        <p>
+          {{ user.membership }}
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- TABS -->
+    <!-- ========================================= -->
+
+    <nav class="profile-tabs">
+
+      <a
+        routerLink="/profile"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{
+          exact: true
+        }"
+      >
+        Personal Info
+      </a>
+
+
+      <a
+        routerLink="/favorites"
+        routerLinkActive="active"
+      >
+        My Favorites
+      </a>
+
+
+      <a
+        routerLink="/test-drives"
+        routerLinkActive="active"
+      >
+        My Test Drives
+      </a>
+
+    </nav>
+
+
+    <!-- ========================================= -->
+    <!-- SUCCESS -->
+    <!-- ========================================= -->
+
+    <div
+      class="success-message"
+      *ngIf="showSuccess"
+    >
+
+      <i class="fa-solid fa-circle-check"></i>
+
+      <span>
+        Your profile has been updated successfully.
+      </span>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- PERSONAL DETAILS -->
+    <!-- ========================================= -->
+
+    <section class="personal-card">
+
+      <h2>
+        Personal Details
+      </h2>
+
+
+      <form
+        #profileForm="ngForm"
+        (ngSubmit)="saveChanges(profileForm)"
+      >
+
+        <div class="form-grid">
+
+
+          <!-- FULL NAME -->
+
+          <div class="form-group">
+
+            <label for="fullName">
+              Full Name
+            </label>
+
+            <input
+              id="fullName"
+
+              type="text"
+
+              name="fullName"
+
+              [(ngModel)]="profile.fullName"
+
+              #fullName="ngModel"
+
+              required
+            >
+
+            <small
+              class="error"
+              *ngIf="
+                fullName.invalid &&
+                fullName.touched
+              "
+            >
+              Full name is required.
+            </small>
+
+          </div>
+
+
+          <!-- EMAIL -->
+
+          <div class="form-group">
+
+            <label for="email">
+              Email
+            </label>
+
+            <input
+              id="email"
+
+              type="email"
+
+              name="email"
+
+              [(ngModel)]="profile.email"
+
+              #email="ngModel"
+
+              required
+              email
+            >
+
+            <small
+              class="error"
+              *ngIf="
+                email.invalid &&
+                email.touched
+              "
+            >
+              Please enter a valid email.
+            </small>
+
+          </div>
+
+
+          <!-- PHONE -->
+
+          <div class="form-group">
+
+            <label for="phone">
+              Phone
+            </label>
+
+            <input
+              id="phone"
+
+              type="tel"
+
+              name="phone"
+
+              [(ngModel)]="profile.phone"
+
+              #phone="ngModel"
+
+              required
+            >
+
+            <small
+              class="error"
+              *ngIf="
+                phone.invalid &&
+                phone.touched
+              "
+            >
+              Phone number is required.
+            </small>
+
+          </div>
+
+
+          <!-- LOCATION -->
+
+          <div class="form-group">
+
+            <label for="location">
+              Location
+            </label>
+
+            <input
+              id="location"
+
+              type="text"
+
+              name="location"
+
+              [(ngModel)]="profile.location"
+
+              required
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <button
+          type="submit"
+          class="save-button"
+        >
+          Save Changes
+        </button>
+
+      </form>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- ACTIVITY -->
+    <!-- ========================================= -->
+
+    <section class="activity-section">
+
+      <h2>
+        Activity Overview
+      </h2>
+
+
+      <div class="activity-grid">
+
+
+        <!-- FAVORITES -->
+
+        <a
+          routerLink="/favorites"
+          class="activity-card"
+        >
+
+          <div class="activity-icon">
+
+            <i class="fa-regular fa-heart"></i>
+
+          </div>
+
+
+          <div class="activity-content">
+
+            <span>
+              Total Favorites
+            </span>
+
+            <strong>
+              {{
+                favoriteService
+                  .favorites()
+                  .length
+              }}
+              Vehicles
+            </strong>
+
+            <small>
+              Saved premium configurations
+            </small>
+
+          </div>
+
+        </a>
+
+
+        <!-- UPCOMING -->
+
+        <a
+          routerLink="/test-drives"
+          class="activity-card"
+        >
+
+          <div class="activity-icon">
+
+            <i class="fa-solid fa-car-side"></i>
+
+          </div>
+
+
+          <div class="activity-content">
+
+            <span>
+              Upcoming Drives
+            </span>
+
+            <strong>
+              {{ upcomingDrives }}
+              Session
+            </strong>
+
+            <small>
+              Confirmed schedule test ride
+            </small>
+
+          </div>
+
+        </a>
+
+
+        <!-- COMPLETED -->
+
+        <a
+          routerLink="/test-drives"
+          class="activity-card"
+        >
+
+          <div class="activity-icon">
+
+            <i class="fa-regular fa-square-check"></i>
+
+          </div>
+
+
+          <div class="activity-content">
+
+            <span>
+              Completed Drives
+            </span>
+
+            <strong>
+              {{ completedDrives }}
+              Sessions
+            </strong>
+
+            <small>
+              Past verified evaluations
+            </small>
+
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
