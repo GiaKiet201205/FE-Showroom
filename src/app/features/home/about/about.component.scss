@@ -1,0 +1,518 @@
+@use '../../../../styles/variables' as *;
+
+
+// =====================================================
+// PAGE
+// =====================================================
+
+.about-page {
+  background: #f5f7fa;
+}
+
+
+// =====================================================
+// HERO
+// =====================================================
+
+.about-hero {
+  position: relative;
+
+  height: 335px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background-image:
+    url('/images/about/about-hero.jpg');
+
+  background-size: cover;
+
+  background-position: center;
+
+  color: white;
+
+  overflow: hidden;
+}
+
+
+.hero-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    rgba(5, 18, 36, 0.72);
+}
+
+
+.hero-content {
+  position: relative;
+
+  z-index: 1;
+
+  width: min(
+    720px,
+    calc(100% - 40px)
+  );
+
+  text-align: center;
+
+
+  h1 {
+    margin:
+      0
+      0
+      18px;
+
+    font-size: 42px;
+    font-weight: 800;
+
+    letter-spacing: -0.8px;
+  }
+
+
+  p {
+    max-width: 650px;
+
+    margin: 0 auto;
+
+    color: #d8dee8;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+  }
+}
+
+
+// =====================================================
+// CONTENT
+// =====================================================
+
+.about-content {
+  padding:
+    50px
+    0
+    65px;
+}
+
+
+.about-container {
+  width: min(
+    1080px,
+    calc(100% - 48px)
+  );
+
+  margin: 0 auto;
+}
+
+
+// =====================================================
+// VISION
+// =====================================================
+
+.vision-section {
+  max-width: 760px;
+
+  margin:
+    0
+    auto
+    45px;
+
+  text-align: center;
+
+
+  .section-label {
+    display: block;
+
+    margin-bottom: 13px;
+
+    color: $primary;
+
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+
+  h2 {
+    margin:
+      0
+      0
+      15px;
+
+    color: #111827;
+
+    font-size: 27px;
+    font-weight: 750;
+  }
+
+
+  p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+  }
+}
+
+
+// =====================================================
+// STATISTICS
+// =====================================================
+
+.stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 24px;
+
+  margin-bottom: 50px;
+}
+
+
+.stat-card {
+  min-height: 105px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    #dbe3ee;
+
+  border-radius: 9px;
+
+  background: white;
+
+  transition: 0.2s;
+
+
+  &:hover {
+    transform:
+      translateY(-3px);
+
+    border-color:
+      rgba(37, 99, 235, 0.3);
+
+    box-shadow:
+      0 8px 22px
+      rgba(15, 23, 42, 0.06);
+  }
+
+
+  strong {
+    margin-bottom: 5px;
+
+    color: $primary;
+
+    font-size: 32px;
+    font-weight: 800;
+  }
+
+
+  span {
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+
+// =====================================================
+// SECTION TITLE
+// =====================================================
+
+.leadership-section,
+.pillars-section {
+
+  > h2 {
+    margin:
+      0
+      0
+      25px;
+
+    color: #111827;
+
+    font-size: 21px;
+    font-weight: 750;
+  }
+
+}
+
+
+// =====================================================
+// LEADERSHIP
+// =====================================================
+
+.leadership-section {
+  margin-bottom: 48px;
+}
+
+
+.leadership-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 22px;
+}
+
+
+.leader-card {
+  overflow: hidden;
+
+  border:
+    1px solid
+    #dbe3ee;
+
+  border-radius: 9px;
+
+  background: white;
+
+  transition: 0.2s;
+
+
+  &:hover {
+    transform:
+      translateY(-4px);
+
+    box-shadow:
+      0 10px 25px
+      rgba(15, 23, 42, 0.08);
+
+
+    .leader-image {
+
+      img {
+        transform: scale(1.03);
+      }
+
+    }
+  }
+}
+
+
+.leader-image {
+  height: 205px;
+
+  overflow: hidden;
+
+
+  img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    transition: 0.3s;
+  }
+}
+
+
+.leader-info {
+  padding:
+    14px
+    16px;
+
+
+  h3 {
+    margin:
+      0
+      0
+      4px;
+
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+
+  p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 10px;
+  }
+}
+
+
+// =====================================================
+// CORE PILLARS
+// =====================================================
+
+.pillars-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 22px;
+}
+
+
+.pillar-card {
+  min-height: 145px;
+
+  padding:
+    20px
+    18px;
+
+  border:
+    1px solid
+    #dbe3ee;
+
+  border-radius: 9px;
+
+  background: white;
+
+  transition: 0.2s;
+
+
+  &:hover {
+    transform:
+      translateY(-3px);
+
+    border-color:
+      rgba(37, 99, 235, 0.3);
+
+    box-shadow:
+      0 8px 22px
+      rgba(15, 23, 42, 0.06);
+  }
+
+
+  h3 {
+    margin:
+      13px
+      0
+      8px;
+
+    color: #111827;
+
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+
+  p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+  }
+}
+
+
+// =====================================================
+// PILLAR ICON
+// =====================================================
+
+.pillar-icon {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 5px;
+
+  background:
+    rgba(37, 99, 235, 0.06);
+
+  color: $primary;
+
+  font-size: 16px;
+}
+
+
+// =====================================================
+// TABLET
+// =====================================================
+
+@media (max-width: 950px) {
+
+  .stats-grid,
+  .leadership-grid,
+  .pillars-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+// =====================================================
+// MOBILE
+// =====================================================
+
+@media (max-width: 600px) {
+
+  .about-hero {
+    height: 300px;
+  }
+
+
+  .hero-content {
+
+    h1 {
+      font-size: 33px;
+    }
+
+
+    p {
+      font-size: 13px;
+    }
+
+  }
+
+
+  .about-content {
+    padding-top: 40px;
+  }
+
+
+  .vision-section {
+
+    h2 {
+      font-size: 23px;
+    }
+
+  }
+
+
+  .stats-grid,
+  .leadership-grid,
+  .pillars-grid {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+
+  .leader-image {
+    height: 270px;
+  }
+
+}

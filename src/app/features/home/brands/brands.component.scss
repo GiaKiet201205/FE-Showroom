@@ -1,0 +1,209 @@
+@use '../../../../styles/variables' as *;
+
+// =====================================================
+// PAGE
+// =====================================================
+
+.brands-page {
+  min-height: 610px;
+
+  padding:
+    55px
+    0
+    70px;
+
+  background: #f5f7fa;
+}
+
+
+.brands-container {
+  width: min(
+    1240px,
+    calc(100% - 48px)
+  );
+
+  margin: 0 auto;
+
+
+  > h1 {
+    margin:
+      0
+      0
+      35px;
+
+    color: #111827;
+
+    font-size: 34px;
+    font-weight: 750;
+
+    letter-spacing: -0.5px;
+  }
+}
+
+
+// =====================================================
+// GRID
+// =====================================================
+
+.brands-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 24px;
+}
+
+
+// =====================================================
+// BRAND CARD
+// =====================================================
+
+.brand-card {
+  min-height: 190px;
+
+  padding: 30px 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 12px;
+
+  background: white;
+
+  color: #111827;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
+
+
+  &:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+      0 10px 28px
+      rgba(15, 23, 42, 0.08);
+
+
+    .brand-icon {
+      background:
+        rgba(37, 99, 235, 0.08);
+
+      color: $primary;
+
+      transform: scale(1.05);
+    }
+
+
+    h2 {
+      color: $primary;
+    }
+  }
+
+
+  h2 {
+    margin:
+      18px
+      0
+      5px;
+
+    color: #111827;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    transition: 0.2s;
+  }
+
+
+  p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+  }
+}
+
+
+// =====================================================
+// BRAND ICON
+// =====================================================
+
+.brand-icon {
+  width: 66px;
+  height: 66px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #f8fafc;
+
+  color: #0f172a;
+
+  font-size: 30px;
+
+  transition: 0.2s;
+}
+
+
+// =====================================================
+// TABLET
+// =====================================================
+
+@media (max-width: 1000px) {
+
+  .brands-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+}
+
+
+// =====================================================
+// MOBILE
+// =====================================================
+
+@media (max-width: 600px) {
+
+  .brands-page {
+    padding-top: 35px;
+  }
+
+
+  .brands-container {
+
+    > h1 {
+      margin-bottom: 25px;
+
+      font-size: 28px;
+    }
+
+  }
+
+
+  .brands-grid {
+    grid-template-columns: 1fr;
+
+    gap: 15px;
+  }
+
+
+  .brand-card {
+    min-height: 155px;
+  }
+
+}

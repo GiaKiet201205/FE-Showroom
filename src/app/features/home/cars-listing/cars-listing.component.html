@@ -1,0 +1,414 @@
+<main class="cars-page">
+
+  <div class="cars-container">
+
+    <!-- ================= FILTER SIDEBAR ================= -->
+
+    <aside class="filter-sidebar">
+
+      <h2>
+        Filters
+      </h2>
+
+
+      <!-- CONDITION -->
+
+      <div class="filter-group">
+
+        <label class="filter-title">
+          CONDITION
+        </label>
+
+        <div class="condition-tabs">
+
+          <button
+            [class.active]="condition === 'all'"
+            (click)="condition = 'all'"
+          >
+            All
+          </button>
+
+          <button
+            [class.active]="condition === 'new'"
+            (click)="condition = 'new'"
+          >
+            New
+          </button>
+
+          <button
+            [class.active]="condition === 'used'"
+            (click)="condition = 'used'"
+          >
+            Used
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- BRAND -->
+
+      <div class="filter-group">
+
+        <label
+          class="filter-title"
+          for="brand"
+        >
+          BRAND
+        </label>
+
+        <select
+          id="brand"
+          [(ngModel)]="selectedBrand"
+        >
+
+          <option value="">
+            BMW, Porsche, Tesla
+          </option>
+
+          <option value="BMW">
+            BMW
+          </option>
+
+          <option value="Porsche">
+            Porsche
+          </option>
+
+          <option value="Tesla">
+            Tesla
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- PRICE -->
+
+      <div class="filter-group">
+
+        <label class="filter-title">
+          PRICE RANGE
+        </label>
+
+        <div class="price-label">
+
+          <strong>
+            {{ minPrice | currency:'USD':'symbol':'1.0-0' }}
+          </strong>
+
+          <strong>
+            {{ maxPrice | currency:'USD':'symbol':'1.0-0' }}+
+          </strong>
+
+        </div>
+
+        <input
+          type="range"
+          min="20000"
+          max="150000"
+          [(ngModel)]="maxPrice"
+        >
+
+      </div>
+
+
+      <!-- YEAR -->
+
+      <div class="filter-group">
+
+        <label class="filter-title">
+          YEAR RANGE
+        </label>
+
+        <div class="year-inputs">
+
+          <input
+            type="number"
+            [(ngModel)]="minYear"
+          >
+
+          <input
+            type="number"
+            [(ngModel)]="maxYear"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- BODY TYPE -->
+
+      <div class="filter-group">
+
+        <label class="filter-title">
+          BODY TYPE
+        </label>
+
+        <label class="checkbox-item">
+
+          <input
+            type="checkbox"
+            [(ngModel)]="bodyTypes.sedan"
+          >
+
+          <span>
+            Sedan
+          </span>
+
+        </label>
+
+        <label class="checkbox-item">
+
+          <input
+            type="checkbox"
+            [(ngModel)]="bodyTypes.suv"
+          >
+
+          <span>
+            SUV
+          </span>
+
+        </label>
+
+        <label class="checkbox-item">
+
+          <input
+            type="checkbox"
+            [(ngModel)]="bodyTypes.hatchback"
+          >
+
+          <span>
+            Hatchback
+          </span>
+
+        </label>
+
+        <label class="checkbox-item">
+
+          <input
+            type="checkbox"
+            [(ngModel)]="bodyTypes.coupe"
+          >
+
+          <span>
+            Coupe
+          </span>
+
+        </label>
+
+      </div>
+
+    </aside>
+
+
+    <!-- ================= CAR CONTENT ================= -->
+
+    <section class="cars-content">
+
+      <!-- TOP BAR -->
+
+      <div class="cars-toolbar">
+
+        <strong>
+          Showing 42 premium vehicles
+        </strong>
+
+
+        <div class="toolbar-right">
+
+          <div class="sort">
+
+            <span>
+              Sort by:
+            </span>
+
+            <select>
+              <option>
+                Newest Arrival
+              </option>
+
+              <option>
+                Price Low to High
+              </option>
+
+              <option>
+                Price High to Low
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <button class="view-button active">
+            <i class="fa-solid fa-border-all"></i>
+          </button>
+
+          <button class="view-button">
+            <i class="fa-solid fa-list"></i>
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- CARS -->
+
+      <div class="cars-grid">
+
+        <article
+          class="car-card"
+          *ngFor="let car of cars"
+        >
+
+          <div class="car-image">
+
+            <img
+              [src]="car.image"
+              [alt]="car.name"
+            >
+
+            <button
+              class="favorite-button"
+              type="button"
+
+              [class.active]="
+                favoriteService.isFavorite(car.id)
+              "
+
+              (click)="toggleFavorite(car, $event)"
+            >
+
+              <i
+                [class]="
+                  favoriteService.isFavorite(car.id)
+                    ? 'fa-solid fa-heart'
+                    : 'fa-regular fa-heart'
+                "
+              ></i>
+
+            </button>
+
+          </div>
+
+
+          <div class="car-info">
+
+            <h3>
+              {{ car.name }}
+            </h3>
+
+            <p class="car-year">
+              Model Year: {{ car.year }}
+            </p>
+
+
+            <div class="car-properties">
+
+              <div>
+
+                <span>
+                  MILEAGE
+                </span>
+
+                <strong>
+                  {{ car.mileage }}
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span>
+                  FUEL
+                </span>
+
+                <strong>
+                  {{ car.fuel }}
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span>
+                  TRANS.
+                </span>
+
+                <strong>
+                  {{ car.transmission }}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="car-footer">
+
+              <strong class="price">
+                {{ car.price | currency:'USD':'symbol':'1.0-0' }}
+              </strong>
+
+
+              <button
+                class="details-button"
+                (click)="viewCar(car.id)"
+              >
+                View Details
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+
+
+      <!-- PAGINATION -->
+
+      <div class="pagination">
+
+        <button>
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <button class="active">
+          1
+        </button>
+
+        <button>
+          2
+        </button>
+
+        <button>
+          3
+        </button>
+
+        <button>
+          ...
+        </button>
+
+        <button>
+          8
+        </button>
+
+        <button>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>

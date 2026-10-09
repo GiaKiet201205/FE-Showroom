@@ -1,0 +1,226 @@
+<main class="favorites-page">
+
+  <div class="favorites-container">
+
+    <!-- ================================= -->
+    <!-- HEADER -->
+    <!-- ================================= -->
+
+    <div class="page-header">
+
+      <div>
+
+        <h1>
+          My Favorites
+        </h1>
+
+        <p>
+          {{
+            favoriteService.favorites().length
+          }}
+          saved vehicles
+        </p>
+
+      </div>
+
+
+      <button
+        *ngIf="
+          favoriteService.favorites().length > 0
+        "
+        class="clear-button"
+        (click)="favoriteService.clear()"
+      >
+
+        Clear All
+
+      </button>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- FAVORITES -->
+    <!-- ================================= -->
+
+    <div
+      class="favorites-grid"
+      *ngIf="
+        favoriteService.favorites().length > 0;
+        else emptyFavorites
+      "
+    >
+
+      <article
+        class="vehicle-card"
+
+        *ngFor="
+          let vehicle of favoriteService.favorites()
+        "
+
+        (click)="viewDetails(vehicle.id)"
+      >
+
+
+        <!-- IMAGE -->
+
+        <div class="vehicle-image">
+
+          <img
+            [src]="vehicle.image"
+            [alt]="vehicle.name"
+          >
+
+
+          <button
+            class="favorite-button active"
+
+            type="button"
+
+            aria-label="Remove favorite"
+
+            (click)="
+              removeFavorite(
+                vehicle.id,
+                $event
+              )
+            "
+          >
+
+            <i class="fa-solid fa-heart"></i>
+
+          </button>
+
+        </div>
+
+
+        <!-- CONTENT -->
+
+        <div class="vehicle-content">
+
+          <h2>
+            {{ vehicle.name }}
+          </h2>
+
+          <p class="year">
+            Model Year:
+            {{ vehicle.year }}
+          </p>
+
+
+          <!-- INFO -->
+
+          <div class="vehicle-info">
+
+            <div>
+
+              <span>
+                MILEAGE
+              </span>
+
+              <strong>
+                {{ vehicle.mileage }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                FUEL
+              </span>
+
+              <strong>
+                {{ vehicle.fuel }}
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span>
+                TRANS.
+              </span>
+
+              <strong>
+                {{ vehicle.transmission }}
+              </strong>
+
+            </div>
+
+          </div>
+
+
+          <!-- FOOTER -->
+
+          <div class="vehicle-footer">
+
+            <strong class="price">
+
+              {{
+                vehicle.price
+                  | currency:'USD':'symbol':'1.0-0'
+              }}
+
+            </strong>
+
+
+            <button
+              class="details-button"
+
+              (click)="
+                $event.stopPropagation();
+                viewDetails(vehicle.id)
+              "
+            >
+
+              View Details
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- ================================= -->
+<!-- EMPTY -->
+<!-- ================================= -->
+
+<ng-template #emptyFavorites>
+
+  <section class="empty-favorites">
+
+    <div class="empty-icon">
+
+      <i class="fa-regular fa-heart"></i>
+
+    </div>
+
+    <h2>
+      No favorite vehicles yet
+    </h2>
+
+    <p>
+      Browse our inventory and save vehicles
+      you are interested in.
+    </p>
+
+
+    <button (click)="browseCars()">
+        Browse Cars
+    </button>
+
+  </section>
+
+</ng-template>

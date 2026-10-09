@@ -1,0 +1,51 @@
+<main class="brands-page">
+
+  <div class="brands-container">
+
+    <!-- ================= TITLE ================= -->
+
+    <h1>
+      Browse by Brand
+    </h1>
+
+
+    <!-- ================= BRANDS ================= -->
+
+    <div class="brands-grid">
+
+      <button
+        class="brand-card"
+        *ngFor="let brand of brands"
+        (click)="selectBrand(brand)"
+      >
+
+        <!-- ICON -->
+
+        <div class="brand-icon">
+
+          <i [class]="brand.icon"></i>
+
+        </div>
+
+
+        <!-- NAME -->
+
+        <h2>
+          {{ brand.name }}
+        </h2>
+
+
+        <!-- AVAILABLE -->
+
+        <p>
+          {{ brand.available | number }}
+          available
+        </p>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</main>

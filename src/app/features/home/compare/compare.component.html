@@ -1,0 +1,251 @@
+<main class="compare-page">
+
+  <div class="compare-container">
+
+    <!-- ================= TITLE ================= -->
+
+    <h1>
+      Compare Vehicles
+    </h1>
+
+
+    <!-- ================= COMPARE GRID ================= -->
+
+    <section
+      class="compare-grid"
+      [style.--column-count]="vehicles.length"
+    >
+
+      <article
+        class="compare-card"
+        *ngFor="
+          let vehicle of vehicles;
+          let i = index
+        "
+        [class.featured]="vehicle.featured"
+      >
+
+        <!-- ===================================== -->
+        <!-- HEADER -->
+        <!-- ===================================== -->
+
+        <div class="card-header">
+
+          <div class="vehicle-title">
+
+            <span class="vehicle-number">
+              {{ i + 1 }}
+            </span>
+
+            <h2>
+              {{ vehicle.name }}
+            </h2>
+
+          </div>
+
+
+          <button
+            class="remove-button"
+            type="button"
+            aria-label="Remove vehicle"
+            (click)="removeVehicle(vehicle.id)"
+          >
+
+            <i class="fa-regular fa-circle-xmark"></i>
+
+          </button>
+
+        </div>
+
+
+        <!-- ===================================== -->
+        <!-- IMAGE -->
+        <!-- ===================================== -->
+
+        <div class="vehicle-image">
+
+          <img
+            [src]="vehicle.image"
+            [alt]="vehicle.name"
+          >
+
+        </div>
+
+
+        <!-- ===================================== -->
+        <!-- SPECIFICATIONS -->
+        <!-- ===================================== -->
+
+        <div class="specifications">
+
+
+          <!-- PRICE -->
+
+          <div class="spec-row">
+
+            <span>
+              Price
+            </span>
+
+            <strong
+              [class.highlight]="vehicle.featured"
+            >
+              {{
+                vehicle.price
+                  | currency:'USD':'symbol':'1.0-0'
+              }}
+            </strong>
+
+          </div>
+
+
+          <!-- YEAR -->
+
+          <div class="spec-row">
+
+            <span>
+              Year
+            </span>
+
+            <strong>
+              {{ vehicle.year }}
+            </strong>
+
+          </div>
+
+
+          <!-- MILEAGE -->
+
+          <div class="spec-row">
+
+            <span>
+              Mileage
+            </span>
+
+            <strong>
+              {{ vehicle.mileage }}
+            </strong>
+
+          </div>
+
+
+          <!-- ENGINE -->
+
+          <div class="spec-row">
+
+            <span>
+              Engine
+            </span>
+
+            <strong>
+              {{ vehicle.engine }}
+            </strong>
+
+          </div>
+
+
+          <!-- HORSEPOWER -->
+
+          <div class="spec-row">
+
+            <span>
+              Horsepower
+            </span>
+
+            <strong
+              [class.highlight]="vehicle.featured"
+            >
+              {{ vehicle.horsepower }}
+            </strong>
+
+          </div>
+
+
+          <!-- FUEL TYPE -->
+
+          <div class="spec-row">
+
+            <span>
+              Fuel Type
+            </span>
+
+            <strong>
+              {{ vehicle.fuelType }}
+            </strong>
+
+          </div>
+
+
+          <!-- TRANSMISSION -->
+
+          <div class="spec-row">
+
+            <span>
+              Transmission
+            </span>
+
+            <strong>
+              {{ vehicle.transmission }}
+            </strong>
+
+          </div>
+
+
+          <!-- BODY TYPE -->
+
+          <div class="spec-row">
+
+            <span>
+              Body Type
+            </span>
+
+            <strong>
+              {{ vehicle.bodyType }}
+            </strong>
+
+          </div>
+
+
+          <!-- DRIVETRAIN -->
+
+          <div class="spec-row">
+
+            <span>
+              Drivetrain
+            </span>
+
+            <strong>
+              {{ vehicle.drivetrain }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <!-- ================= EMPTY ================= -->
+
+    <section
+      class="empty-compare"
+      *ngIf="vehicles.length === 0"
+    >
+
+      <i class="fa-solid fa-car"></i>
+
+      <h2>
+        No vehicles to compare
+      </h2>
+
+      <p>
+        Select vehicles from the inventory to start comparing.
+      </p>
+
+    </section>
+
+  </div>
+
+</main> 

@@ -1,0 +1,182 @@
+<main class="about-page">
+
+  <!-- ================================================= -->
+  <!-- HERO -->
+  <!-- ================================================= -->
+
+  <section class="about-hero">
+
+    <div class="hero-overlay"></div>
+
+
+    <div class="hero-content">
+
+      <h1>
+        About AutoDrive
+      </h1>
+
+      <p>
+        Founded on the obsession of elite motoring and client absolute
+        transparency. We bridge selectively curated automotive masterpieces
+        with drivers who understand the craft.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ================================================= -->
+  <!-- CONTENT -->
+  <!-- ================================================= -->
+
+  <section class="about-content">
+
+    <div class="about-container">
+
+
+      <!-- ============================================= -->
+      <!-- VISION -->
+      <!-- ============================================= -->
+
+      <section class="vision-section">
+
+        <span class="section-label">
+          OUR VISION
+        </span>
+
+
+        <h2>
+          Redefining Premium Car Acquisition
+        </h2>
+
+
+        <p>
+          AutoDrive operates at the frontier of premium automotive commerce.
+          We eliminate traditional dealership opacity through meticulous
+          multi-point testing, certified background histories, and
+          pre-negotiated direct bank financing, presenting purely luxury
+          inventory in immaculate configuration.
+        </p>
+
+      </section>
+
+
+      <!-- ============================================= -->
+      <!-- STATISTICS -->
+      <!-- ============================================= -->
+
+      <section class="stats-grid">
+
+        <article
+          class="stat-card"
+          *ngFor="let stat of statistics"
+        >
+
+          <strong>
+            {{ stat.value }}
+          </strong>
+
+          <span>
+            {{ stat.label }}
+          </span>
+
+        </article>
+
+      </section>
+
+
+      <!-- ============================================= -->
+      <!-- LEADERSHIP -->
+      <!-- ============================================= -->
+
+      <section class="leadership-section">
+
+        <h2>
+          Meet Our Leadership
+        </h2>
+
+
+        <div class="leadership-grid">
+
+          <article
+            class="leader-card"
+            *ngFor="let leader of leaders"
+          >
+
+            <div class="leader-image">
+
+              <img
+                [src]="leader.image"
+                [alt]="leader.name"
+              >
+
+            </div>
+
+
+            <div class="leader-info">
+
+              <h3>
+                {{ leader.name }}
+              </h3>
+
+              <p>
+                {{ leader.role }}
+              </p>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- ============================================= -->
+      <!-- CORE PILLARS -->
+      <!-- ============================================= -->
+
+      <section class="pillars-section">
+
+        <h2>
+          Core Pillars
+        </h2>
+
+
+        <div class="pillars-grid">
+
+          <article
+            class="pillar-card"
+            *ngFor="let pillar of pillars"
+          >
+
+            <div class="pillar-icon">
+
+              <i
+                [class]="pillar.icon"
+              ></i>
+
+            </div>
+
+
+            <h3>
+              {{ pillar.title }}
+            </h3>
+
+
+            <p>
+              {{ pillar.description }}
+            </p>
+
+          </article>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </section>
+
+</main>
