@@ -1,0 +1,465 @@
+<main class="test-drives-page">
+
+  <div class="test-drives-container">
+
+    <!-- ====================================== -->
+    <!-- PAGE TITLE -->
+    <!-- ====================================== -->
+
+    <h1>
+      My Test Drives
+    </h1>
+
+
+    <!-- ====================================== -->
+    <!-- SUCCESS MESSAGE -->
+    <!-- ====================================== -->
+
+    <div
+      class="success-message"
+      *ngIf="showSuccess"
+    >
+
+      <div class="success-icon">
+        <i class="fa-solid fa-check"></i>
+      </div>
+
+      <span>
+        Test drive booked successfully!
+        A confirmation email and calendar invite
+        have been sent to your inbox.
+      </span>
+
+
+      <button
+        type="button"
+        aria-label="Close"
+        (click)="showSuccess = false"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+    </div>
+
+
+    <!-- ====================================== -->
+    <!-- TABS -->
+    <!-- ====================================== -->
+
+    <div class="tabs">
+
+      <button
+        [class.active]="
+          activeTab === 'upcoming'
+        "
+        (click)="setTab('upcoming')"
+      >
+        Upcoming
+      </button>
+
+
+      <button
+        [class.active]="
+          activeTab === 'completed'
+        "
+        (click)="setTab('completed')"
+      >
+        Completed
+      </button>
+
+
+      <button
+        [class.active]="
+          activeTab === 'cancelled'
+        "
+        (click)="setTab('cancelled')"
+      >
+        Cancelled
+      </button>
+
+    </div>
+
+
+    <!-- ====================================== -->
+    <!-- TEST DRIVE LIST -->
+    <!-- ====================================== -->
+
+    <section class="test-drive-list">
+
+      <article
+        class="test-drive-card"
+
+        *ngFor="
+          let testDrive
+          of filteredTestDrives
+        "
+      >
+
+        <!-- VEHICLE -->
+
+        <div class="vehicle-section">
+
+          <img
+            [src]="testDrive.vehicleImage"
+            [alt]="testDrive.vehicleName"
+          >
+
+
+          <div>
+
+            <h2>
+              {{ testDrive.vehicleName }}
+            </h2>
+
+            <p>
+              {{ testDrive.vehicleDescription }}
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- DATE -->
+
+        <div class="drive-info">
+
+          <strong>
+            {{ testDrive.date }}
+          </strong>
+
+          <span>
+            {{ testDrive.time }}
+          </span>
+
+        </div>
+
+
+        <!-- LOCATION -->
+
+        <div class="drive-info location-info">
+
+          <strong>
+            Location
+          </strong>
+
+          <span>
+            {{ testDrive.location }}
+          </span>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="drive-actions">
+
+
+          <!-- UPCOMING -->
+
+          <ng-container
+            *ngIf="
+              testDrive.status === 'upcoming'
+            "
+          >
+
+            <span class="status confirmed">
+              Confirmed
+            </span>
+
+
+            <button
+              class="cancel-button"
+              type="button"
+
+              (click)="
+                cancelTestDrive(
+                  testDrive.id
+                )
+              "
+            >
+              Cancel
+            </button>
+
+          </ng-container>
+
+
+          <!-- COMPLETED -->
+
+          <span
+            class="status completed"
+
+            *ngIf="
+              testDrive.status === 'completed'
+            "
+          >
+            Completed
+          </span>
+
+
+          <!-- CANCELLED -->
+
+          <span
+            class="status cancelled"
+
+            *ngIf="
+              testDrive.status === 'cancelled'
+            "
+          >
+            Cancelled
+          </span>
+
+        </div>
+
+      </article>
+
+
+      <!-- EMPTY -->
+
+      <div
+        class="empty-state"
+
+        *ngIf="
+          filteredTestDrives.length === 0
+        "
+      >
+
+        <i class="fa-regular fa-calendar"></i>
+
+        <h3>
+          No {{ activeTab }} test drives
+        </h3>
+
+        <p>
+          Your {{ activeTab }} test drives
+          will appear here.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ====================================== -->
+    <!-- BOOK FORM -->
+    <!-- ====================================== -->
+
+    <section class="booking-card">
+
+      <h2>
+        Schedule a Test Drive
+      </h2>
+
+
+      <form
+        #testDriveForm="ngForm"
+        (ngSubmit)="bookTestDrive()"
+      >
+
+        <div class="form-grid">
+
+
+          <!-- FULL NAME -->
+
+          <div class="form-group">
+
+            <label for="fullName">
+              Full Name
+            </label>
+
+            <input
+              id="fullName"
+
+              type="text"
+
+              name="fullName"
+
+              [(ngModel)]="fullName"
+
+              placeholder="Enter your full name"
+
+              required
+            >
+
+          </div>
+
+
+          <!-- EMAIL -->
+
+          <div class="form-group">
+
+            <label for="email">
+              Email
+            </label>
+
+            <input
+              id="email"
+
+              type="email"
+
+              name="email"
+
+              [(ngModel)]="email"
+
+              placeholder="your.email@example.com"
+
+              required
+            >
+
+          </div>
+
+
+          <!-- PHONE -->
+
+          <div class="form-group">
+
+            <label for="phone">
+              Phone Number
+            </label>
+
+            <input
+              id="phone"
+
+              type="tel"
+
+              name="phone"
+
+              [(ngModel)]="phone"
+
+              placeholder="+1 (555) 000-0000"
+
+              required
+            >
+
+          </div>
+
+
+          <!-- VEHICLE -->
+
+          <div class="form-group">
+
+            <label for="vehicle">
+              Select Vehicle
+            </label>
+
+            <select
+              id="vehicle"
+
+              name="vehicle"
+
+              [(ngModel)]="
+                selectedVehicleId
+              "
+
+              required
+            >
+
+              <option
+                [ngValue]="null"
+                disabled
+              >
+                Choose vehicle...
+              </option>
+
+
+              <option
+                *ngFor="
+                  let vehicle of vehicles
+                "
+
+                [ngValue]="vehicle.id"
+              >
+                {{ vehicle.name }}
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- DATE -->
+
+          <div class="form-group">
+
+            <label for="date">
+              Preferred Date
+            </label>
+
+            <input
+              id="date"
+
+              type="date"
+
+              name="date"
+
+              [(ngModel)]="
+                preferredDate
+              "
+
+              required
+            >
+
+          </div>
+
+
+          <!-- TIME -->
+
+          <div class="form-group">
+
+            <label for="time">
+              Preferred Time
+            </label>
+
+            <select
+              id="time"
+
+              name="time"
+
+              [(ngModel)]="
+                preferredTime
+              "
+
+              required
+            >
+
+              <option
+                value=""
+                disabled
+              >
+                Choose time slot...
+              </option>
+
+
+              <option
+                *ngFor="
+                  let time of timeSlots
+                "
+
+                [value]="time"
+              >
+                {{ time }}
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- BUTTON -->
+
+        <button
+          class="book-button"
+          type="submit"
+        >
+          Book Test Drive
+        </button>
+
+      </form>
+
+    </section>
+
+  </div>
+
+</main>

@@ -1,0 +1,78 @@
+<main class="services-page">
+
+  <div class="services-container">
+
+    <!-- ======================================== -->
+    <!-- TITLE -->
+    <!-- ======================================== -->
+
+    <h1>
+      Our Premium Services
+    </h1>
+
+
+    <!-- ======================================== -->
+    <!-- SERVICE GRID -->
+    <!-- ======================================== -->
+
+    <section class="services-grid">
+
+      <article
+        class="service-card"
+        *ngFor="
+          let service of services;
+          let i = index
+        "
+        [class.large-card]="i >= 3"
+      >
+
+        <!-- ICON -->
+
+        <div class="service-icon">
+
+          <i
+            [class]="service.icon"
+          ></i>
+
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h2>
+          {{ service.title }}
+        </h2>
+
+
+        <!-- DESCRIPTION -->
+
+        <p>
+          {{ service.description }}
+        </p>
+
+
+        <!-- LEARN MORE -->
+
+        <button
+          class="learn-more"
+          type="button"
+          (click)="learnMore(service)"
+        >
+
+          <span>
+            Learn More
+          </span>
+
+          <i
+            class="fa-solid fa-arrow-right"
+          ></i>
+
+        </button>
+
+      </article>
+
+    </section>
+
+  </div>
+
+</main>

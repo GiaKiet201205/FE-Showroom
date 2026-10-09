@@ -1,0 +1,31 @@
+$primary: #2563eb;
+$primary-hover: #1d4ed8;
+
+$dark: #08182d;
+$dark-secondary: #0d1e35;
+
+$text: #111827;
+$text-secondary: #64748b;
+
+$background: #f5f7fa;
+$white: #ffffff;
+
+$border-color: #e5e7eb;
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+select,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
