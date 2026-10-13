@@ -7,7 +7,7 @@
       <div class="section-title">Active Schedule</div>
       <div class="section-sub">Manage and coordinate consumer testing appointments</div>
     </div>
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openAddModal()">
       <mat-icon>add_circle</mat-icon>
       Schedule Test Drive
     </button>
@@ -65,11 +65,14 @@
       />
     </div>
 
-    <select class="filter-select" [ngModel]="dateFilter()" (ngModelChange)="dateFilter.set($event); onFilterChange()">
-      <option value="all">Date: Oct 2024</option>
-      <option value="2024-11">Date: Nov 2024</option>
-      <option value="2024-12">Date: Dec 2024</option>
-    </select>
+    <!-- Ô chọn ngày có lịch và hỗ trợ nhập tay -->
+    <input 
+      type="date" 
+      class="filter-select" 
+      [ngModel]="dateFilter()" 
+      (ngModelChange)="dateFilter.set($event); onFilterChange()"
+      title="Chọn hoặc nhập ngày"
+    />
 
     <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
       <option value="all">Status: All</option>
@@ -96,7 +99,6 @@
             <th>TIME SLOT</th>
             <th>LOCATION</th>
             <th>STATUS</th>
-            <th class="col-actions">ACTIONS</th>
           </tr>
         </thead>
         <tbody>
@@ -119,8 +121,7 @@
                 <td class="cell-muted">{{ b.location }}</td>
                 <td><span class="status-badge" [class]="b.status">{{ b.status }}</span></td>
                 <td class="col-actions">
-                  <button class="icon-btn view" title="Chi tiết"><mat-icon>track_changes</mat-icon></button>
-                  <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+                  <button class="icon-btn edit" title="Sửa" (click)="openEditModal(b)"><mat-icon>edit</mat-icon></button>
                   <button class="icon-btn delete" title="Huỷ lịch" (click)="deleteBooking(b)"><mat-icon>delete</mat-icon></button>
                 </td>
               </tr>
@@ -150,3 +151,49 @@
     </div>
   </section>
 </div>
+
+<!-- Modal thêm/sửa lịch lái thử -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">{{ editingBooking() ? 'Edit Booking' : 'Schedule New Test Drive' }}</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input type="text" [(ngModel)]="formData().customerName" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Vehicle Name</label>
+          <input type="text" [(ngModel)]="formData().vehicleName" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Preferred Date</label>
+          <input type="date" [(ngModel)]="formData().preferredDate" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Time Slot</label>
+          <input type="text" [(ngModel)]="formData().timeSlot" class="form-control" placeholder="Ví dụ: 10:30 AM" />
+        </div>
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="formData().location" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="formData().status" class="form-control">
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-primary" (click)="saveBooking()">Save</button>
+      </div>
+    </div>
+  </div>
+}

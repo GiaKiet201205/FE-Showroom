@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../core/models/vehicle.model';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-vehicles',
@@ -30,8 +31,14 @@ export class AdminVehiclesComponent implements OnInit {
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
 
-  brandOptions = ['Tesla', 'BMW', 'Mercedes-Benz', 'Audi', 'Toyota', 'Porsche', 'Ford', 'Lexus'];
-  yearOptions = [2023, 2022, 2021, 2020];
+  // Cập nhật danh sách tùy chọn dựa trên dữ liệu mẫu
+  brandOptions = ['Lamborghini', 'Ferrari', 'Audi', 'Porsche', 'BMW', 'Bugatti', 'Maserati', 'Rolls-Royce'];
+  yearOptions = [2024, 2023, 2022, 2021];
+
+  // Trạng thái quản lý hộp thoại
+  showModal = signal(false);
+  editingVehicle = signal<Vehicle | null>(null);
+  formData = signal<Partial<Vehicle>>({});
 
   ngOnInit(): void {
     this.loadVehicles();
@@ -70,10 +77,57 @@ export class AdminVehiclesComponent implements OnInit {
   }
 
   deleteVehicle(vehicle: Vehicle): void {
-    if (!confirm(`Xoá xe "${vehicle.brand} ${vehicle.model}"?`)) return;
+    if (!confirm(`Xác nhận xoá xe ${vehicle.brand} ${vehicle.model}?`)) return;
     this.vehicleService.delete(vehicle.id).subscribe({
       next: () => this.loadVehicles(),
       error: () => this.loadVehicles()
     });
   }
-}
+
+  // Chức năng điều khiển hộp thoại
+  openAddModal(): void {
+    this.editingVehicle.set(null);
+    this.formData.set({
+      brand: '',
+      model: '',
+      year: new Date().getFullYear(),
+      price: 0,
+      mileage: 0,
+      color: '',
+      status: 'available',
+      imageUrl: ''
+    });
+    this.showModal.set(true);
+  }
+
+  openEditModal(vehicle: Vehicle): void {
+    this.editingVehicle.set(vehicle);
+    this.formData.set({ ...vehicle });
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  saveVehicle(): void {
+    const data = this.formData() as Omit<Vehicle, 'id'>;
+    const currentVehicle = this.editingVehicle();
+
+    if (currentVehicle) {
+      this.vehicleService.update(currentVehicle.id, data).subscribe({
+        next: () => {
+          this.loadVehicles();
+          this.closeModal();
+        }
+      });
+    } else {
+      this.vehicleService.create(data).subscribe({
+        next: () => {
+          this.loadVehicles();
+          this.closeModal();
+        }
+      });
+    }
+  }
+}   

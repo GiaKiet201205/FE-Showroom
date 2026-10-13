@@ -21,7 +21,7 @@ export class AdminTestDrivesComponent implements OnInit {
   loading = signal(true);
 
   searchTerm = signal('');
-  dateFilter = signal('all');
+  dateFilter = signal('');
   statusFilter = signal('all');
 
   page = signal(1);
@@ -29,6 +29,11 @@ export class AdminTestDrivesComponent implements OnInit {
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
+
+  // Trạng thái quản lý hộp thoại
+  showModal = signal(false);
+  editingBooking = signal<TestDriveBooking | null>(null);
+  formData = signal<Partial<TestDriveBooking>>({});
 
   ngOnInit(): void {
     this.loadBookings();
@@ -39,7 +44,7 @@ export class AdminTestDrivesComponent implements OnInit {
     this.testDriveService
       .getList({
         search: this.searchTerm(),
-        date: this.dateFilter() === 'all' ? undefined : this.dateFilter(),
+        date: this.dateFilter() ? this.dateFilter() : undefined,
         status: this.statusFilter() === 'all' ? undefined : this.statusFilter(),
         page: this.page(),
         pageSize: this.pageSize
@@ -67,10 +72,63 @@ export class AdminTestDrivesComponent implements OnInit {
   }
 
   deleteBooking(booking: TestDriveBooking): void {
-    if (!confirm(`Huỷ lịch lái thử "${booking.id}" của ${booking.customerName}?`)) return;
+    if (!confirm(`Xác nhận huỷ lịch lái thử ${booking.id} của khách hàng ${booking.customerName}?`)) return;
     this.testDriveService.delete(booking.id).subscribe({
       next: () => this.loadBookings(),
       error: () => this.loadBookings()
     });
+  }
+
+  // Chức năng điều khiển hộp thoại
+  openAddModal(): void {
+    this.editingBooking.set(null);
+    this.formData.set({
+      customerName: '',
+      vehicleName: '',
+      preferredDate: '',
+      timeSlot: '',
+      location: '',
+      status: 'pending'
+    });
+    this.showModal.set(true);
+  }
+
+  openEditModal(booking: TestDriveBooking): void {
+    this.editingBooking.set(booking);
+    this.formData.set({ ...booking });
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  saveBooking(): void {
+    const data = this.formData() as Omit<TestDriveBooking, 'id'>;
+    const current = this.editingBooking();
+
+    if (current) {
+      this.testDriveService.update(current.id, data).subscribe({
+        next: () => {
+          this.loadBookings();
+          this.closeModal();
+        },
+        error: () => {
+          this.loadBookings();
+          this.closeModal();
+        }
+      });
+    } else {
+      this.testDriveService.create(data).subscribe({
+        next: () => {
+          this.loadBookings();
+          this.closeModal();
+        },
+        error: () => {
+          this.loadBookings();
+          this.closeModal();
+        }
+      });
+    }
   }
 }

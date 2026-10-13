@@ -1,0 +1,154 @@
+<div class="settings-page">
+  <div class="breadcrumb">Main / Admin</div>
+  <h1 class="page-title">Settings</h1>
+
+  <div class="settings-layout">
+    <!-- Menu con bên trái -->
+    <nav class="settings-nav">
+      @for (s of sections; track s.id) {
+        <button
+          type="button"
+          class="nav-btn"
+          [class.active]="activeSection() === s.id"
+          (click)="scrollTo(s.id)"
+        >
+          {{ s.label }}
+        </button>
+      }
+    </nav>
+
+    <!-- Nội dung bên phải -->
+    <div class="settings-content">
+      @if (loading()) {
+        <div class="loading-state">Đang tải dữ liệu...</div>
+      } @else {
+        <!-- ===== Profile Details ===== -->
+        <section class="card" id="settings-profile">
+          <h2 class="card-title">Profile Details</h2>
+
+          <div class="avatar-row">
+            <div class="avatar">
+              @if (avatarPreview(); as src) {
+                <img [src]="src" alt="Avatar" />
+              } @else {
+                <span>{{ profileForm.controls.fullName.value.charAt(0) }}</span>
+              }
+            </div>
+            <div>
+              <div class="avatar-actions">
+                <input #fileInput type="file" accept="image/jpeg,image/png,image/gif" hidden (change)="onAvatarSelected($event)" />
+                <button type="button" class="btn-primary small" (click)="fileInput.click()">Upload New Photo</button>
+                <button type="button" class="btn-outline small" (click)="removeAvatar()">Remove</button>
+              </div>
+              <div class="hint">JPG, GIF or PNG. Max size of 800K</div>
+            </div>
+          </div>
+
+          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <div class="form-grid">
+              <div class="field">
+                <label>Full Name</label>
+                <input type="text" formControlName="fullName" />
+                @if (invalid(profileForm, 'fullName')) {
+                  <span class="field-error">Vui lòng nhập họ tên.</span>
+                }
+              </div>
+
+              <div class="field">
+                <label>Email Address</label>
+                <input type="email" formControlName="email" />
+                @if (invalid(profileForm, 'email')) {
+                  <span class="field-error">Email không hợp lệ.</span>
+                }
+              </div>
+
+              <div class="field">
+                <label>Phone Number</label>
+                <input type="text" formControlName="phone" />
+              </div>
+
+              <div class="field">
+                <label>Portal Role</label>
+                <input type="text" formControlName="role" />
+              </div>
+
+              <div class="field full">
+                <label>Biography / Summary</label>
+                <textarea rows="3" formControlName="bio"></textarea>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </form>
+        </section>
+
+        <!-- ===== Security & Authorization ===== -->
+        <section class="card" id="settings-security">
+          <h2 class="card-title">Security &amp; Authorization</h2>
+
+          <form [formGroup]="securityForm" (ngSubmit)="updateCredentials()">
+            <div class="form-grid">
+              <div class="field">
+                <label>Current Password</label>
+                <input type="password" formControlName="currentPassword" placeholder="••••••••••••" />
+                @if (invalid(securityForm, 'currentPassword')) {
+                  <span class="field-error">Vui lòng nhập mật khẩu hiện tại.</span>
+                }
+              </div>
+              <div class="field"></div>
+
+              <div class="field">
+                <label>New Password</label>
+                <input type="password" formControlName="newPassword" placeholder="Enter new password..." />
+                @if (invalid(securityForm, 'newPassword')) {
+                  <span class="field-error">Mật khẩu mới tối thiểu 6 ký tự.</span>
+                }
+              </div>
+
+              <div class="field">
+                <label>Confirm New Password</label>
+                <input type="password" formControlName="confirmPassword" placeholder="Confirm new password..." />
+                @if (securityForm.errors?.['mismatch'] && securityForm.controls.confirmPassword.touched) {
+                  <span class="field-error">Mật khẩu xác nhận không khớp.</span>
+                }
+              </div>
+            </div>
+
+            <div class="toggle-row bordered">
+              <div>
+                <div class="toggle-title">Two-Factor Authentication (2FA)</div>
+                <div class="toggle-desc">Adds an extra layer of protection to your manager session</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" [formControl]="twoFactor" (change)="onTwoFactorChange()" />
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <button type="submit" class="btn-primary">Update Credentials</button>
+          </form>
+        </section>
+
+        <!-- ===== Notification Matrix ===== -->
+        <section class="card" id="settings-notifications">
+          <h2 class="card-title">Notification Matrix</h2>
+
+          <form [formGroup]="notificationsForm">
+            @for (item of notificationItems; track item.key) {
+              <div class="toggle-row">
+                <div>
+                  <div class="toggle-title">{{ item.title }}</div>
+                  <div class="toggle-desc">{{ item.description }}</div>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" [formControlName]="item.key" (change)="onNotificationChange()" />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            }
+          </form>
+        </section>
+      }
+    </div>
+  </div>
+</div>

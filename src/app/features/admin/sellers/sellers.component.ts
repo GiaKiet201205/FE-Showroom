@@ -21,6 +21,7 @@ export class AdminSellersComponent implements OnInit {
   loading = signal(true);
 
   searchTerm = signal('');
+  dateFilter = signal(''); // Biến quản lý bộ lọc ngày
   statusFilter = signal('all');
 
   page = signal(1);
@@ -38,6 +39,7 @@ export class AdminSellersComponent implements OnInit {
     this.sellerService
       .getList({
         search: this.searchTerm(),
+        date: this.dateFilter() ? this.dateFilter() : undefined,
         status: this.statusFilter() === 'all' ? undefined : this.statusFilter(),
         page: this.page(),
         pageSize: this.pageSize

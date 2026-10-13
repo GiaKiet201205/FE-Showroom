@@ -30,6 +30,11 @@ export class AdminUsersComponent implements OnInit {
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
 
+  // Trạng thái quản lý hộp thoại
+  showModal = signal(false);
+  editingUser = signal<UserAccount | null>(null);
+  formData = signal<Partial<UserAccount>>({});
+
   ngOnInit(): void {
     this.loadUsers();
   }
@@ -68,7 +73,7 @@ export class AdminUsersComponent implements OnInit {
 
   toggleBlock(user: UserAccount): void {
     const action = user.status === 'blocked' ? 'mở khoá' : 'khoá';
-    if (!confirm(`Xác nhận ${action} tài khoản "${user.fullName}"?`)) return;
+    if (!confirm(`Xác nhận ${action} tài khoản ${user.fullName}?`)) return;
     this.userService.toggleBlock(user.id).subscribe({
       next: () => this.loadUsers(),
       error: () => this.loadUsers()
@@ -76,10 +81,63 @@ export class AdminUsersComponent implements OnInit {
   }
 
   deleteUser(user: UserAccount): void {
-    if (!confirm(`Xoá tài khoản "${user.fullName}"? Hành động không thể hoàn tác.`)) return;
+    if (!confirm(`Xoá tài khoản ${user.fullName}? Hành động không thể hoàn tác.`)) return;
     this.userService.delete(user.id).subscribe({
       next: () => this.loadUsers(),
       error: () => this.loadUsers()
     });
+  }
+
+  // Chức năng điều khiển hộp thoại
+  openAddModal(): void {
+    this.editingUser.set(null);
+    this.formData.set({
+      fullName: '',
+      email: '',
+      phone: '',
+      role: 'user',
+      status: 'active',
+      registeredAt: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+    });
+    this.showModal.set(true);
+  }
+
+  openEditModal(user: UserAccount): void {
+    this.editingUser.set(user);
+    this.formData.set({ ...user });
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  saveUser(): void {
+    const data = this.formData() as Omit<UserAccount, 'id'>;
+    const currentUser = this.editingUser();
+
+    if (currentUser) {
+      this.userService.update(currentUser.id, data).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeModal();
+        },
+        error: () => {
+          this.loadUsers();
+          this.closeModal();
+        }
+      });
+    } else {
+      this.userService.create(data).subscribe({
+        next: () => {
+          this.loadUsers();
+          this.closeModal();
+        },
+        error: () => {
+          this.loadUsers();
+          this.closeModal();
+        }
+      });
+    }
   }
 }

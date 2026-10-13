@@ -1,0 +1,218 @@
+<div class="orders-page">
+  <div class="breadcrumb">Main / Orders</div>
+  <h1 class="page-title">Orders &amp; Sales</h1>
+
+  <!-- 4 thẻ thống kê -->
+  @if (stats(); as s) {
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon total"><mat-icon>shopping_cart</mat-icon></div>
+        <div class="stat-label">TOTAL ORDERS</div>
+        <div class="stat-value">{{ s.totalOrders | number }}</div>
+        <div class="stat-growth" [class.negative]="s.totalOrdersGrowth < 0">
+          {{ s.totalOrdersGrowth > 0 ? '+' : '' }}{{ s.totalOrdersGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon revenue"><mat-icon>attach_money</mat-icon></div>
+        <div class="stat-label">REVENUE THIS MONTH</div>
+        <div class="stat-value">{{ formatCurrency(s.revenueThisMonth) }}</div>
+        <div class="stat-growth" [class.negative]="s.revenueThisMonthGrowth < 0">
+          {{ s.revenueThisMonthGrowth > 0 ? '+' : '' }}{{ s.revenueThisMonthGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon completed"><mat-icon>directions_car</mat-icon></div>
+        <div class="stat-label">COMPLETED SALES</div>
+        <div class="stat-value">{{ s.completedSales | number }}</div>
+        <div class="stat-growth" [class.negative]="s.completedSalesGrowth < 0">
+          {{ s.completedSalesGrowth > 0 ? '+' : '' }}{{ s.completedSalesGrowth }}% vs last month
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon pending"><mat-icon>event_available</mat-icon></div>
+        <div class="stat-label">PENDING PAYMENTS</div>
+        <div class="stat-value">{{ s.pendingPayments }}</div>
+        <div class="stat-growth" [class.negative]="s.pendingPaymentsGrowth < 0">
+          {{ s.pendingPaymentsGrowth > 0 ? '+' : '' }}{{ s.pendingPaymentsGrowth }}% vs last month
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Thanh tìm kiếm + bộ lọc -->
+<section class="filter-bar">
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input
+        type="text"
+        placeholder="Search orders, customer..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        (keyup.enter)="onFilterChange()"
+      />
+    </div>
+
+    <!-- Bổ sung bộ lọc lịch/ngày đặt hàng -->
+    <input 
+      type="date" 
+      class="filter-select" 
+      [ngModel]="dateFilter()" 
+      (ngModelChange)="dateFilter.set($event); onFilterChange()"
+      title="Lọc theo ngày"
+    />
+
+    <select class="filter-select" [ngModel]="paymentFilter()" (ngModelChange)="paymentFilter.set($event); onFilterChange()">
+      <option value="all">Payment (All)</option>
+      <option value="paid">Paid</option>
+      <option value="pending">Pending</option>
+      <option value="partial">Partial</option>
+      <option value="refunded">Refunded</option>
+    </select>
+
+    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+      <option value="all">Status (All)</option>
+      <option value="completed">Completed</option>
+      <option value="processing">Processing</option>
+      <option value="shipped">Shipped</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+
+    <button type="button" class="btn-outline" (click)="exportCsv()">Export CSV</button>
+  </section>
+
+  <!-- Bảng đơn hàng -->
+  <section class="panel">
+    <div class="table-wrapper">
+      <table class="order-table">
+        <thead>
+          <tr>
+            <th>ORDER ID</th>
+            <th>CUSTOMER</th>
+            <th>VEHICLE</th>
+            <th>PRICE</th>
+            <th>METHOD</th>
+            <th>PAYMENT</th>
+            <th>DATE</th>
+            <th>STATUS</th>
+            <th class="col-actions">ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (loading()) {
+            <tr><td colspan="9" class="loading-cell">Đang tải dữ liệu...</td></tr>
+          } @else {
+            @for (o of orders(); track o.id) {
+              <tr>
+                <td class="cell-id">{{ o.id }}</td>
+                <td class="cell-customer">
+                  <div class="avatar-circle">{{ o.customerName.charAt(0) }}</div>
+                  <span>{{ o.customerName }}</span>
+                </td>
+                <td>{{ o.vehicleName }}</td>
+                <td class="cell-price">{{ o.price | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
+                <td><span class="badge" [class]="o.method">{{ o.method }}</span></td>
+                <td><span class="badge" [class]="o.payment">{{ o.payment }}</span></td>
+                <td class="cell-muted">{{ o.date }}</td>
+                <td><span class="badge" [class]="o.status">{{ o.status }}</span></td>
+<td class="col-actions">
+  <button type="button" class="link-btn invoice" (click)="openInvoice(o)">Invoice</button>
+  <button type="button" class="link-btn delete" (click)="deleteOrder(o)">Delete</button>
+</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Phân trang -->
+  <div class="pagination-bar">
+    <div class="pagination-info">
+      Showing {{ (page() - 1) * pageSize + 1 }}-{{ rangeEnd() }} of {{ total() }} orders
+    </div>
+    <div class="pagination-controls">
+      <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
+      @for (p of [1, 2, 3]; track p) {
+        @if (p <= totalPages()) {
+          <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
+        }
+      }
+      @if (totalPages() > 4) {
+        <span class="page-dots">...</span>
+        <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+      }
+      <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
+    </div>
+  </div>
+</div>
+<!-- Khối hiển thị hộp thoại chi tiết hóa đơn -->
+@if (showInvoiceModal()) {
+  <div class="modal-overlay" (click)="closeInvoice()">
+    <div class="modal-content invoice-modal" (click)="$event.stopPropagation()">
+      @if (selectedOrder(); as order) {
+        <div class="invoice-header">
+          <div>
+            <h2 class="invoice-title">INVOICE</h2>
+            <div class="invoice-id">{{ order.id }}</div>
+          </div>
+          <button class="icon-btn-close" (click)="closeInvoice()"><mat-icon>close</mat-icon></button>
+        </div>
+        
+        <div class="invoice-body">
+          <div class="invoice-section">
+            <div class="info-group">
+              <label>Billed To</label>
+              <span>{{ order.customerName }}</span>
+            </div>
+            <div class="info-group right-align">
+              <label>Date of Issue</label>
+              <span>{{ order.date }}</span>
+            </div>
+          </div>
+          
+          <table class="invoice-items">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Method</th>
+                <th class="text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ order.vehicleName }}</td>
+                <td class="capitalize">{{ order.method }}</td>
+                <td class="text-right">{{ order.price | currency: 'USD' : 'symbol' : '1.0-0' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="invoice-summary">
+            <div class="summary-row">
+              <span>Status</span>
+              <span class="badge" [class]="order.status">{{ order.status }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Payment</span>
+              <span class="badge" [class]="order.payment">{{ order.payment }}</span>
+            </div>
+            <div class="summary-row total-row">
+              <span>Total Due</span>
+              <span>{{ order.price | currency: 'USD' : 'symbol' : '1.0-0' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-outline" (click)="closeInvoice()">Close</button>
+          <button class="btn-primary" (click)="printInvoice()"><mat-icon>print</mat-icon> Print</button>
+        </div>
+      }
+    </div>
+  </div>
+}

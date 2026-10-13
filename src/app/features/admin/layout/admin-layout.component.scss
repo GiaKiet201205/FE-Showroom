@@ -2,7 +2,8 @@
 
 .admin-shell {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: $admin-bg;
   font-family: 'Roboto', 'Segoe UI', sans-serif;
 }
@@ -52,6 +53,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  overflow-y: auto;
 }
 
 .nav-item {

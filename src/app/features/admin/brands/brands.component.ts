@@ -27,6 +27,10 @@ export class AdminBrandsComponent implements OnInit {
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
 
+  showModal = signal(false);
+  editingBrand = signal<Brand | null>(null);
+  formData: Partial<Brand> = {};
+
   ngOnInit(): void {
     this.loadBrands();
   }
@@ -62,10 +66,60 @@ export class AdminBrandsComponent implements OnInit {
   }
 
   deleteBrand(brand: Brand): void {
-    if (!confirm(`Xoá thương hiệu "${brand.name}"?`)) return;
+    if (!confirm(`Xác nhận xoá thương hiệu ${brand.name}?`)) return;
     this.brandService.delete(brand.id).subscribe({
       next: () => this.loadBrands(),
       error: () => this.loadBrands()
     });
+  }
+
+  openAddModal(): void {
+    this.editingBrand.set(null);
+    this.formData = {
+      name: '',
+      origin: 'Germany',
+      listedVehicles: 0,
+      status: 'active'
+    };
+    this.showModal.set(true);
+  }
+
+  openEditModal(brand: Brand): void {
+    this.editingBrand.set(brand);
+    this.formData = { ...brand };
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  saveBrand(): void {
+    const data = this.formData as Omit<Brand, 'id'>;
+    const current = this.editingBrand();
+
+    if (current) {
+      this.brandService.update(current.id, data).subscribe({
+        next: () => {
+          this.loadBrands();
+          this.closeModal();
+        },
+        error: () => {
+          this.loadBrands();
+          this.closeModal();
+        }
+      });
+    } else {
+      this.brandService.create(data).subscribe({
+        next: () => {
+          this.loadBrands();
+          this.closeModal();
+        },
+        error: () => {
+          this.loadBrands();
+          this.closeModal();
+        }
+      });
+    }
   }
 }

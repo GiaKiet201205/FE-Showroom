@@ -7,7 +7,7 @@
       <div class="catalog-title">Active Catalog</div>
       <div class="catalog-sub">Manage list details, availability and details of cars</div>
     </div>
-    <button class="btn-primary">
+<button class="btn-primary" (click)="openAddModal()">
       <mat-icon>add_circle</mat-icon>
       Add New Vehicle
     </button>
@@ -89,8 +89,9 @@
                 <td class="cell-muted">{{ v.color }}</td>
                 <td><span class="status-badge" [class]="v.status">{{ v.status }}</span></td>
                 <td class="col-actions">
-                  <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
-                  <button class="icon-btn delete" title="Xoá" (click)="deleteVehicle(v)"><mat-icon>delete</mat-icon></button>
+<button class="icon-btn edit" title="Sửa" (click)="openEditModal(v)">
+      <mat-icon>edit</mat-icon>
+    </button>                  <button class="icon-btn delete" title="Xoá" (click)="deleteVehicle(v)"><mat-icon>delete</mat-icon></button>
                 </td>
               </tr>
             }
@@ -119,3 +120,57 @@
     </div>
   </section>
 </div>
+
+<!-- Modal thêm/sửa xe -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">{{ editingVehicle() ? 'Edit Vehicle' : 'Add New Vehicle' }}</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Brand</label>
+          <input type="text" [(ngModel)]="formData().brand" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Model</label>
+          <input type="text" [(ngModel)]="formData().model" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" [(ngModel)]="formData().year" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Price ($)</label>
+          <input type="number" [(ngModel)]="formData().price" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Mileage (mi)</label>
+          <input type="number" [(ngModel)]="formData().mileage" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Color</label>
+          <input type="text" [(ngModel)]="formData().color" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="formData().status" class="form-control">
+            <option value="available">Available</option>
+            <option value="reserved">Reserved</option>
+            <option value="sold">Sold</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Image URL</label>
+          <input type="text" [(ngModel)]="formData().imageUrl" class="form-control" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button class="btn-primary" (click)="saveVehicle()">Save</button>
+      </div>
+    </div>
+  </div>
+}
