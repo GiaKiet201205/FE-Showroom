@@ -1,0 +1,226 @@
+@use '../../../../styles/admin-theme' as *;
+
+.breadcrumb { font-size: 12px; color: $admin-text-muted; margin-bottom: 4px; }
+.page-title { font-size: 22px; font-weight: 700; color: $admin-text-dark; margin: 0 0 20px; }
+.loading-state { text-align: center; color: $admin-text-muted; padding: 60px 0; }
+
+// ===== Layout =====
+.settings-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 20px;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.settings-nav {
+  background: $admin-card-bg;
+  border-radius: $admin-radius-md;
+  padding: 10px;
+  box-shadow: $admin-shadow;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: $admin-text-muted;
+  border-radius: $admin-radius-sm;
+  cursor: pointer;
+
+  &:hover { background: $admin-bg; }
+
+  &.active {
+    background: $admin-bg;
+    color: $admin-primary;
+    font-weight: 600;
+  }
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+// ===== Card =====
+.card {
+  background: $admin-card-bg;
+  border-radius: $admin-radius-md;
+  padding: 24px;
+  box-shadow: $admin-shadow;
+  scroll-margin-top: 16px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $admin-text-dark;
+  margin: 0 0 18px;
+}
+
+// ===== Avatar =====
+.avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: $admin-primary;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.avatar-actions { display: flex; gap: 8px; margin-bottom: 6px; }
+.hint { font-size: 11px; color: $admin-text-muted; }
+
+// ===== Buttons =====
+.btn-primary {
+  background: $admin-primary;
+  color: #fff;
+  border: none;
+  border-radius: $admin-radius-sm;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover { background: $admin-primary-dark; }
+  &.small { padding: 7px 14px; font-size: 12px; }
+}
+
+.btn-outline {
+  background: #fff;
+  color: $admin-text-dark;
+  border: 1px solid $admin-border;
+  border-radius: $admin-radius-sm;
+  padding: 10px 18px;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover { background: $admin-bg; }
+  &.small { padding: 7px 14px; font-size: 12px; }
+}
+
+// ===== Form =====
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+  margin-bottom: 18px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full { grid-column: 1 / -1; }
+
+  label { font-size: 11px; font-weight: 600; color: $admin-text-dark; }
+
+  input,
+  textarea {
+    border: 1px solid transparent;
+    background: $admin-bg;
+    border-radius: $admin-radius-sm;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: $admin-text-dark;
+    outline: none;
+    resize: vertical;
+
+    &:focus { border-color: $admin-primary; background: #fff; }
+    &:disabled { color: $admin-text-muted; cursor: not-allowed; }
+    &::placeholder { color: $admin-text-muted; }
+  }
+}
+
+.field-error { color: $admin-danger; font-size: 11px; }
+
+// ===== Toggle rows =====
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+
+  &.bordered {
+    border-top: 1px solid $admin-border;
+    margin-bottom: 18px;
+    padding: 16px 0 0;
+  }
+}
+
+.toggle-title { font-size: 12px; font-weight: 600; color: $admin-text-dark; }
+.toggle-desc { font-size: 11px; color: $admin-text-muted; margin-top: 2px; }
+
+// ===== Switch =====
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #d9dbe7;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+  }
+}
+
+.switch input:checked + .slider { background: $admin-primary; }
+.switch input:checked + .slider::before { transform: translateX(18px); }
+.switch input:focus-visible + .slider { outline: 2px solid $admin-primary; outline-offset: 2px; }

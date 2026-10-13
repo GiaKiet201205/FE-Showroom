@@ -53,6 +53,13 @@
         (keyup.enter)="onFilterChange()"
       />
     </div>
+    <input 
+      type="date" 
+      class="filter-select" 
+      [ngModel]="dateFilter()" 
+      (ngModelChange)="dateFilter.set($event); onFilterChange()"
+      title="Lọc theo ngày tham gia"
+    />
 
     <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
       <option value="all">Status: All</option>
@@ -61,9 +68,6 @@
       <option value="suspended">Suspended</option>
     </select>
 
-    <select class="filter-select sort-select">
-      <option>Sort by: Join Date</option>
-    </select>
   </section>
 
   <section class="panel">

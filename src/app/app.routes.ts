@@ -192,8 +192,8 @@ export const routes: Routes = [
       {
         path: 'orders',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then(
-            (m) => m.ComingSoonComponent,
+          import('./features/admin/orders/orders.component').then(
+            (m) => m.AdminOrdersComponent,
           ),
         data: { title: 'Đơn hàng', icon: 'shopping_cart' },
       },
@@ -208,8 +208,8 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadComponent: () =>
-          import('./shared/components/coming-soon/coming-soon.component').then(
-            (m) => m.ComingSoonComponent,
+          import('./features/admin/setting/settings.component').then(
+            (m) => m.AdminSettingsComponent,
           ),
         data: { title: 'Cài đặt', icon: 'settings' },
       },

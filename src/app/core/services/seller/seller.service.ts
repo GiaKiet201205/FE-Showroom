@@ -1,39 +1,62 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
-import { SellerListResult } from '../../models/seller.model';
-import { MOCK_SELLERS, MOCK_SELLERS_TOTAL, MOCK_SELLER_STATS } from './seller.mock';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { Seller, SellerListResult } from '../../models/seller.model';
+import { MOCK_SELLERS, MOCK_SELLER_STATS } from './seller.mock';
 
 export interface SellerQuery {
   search?: string;
   status?: string;
+  date?: string;
   page: number;
   pageSize: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class SellerService {
-  private http = inject(HttpClient);
-  private endpoint = '/admin/sellers';
+  // Khởi tạo mảng dữ liệu đệm nội bộ
+  private sellers: Seller[] = MOCK_SELLERS.map(s => ({ ...s }));
 
   getList(query: SellerQuery): Observable<SellerListResult> {
-    const params = {
-      search: query.search ?? '',
-      status: query.status ?? '',
-      page: String(query.page),
-      pageSize: String(query.pageSize)
-    };
+    let result = [...this.sellers];
 
-    return this.http.get<SellerListResult>(this.endpoint, { params }).pipe(
-      catchError(() =>
-        of({
-          items: MOCK_SELLERS,
-          total: MOCK_SELLERS_TOTAL,
-          page: query.page,
-          pageSize: query.pageSize,
-          stats: MOCK_SELLER_STATS
-        })
-      )
-    );
+    // Xử lý bộ lọc tìm kiếm
+    const search = query.search?.trim().toLowerCase();
+    if (search) {
+      result = result.filter(s =>
+        s.fullName.toLowerCase().includes(search) ||
+        s.email.toLowerCase().includes(search) ||
+        s.company.toLowerCase().includes(search) ||
+        s.phone.includes(search)
+      );
+    }
+
+    // Xử lý bộ lọc ngày tham gia (joinDate)
+    if (query.date) {
+      const filterDate = new Date(query.date);
+      result = result.filter(s => {
+        const sDate = new Date(s.joinDate);
+        return sDate.getFullYear() === filterDate.getFullYear() &&
+               sDate.getMonth() === filterDate.getMonth() &&
+               sDate.getDate() === filterDate.getDate();
+      });
+    }
+
+    // Xử lý bộ lọc trạng thái
+    if (query.status && query.status !== 'all') {
+      result = result.filter(s => s.status === query.status);
+    }
+
+    // Xử lý phân trang
+    const total = result.length;
+    const start = (query.page - 1) * query.pageSize;
+    const items = result.slice(start, start + query.pageSize);
+
+    return of({
+      items,
+      total,
+      page: query.page,
+      pageSize: query.pageSize,
+      stats: MOCK_SELLER_STATS
+    });
   }
 }
