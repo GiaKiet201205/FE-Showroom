@@ -102,3 +102,98 @@
 }
 
 .page-dots { color: $admin-text-muted; font-size: 12px; padding: 0 4px; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: $admin-card-bg;
+  padding: 24px;
+  border-radius: $admin-radius-md;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: $admin-text-dark;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $admin-text-muted;
+  }
+}
+
+.form-control {
+  border: 1px solid $admin-border;
+  border-radius: $admin-radius-sm;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: $admin-text-dark;
+  outline: none;
+  
+  &:focus {
+    border-color: $admin-primary;
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid $admin-border;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid $admin-border;
+  color: $admin-text-dark;
+  border-radius: $admin-radius-sm;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  
+  &:hover {
+    background: $admin-bg;
+  }
+}
+.field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #dc2626;
+}
+
+.form-control.is-invalid {
+  border-color: #dc2626;
+}

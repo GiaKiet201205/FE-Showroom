@@ -7,29 +7,26 @@
       <div class="catalog-title">Brand Catalog</div>
       <div class="catalog-sub">Manage list details, availability and verified manufacturing status</div>
     </div>
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openAddModal()">
       <mat-icon>add_circle</mat-icon>
       Add Brand
     </button>
   </section>
 
-  <section class="filter-bar">
+  <!-- Bộ lọc: Reactive Forms. Gõ tìm kiếm tự động lọc sau 300ms (debounceTime), không cần Enter -->
+  <section class="filter-bar" [formGroup]="filterForm">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input
-        type="text"
-        placeholder="Search brands..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onFilterChange()"
-      />
+      <input type="text" placeholder="Search brands..." formControlName="search" />
     </div>
 
-    <select class="filter-select" [ngModel]="regionFilter()" (ngModelChange)="regionFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="region">
       <option value="all">Region: All Regions</option>
       <option value="Germany">Germany</option>
       <option value="Japan">Japan</option>
       <option value="United States">United States</option>
+      <option value="Italy">Italy</option>
+      <option value="France">France</option>
     </select>
   </section>
 
@@ -53,7 +50,7 @@
               <div class="footer-value">{{ b.listedVehicles }} Active Units</div>
             </div>
             <div class="footer-actions">
-              <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+              <button class="icon-btn edit" title="Sửa" (click)="openEditModal(b)"><mat-icon>edit</mat-icon></button>
               <button class="icon-btn delete" title="Xoá" (click)="deleteBrand(b)"><mat-icon>delete</mat-icon></button>
             </div>
           </div>
@@ -81,3 +78,78 @@
     </div>
   </div>
 </div>
+
+<!-- Modal thêm/sửa thương hiệu: Reactive Forms + validator -->
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <form
+      class="modal-content"
+      [formGroup]="brandForm"
+      (ngSubmit)="saveBrand()"
+      (click)="$event.stopPropagation()"
+      novalidate
+    >
+      <h2 class="modal-title">{{ editingBrand() ? 'Edit Brand' : 'Add New Brand' }}</h2>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Brand Name</label>
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control"
+            [class.is-invalid]="f.name.touched && f.name.invalid"
+          />
+          @if (f.name.touched && f.name.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập tên thương hiệu</small>
+          }
+          @if (f.name.errors?.['maxlength']) {
+            <small class="field-error">Tối đa 50 ký tự</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Origin</label>
+          <select formControlName="origin" class="form-control">
+            <option value="Germany">Germany</option>
+            <option value="Italy">Italy</option>
+            <option value="Japan">Japan</option>
+            <option value="United States">United States</option>
+            <option value="France">France</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="South Korea">South Korea</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Listed Vehicles</label>
+          <input
+            type="number"
+            formControlName="listedVehicles"
+            class="form-control"
+            [class.is-invalid]="f.listedVehicles.touched && f.listedVehicles.invalid"
+          />
+          @if (f.listedVehicles.touched && f.listedVehicles.invalid) {
+            <small class="field-error">Số xe không được âm</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status" class="form-control">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <!-- type="button" để nút Cancel không kích hoạt submit của form -->
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}

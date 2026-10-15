@@ -42,33 +42,27 @@
     </section>
   }
 
-  <section class="filter-bar">
+  <section class="filter-bar" [formGroup]="filterForm">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input
-        type="text"
-        placeholder="Search users by name, email..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onFilterChange()"
-      />
+      <input type="text" placeholder="Search users by name, email..." formControlName="search" />
     </div>
 
-    <select class="filter-select" [ngModel]="roleFilter()" (ngModelChange)="roleFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="role">
       <option value="all">Role: All</option>
       <option value="admin">Admin</option>
       <option value="seller">Seller</option>
       <option value="user">User</option>
     </select>
 
-    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="status">
       <option value="all">Status: All</option>
       <option value="active">Active</option>
       <option value="pending">Pending</option>
       <option value="blocked">Blocked</option>
     </select>
 
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openAddModal()">
       <mat-icon>add_circle</mat-icon>
       Add Internal User
     </button>
@@ -104,8 +98,7 @@
                 <td><span class="role-badge" [class]="u.role">{{ u.role }}</span></td>
                 <td><span class="status-badge" [class]="u.status">{{ u.status }}</span></td>
                 <td class="col-actions">
-                  <button class="icon-btn view" title="Xem"><mat-icon>visibility</mat-icon></button>
-                  <button class="icon-btn edit" title="Sửa"><mat-icon>edit</mat-icon></button>
+                  <button class="icon-btn edit" title="Sửa" (click)="openEditModal(u)"><mat-icon>edit</mat-icon></button>
                   <button class="icon-btn lock" title="Khoá/Mở khoá" (click)="toggleBlock(u)">
                     <mat-icon>{{ u.status === 'blocked' ? 'lock' : 'lock_open' }}</mat-icon>
                   </button>
@@ -138,3 +131,89 @@
     </div>
   </section>
 </div>
+
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <form
+      class="modal-content"
+      [formGroup]="userForm"
+      (ngSubmit)="saveUser()"
+      (click)="$event.stopPropagation()"
+      novalidate
+    >
+      <h2 class="modal-title">{{ editingUser() ? 'Edit User' : 'Add New User' }}</h2>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input
+            type="text"
+            formControlName="fullName"
+            class="form-control"
+            [class.is-invalid]="f.fullName.touched && f.fullName.invalid"
+          />
+          @if (f.fullName.touched && f.fullName.errors?.['required']) {
+            <small class="field-error">Yêu cầu nhập họ và tên.</small>
+          }
+          @if (f.fullName.errors?.['maxlength']) {
+            <small class="field-error">Giới hạn tối đa 80 ký tự.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="form-control"
+            [class.is-invalid]="f.email.touched && f.email.invalid"
+          />
+          @if (f.email.touched && f.email.errors?.['required']) {
+            <small class="field-error">Yêu cầu nhập địa chỉ email.</small>
+          }
+          @if (f.email.touched && f.email.errors?.['email']) {
+            <small class="field-error">Định dạng email không hợp lệ.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input
+            type="text"
+            formControlName="phone"
+            class="form-control"
+            [class.is-invalid]="f.phone.touched && f.phone.invalid"
+          />
+          @if (f.phone.touched && f.phone.errors?.['required']) {
+            <small class="field-error">Yêu cầu nhập số điện thoại.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Role</label>
+          <select formControlName="role" class="form-control">
+            <option value="admin">Admin</option>
+            <option value="seller">Seller</option>
+            <option value="user">User</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select formControlName="status" class="form-control">
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="blocked">Blocked</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : 'Save' }}
+        </button>
+      </div>
+    </form>
+  </div>
+}
