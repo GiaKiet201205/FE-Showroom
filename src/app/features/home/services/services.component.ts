@@ -1,6 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import {
+  PremiumService
+} from '../../../core/models/site-content.model';
+
+import {
+  SiteContentService
+} from '../../../core/services/site-content/site-content.service';
 
 interface PremiumService {
   id: number;
@@ -29,128 +36,25 @@ interface PremiumService {
 })
 export class ServicesComponent {
 
-  services: PremiumService[] = [
-    {
-      id: 1,
-
-      title: 'Financing Plans',
-
-      description:
-        'Instantly discover optimal customized auto loans with transparent monthly quotes.',
-
-      icon: 'fa-solid fa-percent',
-
-      type: 'financing'
-    },
-
-    {
-      id: 2,
-
-      title: 'Vehicle Insurance',
-
-      description:
-        'Compare policy terms instantly with nationwide partner providers.',
-
-      icon: 'fa-solid fa-shield-halved',
-
-      type: 'insurance'
-    },
-
-    {
-      id: 3,
-
-      title: 'Rigorous Inspection',
-
-      description:
-        'Comprehensive 150-point report provided for absolute buyer confidence.',
-
-      icon: 'fa-regular fa-file-lines',
-
-      type: 'inspection'
-    },
-
-    {
-      id: 4,
-
-      title: 'Instant Trade-In Valuation',
-
-      description:
-        'Transition your asset value immediately toward selected premium configuration upgrades.',
-
-      icon: 'fa-solid fa-arrow-right-arrow-left',
-
-      type: 'trade-in'
-    },
-
-    {
-      id: 5,
-
-      title: 'VIP Test Drive Program',
-
-      description:
-        'Book personalized extended trial drives delivered straight to your local home.',
-
-      icon: 'fa-regular fa-circle-xmark',
-
-      type: 'test-drive'
-    }
-  ];
-
+  services: PremiumService[] = [];
 
   constructor(
-    private router: Router
+    private router: Router,
+
+    private siteContentService:
+      SiteContentService
   ) {}
 
 
-  learnMore(service: PremiumService): void {
+  ngOnInit(): void {
 
-    switch (service.type) {
+    this.siteContentService
+      .getPremiumServices()
+      .subscribe(data => {
 
-      case 'test-drive':
+        this.services = data;
 
-        this.router.navigate([
-          '/test-drives'
-        ]);
-
-        break;
-
-
-      case 'financing':
-
-        console.log(
-          'Financing service selected'
-        );
-
-        break;
-
-
-      case 'insurance':
-
-        console.log(
-          'Insurance service selected'
-        );
-
-        break;
-
-
-      case 'inspection':
-
-        console.log(
-          'Inspection service selected'
-        );
-
-        break;
-
-
-      case 'trade-in':
-
-        console.log(
-          'Trade-in service selected'
-        );
-
-        break;
-
-    }
+      });
 
   }
 

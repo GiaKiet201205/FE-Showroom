@@ -31,126 +31,30 @@ interface FaqItem {
 })
 export class ContactComponent {
 
-  submitted = false;
+  subjects: ContactSubject[] = [];
+
+  faqs: FaqItem[] = [];
 
 
-  contactForm: ContactFormData = {
-    fullName: '',
-    email: '',
-    phone: '',
-    subject: 'general',
-    message: ''
-  };
+  constructor(
+    private siteContentService:
+      SiteContentService
+  ) {}
 
 
-  subjects = [
-    {
-      value: 'general',
-      label: 'General Inquiry'
-    },
-    {
-      value: 'vehicle',
-      label: 'Vehicle Inquiry'
-    },
-    {
-      value: 'financing',
-      label: 'Financing'
-    },
-    {
-      value: 'insurance',
-      label: 'Insurance'
-    },
-    {
-      value: 'test-drive',
-      label: 'Test Drive'
-    },
-    {
-      value: 'trade-in',
-      label: 'Trade-In'
-    }
-  ];
+  ngOnInit(): void {
 
+    this.siteContentService
+      .getContactContent()
+      .subscribe(data => {
 
-  faqs: FaqItem[] = [
-    {
-      question:
-        'How does nationwide transport delivery work?',
+        this.subjects =
+          data.subjects;
 
-      answer:
-        'Once your acquisition is completed and verified, we coordinate enclosed carrier transport directly to your designated address. Track links and dedicated advisor check-ins are provided daily.',
+        this.faqs =
+          data.faqs;
 
-      open: true
-    },
-
-    {
-      question:
-        'Can I inspect the car in person before purchasing?',
-
-      answer:
-        'Absolutely. Scheduled test drives and direct viewings are available at all dealership partner locations. Schedule online or coordinate with your concierge advisor.',
-
-      open: false
-    },
-
-    {
-      question:
-        'Are vehicle background checks guaranteed?',
-
-      answer:
-        'Yes. Every single listed vehicle contains verified background certifications and our bespoke 150-point report provided entirely free.',
-
-      open: false
-    },
-
-    {
-      question:
-        'Do you accept trades for other luxury vehicles?',
-
-      answer:
-        'We provide virtual valuation metrics and fair value acquisition proposals for clean high-tier luxury models from selected model years.',
-
-      open: false
-    }
-  ];
-
-
-  sendMessage(): void {
-
-    if (
-      !this.contactForm.fullName ||
-      !this.contactForm.email ||
-      !this.contactForm.phone ||
-      !this.contactForm.subject ||
-      !this.contactForm.message
-    ) {
-      return;
-    }
-
-
-    console.log(
-      'Contact form:',
-      this.contactForm
-    );
-
-
-    this.submitted = true;
-
-
-    this.contactForm = {
-      fullName: '',
-      email: '',
-      phone: '',
-      subject: 'general',
-      message: ''
-    };
-
-  }
-
-
-  toggleFaq(index: number): void {
-
-    this.faqs[index].open =
-      !this.faqs[index].open;
+      });
 
   }
 

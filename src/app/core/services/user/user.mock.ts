@@ -19,7 +19,8 @@ export const MOCK_USERS: UserAccount[] = [
   { id: 5, fullName: 'Helena Vance', email: 'helena.v@outlook.com', phone: '+1 (512) 662-8119', registeredAt: 'Oct 02, 2023', role: 'user', status: 'blocked' },
   { id: 6, fullName: 'Marcus Sterling', email: 'marcus.sterling@gmail.com', phone: '+1 (201) 441-2309', registeredAt: 'Oct 14, 2023', role: 'user', status: 'active' },
   { id: 7, fullName: 'Clara Oswald', email: 'clara_os@autodrive.com', phone: '+1 (512) 808-1123', registeredAt: 'Oct 15, 2023', role: 'admin', status: 'active' },
-  { id: 8, fullName: 'Julian Brooks', email: 'jbrooks@gmail.com', phone: '+1 (310) 902-8812', registeredAt: 'Oct 19, 2023', role: 'user', status: 'pending' }
+  { id: 8, fullName: 'Julian Brooks', email: 'jbrooks@gmail.com', phone: '+1 (310) 902-8812', registeredAt: 'Oct 19, 2023', role: 'user', status: 'pending' },
+  { id: 100,fullName:'Jonathan Vance', email: 'jonathan.vance@beverlyhills.org', phone: '+1 (310) 555-8422', registeredAt: 'Jan 01, 2024', role: 'user', status: 'active', avatarUrl: '/images/avt.jpg', location: 'Beverly Hills, CA', membership: 'Elite Member since January 2024' }
 ];
 
 export const MOCK_USERS_TOTAL = 1240;

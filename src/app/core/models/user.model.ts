@@ -2,14 +2,29 @@ export type UserAccountRole = 'admin' | 'seller' | 'user';
 export type UserAccountStatus = 'active' | 'pending' | 'blocked';
 
 export interface UserAccount {
+
   id: number;
+
   fullName: string;
+
   email: string;
+
   phone: string;
+
   registeredAt: string;
+
   role: UserAccountRole;
+
   status: UserAccountStatus;
+
   avatarUrl?: string;
+
+
+  // User profile
+  location?: string;
+
+  membership?: string;
+
 }
 
 export interface UserStats {
@@ -30,3 +45,4 @@ export interface UserListResult {
   pageSize: number;
   stats: UserStats;
 }
+

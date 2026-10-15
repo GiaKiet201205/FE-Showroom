@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of } from 'rxjs';
 import { UserListResult } from '../../models/user.model';
-import { MOCK_USERS, MOCK_USERS_TOTAL, MOCK_USER_STATS } from './user.mock';
+import { MOCK_CURRENT_USER, MOCK_USERS, MOCK_USERS_TOTAL, MOCK_USER_STATS } from './user.mock';
 
 export interface UserQuery {
   search?: string;
@@ -16,6 +16,39 @@ export interface UserQuery {
 export class UserService {
   private http = inject(HttpClient);
   private endpoint = '/admin/users';
+  private currentUser: UserAccount = {
+    ...MOCK_CURRENT_USER
+  };
+
+
+  getCurrentUser():
+    Observable<UserAccount> {
+
+    return of({
+      ...this.currentUser
+    });
+
+  }
+
+
+  updateCurrentUser(
+    changes: Partial<UserAccount>
+  ): Observable<UserAccount> {
+
+    this.currentUser = {
+
+      ...this.currentUser,
+
+      ...changes
+
+    };
+
+
+    return of({
+      ...this.currentUser
+    });
+
+  }
 
   getList(query: UserQuery): Observable<UserListResult> {
     const params = {

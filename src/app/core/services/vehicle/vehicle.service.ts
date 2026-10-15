@@ -43,4 +43,53 @@ export class VehicleService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
+
+  getById(
+    id: number
+  ): Observable<Vehicle | undefined> {
+
+    const vehicle =
+      this.vehicles.find(
+        vehicle =>
+          vehicle.id === id
+      );
+
+    return of(vehicle);
+
+  }
+
+
+  getFeatured(
+    limit = 4
+  ): Observable<Vehicle[]> {
+
+    const vehicles =
+      this.vehicles
+        .filter(
+          vehicle =>
+            vehicle.featured
+        )
+        .slice(
+          0,
+          limit
+        );
+
+    return of(vehicles);
+
+  }
+
+
+  getByIds(
+    ids: number[]
+  ): Observable<Vehicle[]> {
+
+    const vehicles =
+      this.vehicles.filter(
+        vehicle =>
+          ids.includes(vehicle.id)
+      );
+
+    return of(vehicles);
+
+  }
 }

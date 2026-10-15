@@ -32,92 +32,36 @@ interface Pillar {
 })
 export class AboutComponent {
 
-  statistics: Statistic[] = [
-    {
-      value: '500+',
-      label: 'Premium Cars Sold'
-    },
+  statistics: Statistic[] = [];
 
-    {
-      value: '50+',
-      label: 'Verified Brands'
-    },
+  leaders: Leader[] = [];
 
-    {
-      value: '10K+',
-      label: 'Happy Customers'
-    },
-
-    {
-      value: '15+',
-      label: 'Years of Trust'
-    }
-  ];
+  pillars: Pillar[] = [];
 
 
-  leaders: Leader[] = [
-    {
-      name: 'Marcus Sterling',
-      role: 'CEO & Founder',
-      image: '/images/leader-1.jpg'
-    },
-
-    {
-      name: 'Sarah Jenkins',
-      role: 'Head of Acquisitions',
-      image: '/images/leader-2.jpg'
-    },
-
-    {
-      name: 'David Vance',
-      role: 'Chief Mechanic Officer',
-      image: '/images/leader-3.jpg'
-    },
-
-    {
-      name: 'Elena Rostova',
-      role: 'Client Relations Director',
-      image: '/images/leader-4.jpg'
-    }
-  ];
+  constructor(
+    private siteContentService:
+      SiteContentService
+  ) {}
 
 
-  pillars: Pillar[] = [
-    {
-      title: 'Trust',
+  ngOnInit(): void {
 
-      description:
-        'No hidden clauses. Full transparency in history and specifications.',
+    this.siteContentService
+      .getAboutContent()
+      .subscribe(data => {
 
-      icon: 'fa-solid fa-shield-halved'
-    },
+        this.statistics =
+          data.statistics;
 
-    {
-      title: 'Quality',
+        this.leaders =
+          data.leaders;
 
-      description:
-        'Every vehicle is exhaustively certified through 150-point inspection.',
+        this.pillars =
+          data.pillars;
 
-      icon: 'fa-regular fa-square-check'
-    },
+      });
 
-    {
-      title: 'Innovation',
-
-      description:
-        'Online instant rates and streamlined virtual configuration path.',
-
-      icon: 'fa-regular fa-credit-card'
-    },
-
-    {
-      title: 'Customer First',
-
-      description:
-        'Dedicated advisor assistance with seamless home delivery options.',
-
-      icon: 'fa-solid fa-headset'
-    }
-  ];
+  }
 
 }
