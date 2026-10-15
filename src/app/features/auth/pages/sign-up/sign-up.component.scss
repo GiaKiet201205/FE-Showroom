@@ -1,6 +1,9 @@
 @use '../../auth-page' as auth;
 @include auth.layout;
 
+.field-error { display: block; margin-top: 4px; color: #dc2626; font-size: 9px; }
+.terms-error { margin: -10px 0 12px; text-align: left; }
+
 .card-mark { width: 27px; height: 27px; border-radius: 6px; }
 .card-mark svg { width: 21px; height: 21px; }
 
