@@ -1,33 +1,49 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, throwError } from 'rxjs';
-import { NotificationService } from '../services/notification.service';
+import { AuthService } from '../services/auth.service';
 
-/**
- * Bắt lỗi HTTP tập trung một chỗ: hiển thị thông báo lỗi và
- * ném lại lỗi để component/service gọi tiếp có thể xử lý riêng nếu cần.
- */
+/** Bắt lỗi HTTP tập trung: báo người dùng, xử lý 401, rồi ném lỗi tiếp cho component. */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const notification = inject(NotificationService);
+  const snackBar = inject(MatSnackBar);
+  const router = inject(Router);
+  const auth = inject(AuthService);
 
   return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {
-      let message = 'Đã xảy ra lỗi không xác định. Vui lòng thử lại.';
+    catchError((err: HttpErrorResponse) => {
+      let message: string;
 
-      if (error.status === 0) {
-        message = 'Không thể kết nối tới máy chủ. Vui lòng kiểm tra kết nối mạng.';
-      } else if (error.status === 401) {
-        message = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
-      } else if (error.status === 403) {
-        message = 'Bạn không có quyền thực hiện thao tác này.';
-      } else if (error.status === 404) {
-        message = 'Không tìm thấy dữ liệu yêu cầu.';
-      } else if (error.error?.message) {
-        message = error.error.message;
+      switch (err.status) {
+        case 0:
+          message = 'Không kết nối được máy chủ. Vui lòng kiểm tra mạng.';
+          break;
+        case 401:
+          message = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+          // Request đăng nhập bị 401 (sai mật khẩu) thì không chuyển hướng
+          if (!req.url.includes('/auth/login')) {
+            auth.logout();
+            router.navigate(['/loginadmin'], { queryParams: { redirectTo: router.url } });
+          }
+          break;
+        case 403:
+          message = 'Bạn không có quyền thực hiện thao tác này.';
+          break;
+        case 404:
+          message = 'Không tìm thấy dữ liệu yêu cầu.';
+          break;
+        default:
+          message =
+            err.status >= 500
+              ? 'Lỗi máy chủ. Vui lòng thử lại sau.'
+              : err.error?.message ?? 'Đã có lỗi xảy ra.';
       }
 
-      notification.showError(message);
-      return throwError(() => error);
+      console.error(`[HTTP ${err.status}] ${req.method} ${req.url}`, err);
+      snackBar.open(message, 'Đóng', { duration: 4000 });
+
+      return throwError(() => err);
     })
   );
 };

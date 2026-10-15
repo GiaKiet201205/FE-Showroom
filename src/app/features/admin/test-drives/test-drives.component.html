@@ -53,37 +53,27 @@
     </section>
   }
 
-  <section class="filter-bar">
+  <!-- Bộ lọc: Reactive Forms. Gõ tìm kiếm tự động lọc sau 300ms (debounceTime), không cần Enter -->
+  <section class="filter-bar" [formGroup]="filterForm">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input
-        type="text"
-        placeholder="Search bookings..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onFilterChange()"
-      />
+      <input type="text" placeholder="Search bookings..." formControlName="search" />
     </div>
 
     <!-- Ô chọn ngày có lịch và hỗ trợ nhập tay -->
-    <input 
-      type="date" 
-      class="filter-select" 
-      [ngModel]="dateFilter()" 
-      (ngModelChange)="dateFilter.set($event); onFilterChange()"
+    <input
+      type="date"
+      class="filter-select"
+      formControlName="date"
       title="Chọn hoặc nhập ngày"
     />
 
-    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="status">
       <option value="all">Status: All</option>
       <option value="confirmed">Confirmed</option>
       <option value="pending">Pending</option>
       <option value="completed">Completed</option>
       <option value="cancelled">Cancelled</option>
-    </select>
-
-    <select class="filter-select sort-select">
-      <option>Sort by: Preferred Date</option>
     </select>
   </section>
 
@@ -152,36 +142,94 @@
   </section>
 </div>
 
-<!-- Modal thêm/sửa lịch lái thử -->
+<!-- Modal thêm/sửa lịch lái thử: Reactive Forms + validator -->
 @if (showModal()) {
   <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <form
+      class="modal-content"
+      [formGroup]="bookingForm"
+      (ngSubmit)="saveBooking()"
+      (click)="$event.stopPropagation()"
+      novalidate
+    >
       <h2 class="modal-title">{{ editingBooking() ? 'Edit Booking' : 'Schedule New Test Drive' }}</h2>
-      
+
       <div class="form-grid">
         <div class="form-group">
           <label>Customer Name</label>
-          <input type="text" [(ngModel)]="formData().customerName" class="form-control" />
+          <input
+            type="text"
+            formControlName="customerName"
+            class="form-control"
+            [class.is-invalid]="f.customerName.touched && f.customerName.invalid"
+          />
+          @if (f.customerName.touched && f.customerName.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập tên khách hàng</small>
+          }
+          @if (f.customerName.errors?.['maxlength']) {
+            <small class="field-error">Tối đa 80 ký tự</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Vehicle Name</label>
-          <input type="text" [(ngModel)]="formData().vehicleName" class="form-control" />
+          <input
+            type="text"
+            formControlName="vehicleName"
+            class="form-control"
+            [class.is-invalid]="f.vehicleName.touched && f.vehicleName.invalid"
+          />
+          @if (f.vehicleName.touched && f.vehicleName.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập tên xe</small>
+          }
+          @if (f.vehicleName.errors?.['maxlength']) {
+            <small class="field-error">Tối đa 80 ký tự</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Preferred Date</label>
-          <input type="date" [(ngModel)]="formData().preferredDate" class="form-control" />
+          <input
+            type="date"
+            formControlName="preferredDate"
+            class="form-control"
+            [class.is-invalid]="f.preferredDate.touched && f.preferredDate.invalid"
+          />
+          @if (f.preferredDate.touched && f.preferredDate.invalid) {
+            <small class="field-error">Vui lòng chọn ngày lái thử</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Time Slot</label>
-          <input type="text" [(ngModel)]="formData().timeSlot" class="form-control" placeholder="Ví dụ: 10:30 AM" />
+          <input
+            type="text"
+            formControlName="timeSlot"
+            class="form-control"
+            placeholder="Ví dụ: 10:30 AM"
+            [class.is-invalid]="f.timeSlot.touched && f.timeSlot.invalid"
+          />
+          @if (f.timeSlot.touched && f.timeSlot.invalid) {
+            <small class="field-error">Vui lòng nhập khung giờ</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Location</label>
-          <input type="text" [(ngModel)]="formData().location" class="form-control" />
+          <input
+            type="text"
+            formControlName="location"
+            class="form-control"
+            [class.is-invalid]="f.location.touched && f.location.invalid"
+          />
+          @if (f.location.touched && f.location.invalid) {
+            <small class="field-error">Vui lòng nhập địa điểm</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Status</label>
-          <select [(ngModel)]="formData().status" class="form-control">
+          <select formControlName="status" class="form-control">
             <option value="pending">Pending</option>
             <option value="confirmed">Confirmed</option>
             <option value="completed">Completed</option>
@@ -191,9 +239,12 @@
       </div>
 
       <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-        <button class="btn-primary" (click)="saveBooking()">Save</button>
+        <!-- type="button" để nút Cancel không kích hoạt submit của form -->
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : 'Save' }}
+        </button>
       </div>
-    </div>
+    </form>
   </div>
 }
