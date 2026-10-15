@@ -9,18 +9,6 @@ import {
   SiteContentService
 } from '../../../core/services/site-content/site-content.service';
 
-interface PremiumService {
-  id: number;
-  title: string;
-  description: string;
-  icon: string;
-  type:
-    | 'financing'
-    | 'insurance'
-    | 'inspection'
-    | 'trade-in'
-    | 'test-drive';
-}
 
 @Component({
   selector: 'app-services',
@@ -55,6 +43,39 @@ export class ServicesComponent {
         this.services = data;
 
       });
+
+  }
+
+  learnMore(
+    service: PremiumService
+  ): void {
+
+    switch (
+      service.type
+    ) {
+
+      case 'test-drive':
+
+        this.router.navigate([
+          '/test-drives'
+        ]);
+
+        break;
+
+
+      case 'financing':
+      case 'insurance':
+      case 'inspection':
+      case 'trade-in':
+
+        console.log(
+          'Selected service:',
+          service.type
+        );
+
+        break;
+
+    }
 
   }
 

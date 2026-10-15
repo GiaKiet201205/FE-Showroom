@@ -99,8 +99,18 @@
         (click)="viewVehicle(vehicle.id)"
       >
         <div class="vehicle-image">
-          <img [src]="vehicle.image" [alt]="vehicle.name" />
+          <img
+            [src]="vehicle.imageUrl || '/images/no-image.jpg'"
+            [alt]="vehicle.brand + ' ' + vehicle.model"
+          />
 
+          <h3>
+            {{ vehicle.brand }} {{ vehicle.model }}
+          </h3>
+
+          <p>
+            {{ vehicle.year }} • {{ vehicle.transmission || '-' }}
+          </p>
           <button
             type="button"
             class="favorite-button"
@@ -113,11 +123,11 @@
 
         <div class="vehicle-content">
           <h3>
-            {{ vehicle.name }}
+            {{ vehicle.brand }} {{ vehicle.model }}
           </h3>
 
           <p>
-            {{ vehicle.category }}
+            {{ vehicle.year }} • {{ vehicle.transmission || '-' }}
           </p>
 
           <strong>

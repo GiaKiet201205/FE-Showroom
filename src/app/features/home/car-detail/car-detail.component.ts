@@ -1,65 +1,51 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FavoriteService } from '../../../core/services/favorite.service';
+
 import {
-  Vehicle
+  Component
+} from '@angular/core';
+
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
+
+import {
+  Vehicle,
+  VehicleSpecification
 } from '../../../core/models/vehicle.model';
 
 import {
   VehicleService
 } from '../../../core/services/vehicle/vehicle.service';
 
-interface Specification {
-  label: string;
-  value: string;
-}
+import {
+  FavoriteService
+} from '../../../core/services/favorite.service';
 
-interface Seller {
-  name: string;
-  avatar: string;
-  rating: number;
-  reviews: number;
-  address: string;
-  phone: string;
-}
-
-interface CarDetail {
-  id: number;
-
-  listingId: string;
-
-  name: string;
-  year: number;
-  price: number;
-
-  images: string[];
-
-  seller: Seller;
-
-  specifications: Specification[];
-
-  highlights: string[];
-
-  description: string;
-}
 
 @Component({
   selector: 'app-car-detail',
+
   standalone: true,
 
   imports: [
     CommonModule
   ],
 
-  templateUrl: './car-detail.component.html',
-  styleUrl: './car-detail.component.scss'
+  templateUrl:
+    './car-detail.component.html',
+
+  styleUrl:
+    './car-detail.component.scss'
 })
 export class CarDetailComponent {
 
   car?: Vehicle;
 
   selectedImage = '';
+
+  specifications:
+    VehicleSpecification[] = [];
 
 
   constructor(
@@ -89,14 +75,181 @@ export class CarDetailComponent {
         this.car = vehicle;
 
 
-        if (vehicle) {
-
-          this.selectedImage =
-            vehicle.images?.[0]
-            ?? vehicle.imageUrl
-            ?? '';
-
+        if (!vehicle) {
+          return;
         }
+
+
+        this.selectedImage =
+          vehicle.images?.[0]
+          ?? vehicle.imageUrl
+          ?? '';
+
+
+        this.specifications =
+          this.buildSpecifications(
+            vehicle
+          );
+
       });
+
   }
+
+
+  // =========================================
+  // SPECIFICATIONS
+  // =========================================
+
+  private buildSpecifications(
+    vehicle: Vehicle
+  ): VehicleSpecification[] {
+
+    return [
+
+      {
+        label: 'Engine',
+        value:
+          vehicle.engine ?? '-'
+      },
+
+      {
+        label: 'Horsepower',
+        value:
+          vehicle.horsepower ?? '-'
+      },
+
+      {
+        label: 'Fuel Type',
+        value:
+          vehicle.fuelType ?? '-'
+      },
+
+      {
+        label: 'Transmission',
+        value:
+          vehicle.transmission ?? '-'
+      },
+
+      {
+        label: 'Mileage',
+        value:
+          `${vehicle.mileage.toLocaleString()} mi`
+      },
+
+      {
+        label: 'Body Type',
+        value:
+          vehicle.bodyType ?? '-'
+      },
+
+      {
+        label: 'Drivetrain',
+        value:
+          vehicle.drivetrain ?? '-'
+      },
+
+      {
+        label: 'Exterior Color',
+        value:
+          vehicle.color
+      }
+
+    ];
+
+  }
+
+
+  // =========================================
+  // IMAGE
+  // =========================================
+
+  selectImage(
+    image: string
+  ): void {
+
+    this.selectedImage =
+      image;
+
+  }
+
+
+  // =========================================
+  // TEST DRIVE
+  // =========================================
+
+  scheduleTestDrive(): void {
+
+    if (!this.car) {
+      return;
+    }
+
+
+    this.router.navigate(
+      ['/test-drives'],
+      {
+        queryParams: {
+          vehicleId:
+            this.car.id
+        }
+      }
+    );
+
+  }
+
+
+  // =========================================
+  // CONTACT
+  // =========================================
+
+  contactDealer(): void {
+
+    console.log(
+      'Contact dealer:',
+      this.car?.seller?.name
+    );
+
+  }
+
+
+  // =========================================
+  // FAVORITE
+  // =========================================
+
+  toggleFavorite(): void {
+
+    if (!this.car) {
+      return;
+    }
+
+
+    this.favoriteService.toggle({
+
+      id:
+        this.car.id,
+
+      name:
+        `${this.car.brand} ${this.car.model}`,
+
+      image:
+        this.car.imageUrl ?? '',
+
+      price:
+        this.car.price,
+
+      year:
+        this.car.year,
+
+      mileage:
+        `${this.car.mileage.toLocaleString()} mi`,
+
+      fuel:
+        this.car.fuelType ?? '-',
+
+      transmission:
+        this.car.transmission ?? '-'
+
+    });
+
+  }
+
 }

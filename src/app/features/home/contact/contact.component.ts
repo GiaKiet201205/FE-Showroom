@@ -1,20 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {
+  ContactSubject,
+  FaqItem
+} from '../../../core/models/site-content.model';
 
-interface ContactFormData {
-  fullName: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
+import {
+  SiteContentService
+} from '../../../core/services/site-content/site-content.service';
 
-interface FaqItem {
-  question: string;
-  answer: string;
-  open: boolean;
-}
 
 @Component({
   selector: 'app-contact',
@@ -30,6 +25,23 @@ interface FaqItem {
   styleUrl: './contact.component.scss'
 })
 export class ContactComponent {
+
+  submitted = false;
+
+  contactForm = {
+
+    fullName: '',
+
+    email: '',
+
+    phone: '',
+
+    subject: 'general',
+
+    message: ''
+
+  };
+
 
   subjects: ContactSubject[] = [];
 
@@ -58,4 +70,49 @@ export class ContactComponent {
 
   }
 
+  sendMessage(): void {
+    if (
+      !this.contactForm.fullName ||
+      !this.contactForm.email ||
+      !this.contactForm.phone ||
+      !this.contactForm.subject ||
+      !this.contactForm.message
+    ) {
+      return;
+    }
+
+
+    console.log(
+      this.contactForm
+    );
+
+
+    this.submitted = true;
+
+
+    this.contactForm = {
+
+      fullName: '',
+
+      email: '',
+
+      phone: '',
+
+      subject: 'general',
+
+      message: ''
+
+    };
+
+  }
+
+
+  toggleFaq(
+    index: number
+  ): void {
+
+    this.faqs[index].open =
+      !this.faqs[index].open;
+
+  }
 }

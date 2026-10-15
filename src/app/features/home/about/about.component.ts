@@ -1,22 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import {
+  SiteContentService
+} from '../../../core/services/site-content/site-content.service';
+import {
+  Statistic,
+  Leader,
+  Pillar
+} from '../../../core/models/site-content.model';
 
-interface Statistic {
-  value: string;
-  label: string;
-}
-
-interface Leader {
-  name: string;
-  role: string;
-  image: string;
-}
-
-interface Pillar {
-  title: string;
-  description: string;
-  icon: string;
-}
 
 @Component({
   selector: 'app-about',
