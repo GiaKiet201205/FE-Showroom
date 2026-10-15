@@ -1,18 +1,11 @@
 import { Routes } from '@angular/router';
-import { SignInComponent } from './features/auth/pages/sign-in/sign-in.component';
 import { SignUpComponent } from './features/auth/pages/sign-up/sign-up.component';
 import { ForgotPasswordComponent } from './features/auth/pages/forgot-password/forgot-password.component';
 import { adminGuard } from './core/guards/admin.guard';
+import { SignInComponent } from './features/auth/pages/sign-in/sign-in.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },
-
-  // {
-  //   loadComponent: () =>
-  //     import('./features/auth/pages/sign-in/sign-in.component').then(
-  //       (m) => m.SignInComponent,
-  //     ),
-  // }
   { path: 'sign-in', component: SignInComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
