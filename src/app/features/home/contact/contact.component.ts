@@ -1,20 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import {
+  ContactSubject,
+  FaqItem
+} from '../../../core/models/site-content.model';
 
-interface ContactFormData {
-  fullName: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
+import {
+  SiteContentService
+} from '../../../core/services/site-content/site-content.service';
 
-interface FaqItem {
-  question: string;
-  answer: string;
-  open: boolean;
-}
 
 @Component({
   selector: 'app-contact',
@@ -33,89 +28,49 @@ export class ContactComponent {
 
   submitted = false;
 
+  contactForm = {
 
-  contactForm: ContactFormData = {
     fullName: '',
+
     email: '',
+
     phone: '',
+
     subject: 'general',
+
     message: ''
+
   };
 
 
-  subjects = [
-    {
-      value: 'general',
-      label: 'General Inquiry'
-    },
-    {
-      value: 'vehicle',
-      label: 'Vehicle Inquiry'
-    },
-    {
-      value: 'financing',
-      label: 'Financing'
-    },
-    {
-      value: 'insurance',
-      label: 'Insurance'
-    },
-    {
-      value: 'test-drive',
-      label: 'Test Drive'
-    },
-    {
-      value: 'trade-in',
-      label: 'Trade-In'
-    }
-  ];
+  subjects: ContactSubject[] = [];
+
+  faqs: FaqItem[] = [];
 
 
-  faqs: FaqItem[] = [
-    {
-      question:
-        'How does nationwide transport delivery work?',
+  constructor(
+    private siteContentService:
+      SiteContentService
+  ) {}
 
-      answer:
-        'Once your acquisition is completed and verified, we coordinate enclosed carrier transport directly to your designated address. Track links and dedicated advisor check-ins are provided daily.',
 
-      open: true
-    },
+  ngOnInit(): void {
 
-    {
-      question:
-        'Can I inspect the car in person before purchasing?',
+    this.siteContentService
+      .getContactContent()
+      .subscribe(data => {
 
-      answer:
-        'Absolutely. Scheduled test drives and direct viewings are available at all dealership partner locations. Schedule online or coordinate with your concierge advisor.',
+        this.subjects =
+          data.subjects;
 
-      open: false
-    },
+        this.faqs =
+          data.faqs;
 
-    {
-      question:
-        'Are vehicle background checks guaranteed?',
+      });
 
-      answer:
-        'Yes. Every single listed vehicle contains verified background certifications and our bespoke 150-point report provided entirely free.',
-
-      open: false
-    },
-
-    {
-      question:
-        'Do you accept trades for other luxury vehicles?',
-
-      answer:
-        'We provide virtual valuation metrics and fair value acquisition proposals for clean high-tier luxury models from selected model years.',
-
-      open: false
-    }
-  ];
-
+  }
 
   sendMessage(): void {
-
     if (
       !this.contactForm.fullName ||
       !this.contactForm.email ||
@@ -128,7 +83,6 @@ export class ContactComponent {
 
 
     console.log(
-      'Contact form:',
       this.contactForm
     );
 
@@ -137,21 +91,28 @@ export class ContactComponent {
 
 
     this.contactForm = {
+
       fullName: '',
+
       email: '',
+
       phone: '',
+
       subject: 'general',
+
       message: ''
+
     };
 
   }
 
 
-  toggleFaq(index: number): void {
+  toggleFaq(
+    index: number
+  ): void {
 
     this.faqs[index].open =
       !this.faqs[index].open;
 
   }
-
 }
