@@ -7,32 +7,28 @@
       <div class="catalog-title">Active Catalog</div>
       <div class="catalog-sub">Manage list details, availability and details of cars</div>
     </div>
-<button class="btn-primary" (click)="openAddModal()">
+    <button class="btn-primary" (click)="openAddModal()">
       <mat-icon>add_circle</mat-icon>
       Add New Vehicle
     </button>
   </section>
 
-  <section class="filter-bar">
+  <!-- Bộ lọc: Reactive Forms. Gõ tìm kiếm tự động lọc sau 300ms (debounceTime), không cần Enter -->
+
+  <section class="filter-bar" [formGroup]="filterForm">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input
-        type="text"
-        placeholder="Search vehicles..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onFilterChange()"
-      />
+      <input type="text" placeholder="Search vehicles..." formControlName="search" />
     </div>
 
-    <select class="filter-select" [ngModel]="brandFilter()" (ngModelChange)="brandFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="brand">
       <option value="all">Brand (All)</option>
       @for (b of brandOptions; track b) {
         <option [value]="b">{{ b }}</option>
       }
     </select>
 
-    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="status">
       <option value="all">Status (All)</option>
       <option value="available">Available</option>
       <option value="reserved">Reserved</option>
@@ -40,10 +36,12 @@
       <option value="draft">Draft</option>
     </select>
 
-    <select class="filter-select" [ngModel]="yearFilter()" (ngModelChange)="yearFilter.set($event); onFilterChange()">
+    <!-- [ngValue] để giá trị năm là số (number), không bị biến thành chuỗi -->
+
+    <select class="filter-select" formControlName="year">
       <option value="all">Year (All)</option>
       @for (y of yearOptions; track y) {
-        <option [value]="y">{{ y }}</option>
+        <option [ngValue]="y">{{ y }}</option>
       }
     </select>
   </section>
@@ -67,7 +65,7 @@
         </thead>
         <tbody>
           @if (loading()) {
-            <tr><td colspan="9" class="loading-cell">Đang tải dữ liệu...</td></tr>
+            <tr><td colspan="10" class="loading-cell">Đang tải dữ liệu...</td></tr>
           } @else {
             @for (v of vehicles(); track v.id) {
               <tr>
@@ -89,9 +87,12 @@
                 <td class="cell-muted">{{ v.color }}</td>
                 <td><span class="status-badge" [class]="v.status">{{ v.status }}</span></td>
                 <td class="col-actions">
-<button class="icon-btn edit" title="Sửa" (click)="openEditModal(v)">
-      <mat-icon>edit</mat-icon>
-    </button>                  <button class="icon-btn delete" title="Xoá" (click)="deleteVehicle(v)"><mat-icon>delete</mat-icon></button>
+                  <button class="icon-btn edit" title="Sửa" (click)="openEditModal(v)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button class="icon-btn delete" title="Xoá" (click)="deleteVehicle(v)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
                 </td>
               </tr>
             }
@@ -121,56 +122,133 @@
   </section>
 </div>
 
-<!-- Modal thêm/sửa xe -->
+<!-- Modal thêm/sửa xe: Reactive Forms + validator -->
+ 
 @if (showModal()) {
   <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <form
+      class="modal-content"
+      [formGroup]="vehicleForm"
+      (ngSubmit)="saveVehicle()"
+      (click)="$event.stopPropagation()"
+      novalidate
+    >
       <h2 class="modal-title">{{ editingVehicle() ? 'Edit Vehicle' : 'Add New Vehicle' }}</h2>
-      
+
       <div class="form-grid">
         <div class="form-group">
           <label>Brand</label>
-          <input type="text" [(ngModel)]="formData().brand" class="form-control" />
+          <input
+            type="text"
+            formControlName="brand"
+            class="form-control"
+            [class.is-invalid]="f.brand.touched && f.brand.invalid"
+          />
+          @if (f.brand.touched && f.brand.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập thương hiệu</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Model</label>
-          <input type="text" [(ngModel)]="formData().model" class="form-control" />
+          <input
+            type="text"
+            formControlName="model"
+            class="form-control"
+            [class.is-invalid]="f.model.touched && f.model.invalid"
+          />
+          @if (f.model.touched && f.model.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập tên dòng xe</small>
+          }
+          @if (f.model.errors?.['maxlength']) {
+            <small class="field-error">Tối đa 60 ký tự</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Year</label>
-          <input type="number" [(ngModel)]="formData().year" class="form-control" />
+          <input
+            type="number"
+            formControlName="year"
+            class="form-control"
+            [class.is-invalid]="f.year.touched && f.year.invalid"
+          />
+          @if (f.year.touched && f.year.invalid) {
+            <small class="field-error">Năm phải từ 1900 đến {{ currentYear + 1 }}</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Price ($)</label>
-          <input type="number" [(ngModel)]="formData().price" class="form-control" />
+          <input
+            type="number"
+            formControlName="price"
+            class="form-control"
+            [class.is-invalid]="f.price.touched && f.price.invalid"
+          />
+          @if (f.price.touched && f.price.invalid) {
+            <small class="field-error">Giá phải lớn hơn 0</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Mileage (mi)</label>
-          <input type="number" [(ngModel)]="formData().mileage" class="form-control" />
+          <input
+            type="number"
+            formControlName="mileage"
+            class="form-control"
+            [class.is-invalid]="f.mileage.touched && f.mileage.invalid"
+          />
+          @if (f.mileage.touched && f.mileage.invalid) {
+            <small class="field-error">Số dặm không được âm</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Color</label>
-          <input type="text" [(ngModel)]="formData().color" class="form-control" />
+          <input
+            type="text"
+            formControlName="color"
+            class="form-control"
+            [class.is-invalid]="f.color.touched && f.color.invalid"
+          />
+          @if (f.color.touched && f.color.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập màu xe</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Status</label>
-          <select [(ngModel)]="formData().status" class="form-control">
+          <select formControlName="status" class="form-control">
             <option value="available">Available</option>
             <option value="reserved">Reserved</option>
             <option value="sold">Sold</option>
             <option value="draft">Draft</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>Image URL</label>
-          <input type="text" [(ngModel)]="formData().imageUrl" class="form-control" />
+          <input
+            type="text"
+            formControlName="imageUrl"
+            class="form-control"
+            placeholder="https://..."
+            [class.is-invalid]="f.imageUrl.touched && f.imageUrl.invalid"
+          />
+          @if (f.imageUrl.touched && f.imageUrl.invalid) {
+            <small class="field-error">Đường dẫn phải bắt đầu bằng http:// hoặc https://</small>
+          }
         </div>
       </div>
 
       <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-        <button class="btn-primary" (click)="saveVehicle()">Save</button>
+        <!-- type="button" để nút Cancel không kích hoạt submit của form -->
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : 'Save' }}
+        </button>
       </div>
-    </div>
+    </form>
   </div>
 }

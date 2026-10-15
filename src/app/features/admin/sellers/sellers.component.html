@@ -42,32 +42,26 @@
     </section>
   }
 
-  <section class="filter-bar">
+  <!-- Bộ lọc: Reactive Forms. Gõ tìm kiếm tự động lọc sau 300ms (debounceTime), không cần Enter -->
+  <section class="filter-bar" [formGroup]="filterForm">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input
-        type="text"
-        placeholder="Search sellers, company name..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onFilterChange()"
-      />
+      <input type="text" placeholder="Search sellers, company name..." formControlName="search" />
     </div>
-    <input 
-      type="date" 
-      class="filter-select" 
-      [ngModel]="dateFilter()" 
-      (ngModelChange)="dateFilter.set($event); onFilterChange()"
+
+    <input
+      type="date"
+      class="filter-select"
+      formControlName="date"
       title="Lọc theo ngày tham gia"
     />
 
-    <select class="filter-select" [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="status">
       <option value="all">Status: All</option>
       <option value="verified">Verified</option>
       <option value="pending">Pending</option>
       <option value="suspended">Suspended</option>
     </select>
-
   </section>
 
   <section class="panel">

@@ -13,19 +13,14 @@
     </button>
   </section>
 
-  <section class="filter-bar">
+  <!-- Bộ lọc: Reactive Forms. Gõ tìm kiếm tự động lọc sau 300ms (debounceTime), không cần Enter -->
+  <section class="filter-bar" [formGroup]="filterForm">
     <div class="search-box">
       <mat-icon>search</mat-icon>
-      <input
-        type="text"
-        placeholder="Search brands..."
-        [ngModel]="searchTerm()"
-        (ngModelChange)="searchTerm.set($event)"
-        (keyup.enter)="onFilterChange()"
-      />
+      <input type="text" placeholder="Search brands..." formControlName="search" />
     </div>
 
-    <select class="filter-select" [ngModel]="regionFilter()" (ngModelChange)="regionFilter.set($event); onFilterChange()">
+    <select class="filter-select" formControlName="region">
       <option value="all">Region: All Regions</option>
       <option value="Germany">Germany</option>
       <option value="Japan">Japan</option>
@@ -84,19 +79,38 @@
   </div>
 </div>
 
+<!-- Modal thêm/sửa thương hiệu: Reactive Forms + validator -->
 @if (showModal()) {
   <div class="modal-overlay" (click)="closeModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <form
+      class="modal-content"
+      [formGroup]="brandForm"
+      (ngSubmit)="saveBrand()"
+      (click)="$event.stopPropagation()"
+      novalidate
+    >
       <h2 class="modal-title">{{ editingBrand() ? 'Edit Brand' : 'Add New Brand' }}</h2>
-      
+
       <div class="form-grid">
         <div class="form-group">
           <label>Brand Name</label>
-          <input type="text" [(ngModel)]="formData.name" class="form-control" />
+          <input
+            type="text"
+            formControlName="name"
+            class="form-control"
+            [class.is-invalid]="f.name.touched && f.name.invalid"
+          />
+          @if (f.name.touched && f.name.errors?.['required']) {
+            <small class="field-error">Vui lòng nhập tên thương hiệu</small>
+          }
+          @if (f.name.errors?.['maxlength']) {
+            <small class="field-error">Tối đa 50 ký tự</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Origin</label>
-          <select [(ngModel)]="formData.origin" class="form-control">
+          <select formControlName="origin" class="form-control">
             <option value="Germany">Germany</option>
             <option value="Italy">Italy</option>
             <option value="Japan">Japan</option>
@@ -106,13 +120,23 @@
             <option value="South Korea">South Korea</option>
           </select>
         </div>
+
         <div class="form-group">
           <label>Listed Vehicles</label>
-          <input type="number" [(ngModel)]="formData.listedVehicles" class="form-control" />
+          <input
+            type="number"
+            formControlName="listedVehicles"
+            class="form-control"
+            [class.is-invalid]="f.listedVehicles.touched && f.listedVehicles.invalid"
+          />
+          @if (f.listedVehicles.touched && f.listedVehicles.invalid) {
+            <small class="field-error">Số xe không được âm</small>
+          }
         </div>
+
         <div class="form-group">
           <label>Status</label>
-          <select [(ngModel)]="formData.status" class="form-control">
+          <select formControlName="status" class="form-control">
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
@@ -120,9 +144,12 @@
       </div>
 
       <div class="modal-actions">
-        <button class="btn-cancel" (click)="closeModal()">Cancel</button>
-        <button class="btn-primary" (click)="saveBrand()">Save</button>
+        <!-- type="button" để nút Cancel không kích hoạt submit của form -->
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : 'Save' }}
+        </button>
       </div>
-    </div>
+    </form>
   </div>
 }
