@@ -27,7 +27,9 @@
 
 
         <h1>
-          {{ car.name }} ({{ car.year }})
+          {{ car.brand }}
+          {{ car.model }}
+          ({{ car.year }})
         </h1>
 
       </div>
@@ -70,7 +72,7 @@
 
             <img
               [src]="selectedImage"
-              [alt]="car.name"
+              [alt]="car.brand + ' ' + car.model"
             >
 
           </div>
@@ -87,7 +89,7 @@
 
               <img
                 [src]="image"
-                [alt]="car.name"
+                [alt]="car.brand + ' ' + car.model"
               >
 
             </button>
@@ -112,7 +114,7 @@
 
             <div
               class="spec-item"
-              *ngFor="let spec of car.specifications"
+              *ngFor="let spec of specifications"
             >
 
               <span>
@@ -158,35 +160,35 @@
 
         <!-- SELLER -->
 
-        <section class="seller-card">
+        <section
+          class="seller-card"
+          *ngIf="car.seller as seller"
+        >
 
           <h3>
             Seller Information
           </h3>
 
-
           <div class="seller-profile">
 
             <img
-              [src]="car.seller.avatar"
-              [alt]="car.seller.name"
+              [src]="seller.avatar"
+              [alt]="seller.name"
             >
-
 
             <div>
 
               <strong>
-                {{ car.seller.name }}
+                {{ seller.name }}
               </strong>
-
 
               <div class="seller-rating">
 
                 <i class="fa-solid fa-star"></i>
 
                 <span>
-                  {{ car.seller.rating }}
-                  ({{ car.seller.reviews }} Reviews)
+                  {{ seller.rating }}
+                  ({{ seller.reviews }} Reviews)
                 </span>
 
               </div>
@@ -203,7 +205,7 @@
               <i class="fa-solid fa-location-dot"></i>
 
               <span>
-                {{ car.seller.address }}
+                {{ seller.address }}
               </span>
 
             </div>
@@ -214,7 +216,7 @@
               <i class="fa-solid fa-phone"></i>
 
               <span>
-                {{ car.seller.phone }}
+                {{ seller.phone }}
               </span>
 
             </div>
@@ -286,9 +288,7 @@
 
           <ul>
 
-            <li
-              *ngFor="let highlight of car.highlights"
-            >
+            <li *ngFor="let highlight of (car.highlights ?? [])" >
 
               <i class="fa-regular fa-circle-check"></i>
 

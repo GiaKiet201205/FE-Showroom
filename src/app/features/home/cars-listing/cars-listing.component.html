@@ -268,8 +268,8 @@
           <div class="car-image">
 
             <img
-              [src]="car.image"
-              [alt]="car.name"
+              [src]="car.imageUrl"
+              [alt]="car.brand + ' ' + car.model"
             >
 
             <button
@@ -299,7 +299,7 @@
           <div class="car-info">
 
             <h3>
-              {{ car.name }}
+              {{ car.brand }} {{ car.model }}
             </h3>
 
             <p class="car-year">
@@ -316,7 +316,7 @@
                 </span>
 
                 <strong>
-                  {{ car.mileage }}
+                  {{ car.mileage | number }} mi
                 </strong>
 
               </div>
@@ -329,7 +329,7 @@
                 </span>
 
                 <strong>
-                  {{ car.fuel }}
+                  {{ car.fuelType }}
                 </strong>
 
               </div>

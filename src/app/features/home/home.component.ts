@@ -1,185 +1,166 @@
-import { Component, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
 
-interface BodyType {
-  name: string;
-  icon: string;
-}
+import {
+  Router,
+  RouterLink
+} from '@angular/router';
 
-interface Vehicle {
-  id: number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-}
+import {
+  Benefit,
+  BodyTypeOption,
+  PriceRangeOption
+} from '../../core/models/site-content.model';
 
-interface Benefit {
-  icon: string;
-  title: string;
-  description: string;
-}
+import {
+  SiteContentService
+} from '../../core/services/site-content/site-content.service';
+
+import {
+  VehicleService
+} from '../../core/services/vehicle/vehicle.service';
+
+import {
+  Vehicle
+} from '../../core/models/vehicle.model';
+
 
 @Component({
   selector: 'app-home',
+
   standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
     RouterLink
   ],
+
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent {
+export class HomeComponent
+  implements OnInit {
+
   private router = inject(Router);
+
+  private siteContentService =
+    inject(SiteContentService);
+
+  private vehicleService =
+    inject(VehicleService);
+
 
   selectedMake = '';
   selectedModel = '';
   selectedPrice = '';
 
-  makes = [
-    'BMW',
-    'Mercedes-Benz',
-    'Audi',
-    'Porsche',
-    'Ferrari',
-    'Lamborghini'
-  ];
 
-  models = [
-    'Sedan',
-    'SUV',
-    'Coupe',
-    'Hatchback',
-    'Truck'
-  ];
+  makes: string[] = [];
 
-  priceRanges = [
-    {
-      label: 'Under $50,000',
-      value: '0-50000'
-    },
-    {
-      label: '$50,000 - $100,000',
-      value: '50000-100000'
-    },
-    {
-      label: '$100,000 - $200,000',
-      value: '100000-200000'
-    },
-    {
-      label: 'Above $200,000',
-      value: '200000'
-    }
-  ];
+  models: string[] = [];
 
-  bodyTypes = [
-    {
-      name: 'Sedan',
-      icon: 'fa-solid fa-car-side'
-    },
-    {
-      name: 'SUV',
-      icon: 'fa-solid fa-car'
-    },
-    {
-      name: 'Hatchback',
-      icon: 'fa-solid fa-car-side'
-    },
-    {
-      name: 'Coupe',
-      icon: 'fa-solid fa-car-rear'
-    },
-    {
-      name: 'Truck',
-      icon: 'fa-solid fa-truck-pickup'
-    },
-    {
-      name: 'Van',
-      icon: 'fa-solid fa-van-shuttle'
-    }
-  ];
+  priceRanges: PriceRangeOption[] = [];
 
-  vehicles: Vehicle[] = [
-    {
-      id: 1,
-      name: 'BMW M3 Competition',
-      category: '2026 • Automatic',
-      price: 84900,
-      image: '/images/car1.jpg'
-    },
-    {
-      id: 2,
-      name: 'Tesla Model S Plaid',
-      category: '2026 • Electric',
-      price: 89990,
-      image: '/images/car2.jpg'
-    },
-    {
-      id: 3,
-      name: 'Porsche 911 Carrera',
-      category: '2026 • Automatic',
-      price: 120100,
-      image: '/images/car3.jpg'
-    },
-    {
-      id: 4,
-      name: 'Audi RS7',
-      category: '2026 • Automatic',
-      price: 128600,
-      image: '/images/car4.jpg'
-    }
-  ];
+  bodyTypes: BodyTypeOption[] = [];
 
-  benefits = [
-    {
-      icon: 'fa-solid fa-shield-halved',
-      title: 'Verified Sellers',
-      description:
-        'Every partner passes through professional licensing checks.'
-    },
-    {
-      icon: 'fa-solid fa-wallet',
-      title: 'Easy Financing',
-      description:
-        'Instantly compare competitive loan rates from top auto banks.'
-    },
-    {
-      icon: 'fa-solid fa-clipboard-check',
-      title: 'Free Inspection',
-      description:
-        'Comprehensive 150-point report provided with every vehicle.'
-    },
-    {
-      icon: 'fa-solid fa-headset',
-      title: '24/7 Support',
-      description:
-        'Direct hotline assistance during purchasing and active transport.'
-    }
-  ];
+  benefits: Benefit[] = [];
+
+  vehicles: Vehicle[] = [];
+
+
+  ngOnInit(): void {
+
+    this.loadContent();
+
+    this.loadFeaturedVehicles();
+
+  }
+
+
+  private loadContent(): void {
+
+    this.siteContentService
+      .getHomeContent()
+      .subscribe(data => {
+
+        this.makes =
+          data.makes;
+
+        this.models =
+          data.models;
+
+        this.priceRanges =
+          data.priceRanges;
+
+        this.bodyTypes =
+          data.bodyTypes;
+
+        this.benefits =
+          data.benefits;
+
+      });
+
+  }
+
+
+  private loadFeaturedVehicles(): void {
+    this.vehicleService.getFeatured(4).subscribe(data => {this.vehicles = data;});
+  }
+
 
   browseCars(): void {
-    this.router.navigate(['/cars'], {
-      queryParams: {
-        make: this.selectedMake || null,
-        model: this.selectedModel || null,
-        price: this.selectedPrice || null
+
+    this.router.navigate(
+      ['/cars'],
+      {
+        queryParams: {
+          make:
+            this.selectedMake || null,
+
+          model:
+            this.selectedModel || null,
+
+          price:
+            this.selectedPrice || null
+        }
       }
-    });
+    );
+
   }
 
-  filterByBodyType(type: string): void {
-    this.router.navigate(['/cars'], {
-      queryParams: {
-        bodyType: type
+
+  filterByBodyType(
+    type: string
+  ): void {
+
+    this.router.navigate(
+      ['/cars'],
+      {
+        queryParams: {
+          bodyType: type
+        }
       }
-    });
+    );
+
   }
 
-  viewVehicle(id: number): void {
-    this.router.navigate(['/cars', id]);
+
+  viewVehicle(
+    id: number
+  ): void {
+
+    this.router.navigate([
+      '/cars',
+      id
+    ]);
+
   }
-} 
+
+}

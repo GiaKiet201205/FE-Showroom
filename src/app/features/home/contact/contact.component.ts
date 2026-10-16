@@ -3,19 +3,10 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationService } from '../../../core/services/notification.service';
 
-interface ContactFormData {
-  fullName: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
+import {
+  SiteContentService
+} from '../../../core/services/site-content/site-content.service';
 
-interface FaqItem {
-  question: string;
-  answer: string;
-  open: boolean;
-}
 
 @Component({
   selector: 'app-contact',
@@ -44,77 +35,41 @@ export class ContactComponent {
     message: ['', [Validators.required, Validators.minLength(10)]]
   });
 
+    phone: '',
 
-  subjects = [
-    {
-      value: 'general',
-      label: 'General Inquiry'
-    },
-    {
-      value: 'vehicle',
-      label: 'Vehicle Inquiry'
-    },
-    {
-      value: 'financing',
-      label: 'Financing'
-    },
-    {
-      value: 'insurance',
-      label: 'Insurance'
-    },
-    {
-      value: 'test-drive',
-      label: 'Test Drive'
-    },
-    {
-      value: 'trade-in',
-      label: 'Trade-In'
-    }
-  ];
+    subject: 'general',
+
+    message: ''
+
+  };
 
 
-  faqs: FaqItem[] = [
-    {
-      question:
-        'How does nationwide transport delivery work?',
+  subjects: ContactSubject[] = [];
 
-      answer:
-        'Once your acquisition is completed and verified, we coordinate enclosed carrier transport directly to your designated address. Track links and dedicated advisor check-ins are provided daily.',
+  faqs: FaqItem[] = [];
 
-      open: true
-    },
 
-    {
-      question:
-        'Can I inspect the car in person before purchasing?',
+  constructor(
+    private siteContentService:
+      SiteContentService
+  ) {}
 
-      answer:
-        'Absolutely. Scheduled test drives and direct viewings are available at all dealership partner locations. Schedule online or coordinate with your concierge advisor.',
 
-      open: false
-    },
+  ngOnInit(): void {
 
-    {
-      question:
-        'Are vehicle background checks guaranteed?',
+    this.siteContentService
+      .getContactContent()
+      .subscribe(data => {
 
-      answer:
-        'Yes. Every single listed vehicle contains verified background certifications and our bespoke 150-point report provided entirely free.',
+        this.subjects =
+          data.subjects;
 
-      open: false
-    },
+        this.faqs =
+          data.faqs;
 
-    {
-      question:
-        'Do you accept trades for other luxury vehicles?',
+      });
 
-      answer:
-        'We provide virtual valuation metrics and fair value acquisition proposals for clean high-tier luxury models from selected model years.',
-
-      open: false
-    }
-  ];
-
+  }
 
   sendMessage(): void {
     if (this.contactForm.invalid) {
@@ -133,7 +88,9 @@ export class ContactComponent {
   }
 
 
-  toggleFaq(index: number): void {
+  toggleFaq(
+    index: number
+  ): void {
 
     this.faqs[index].open =
       !this.faqs[index].open;
