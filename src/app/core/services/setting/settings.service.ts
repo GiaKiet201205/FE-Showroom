@@ -1,6 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, of } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
 import {
   AdminProfile,
   AdminSettings,
@@ -10,34 +9,44 @@ import {
 import { MOCK_ADMIN_SETTINGS } from './settings.mock';
 
 /**
- * Toàn bộ logic gọi API của trang Settings nằm ở đây.
- * Component chỉ gọi method và hiển thị kết quả.
- * Backend chưa có -> catchError trả dữ liệu mẫu để UI vẫn chạy được.
+ * Dữ liệu Settings hiện dùng mock cục bộ; chưa gọi API khi backend chưa sẵn sàng.
  */
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private http = inject(HttpClient);
-  private endpoint = '/admin/settings';
+  private settings: AdminSettings = {
+    profile: { ...MOCK_ADMIN_SETTINGS.profile },
+    notifications: { ...MOCK_ADMIN_SETTINGS.notifications },
+    twoFactorEnabled: MOCK_ADMIN_SETTINGS.twoFactorEnabled
+  };
 
   getSettings(): Observable<AdminSettings> {
-    return this.http
-      .get<AdminSettings>(this.endpoint)
-      .pipe(catchError(() => of(MOCK_ADMIN_SETTINGS)));
+    return of(this.copySettings());
   }
 
-  saveProfile(profile: Partial<AdminProfile>): Observable<unknown> {
-    return this.http.put(`${this.endpoint}/profile`, profile).pipe(catchError(() => of(null)));
+  saveProfile(profile: Partial<AdminProfile>): Observable<void> {
+    this.settings.profile = { ...this.settings.profile, ...profile };
+    return of(undefined);
   }
 
-  changePassword(payload: ChangePasswordRequest): Observable<unknown> {
-    return this.http.put(`${this.endpoint}/password`, payload).pipe(catchError(() => of(null)));
+  changePassword(_payload: ChangePasswordRequest): Observable<void> {
+    return of(undefined);
   }
 
-  setTwoFactor(enabled: boolean): Observable<unknown> {
-    return this.http.put(`${this.endpoint}/two-factor`, { enabled }).pipe(catchError(() => of(null)));
+  setTwoFactor(enabled: boolean): Observable<void> {
+    this.settings.twoFactorEnabled = enabled;
+    return of(undefined);
   }
 
-  saveNotifications(prefs: NotificationPrefs): Observable<unknown> {
-    return this.http.put(`${this.endpoint}/notifications`, prefs).pipe(catchError(() => of(null)));
+  saveNotifications(prefs: NotificationPrefs): Observable<void> {
+    this.settings.notifications = { ...prefs };
+    return of(undefined);
+  }
+
+  private copySettings(): AdminSettings {
+    return {
+      profile: { ...this.settings.profile },
+      notifications: { ...this.settings.notifications },
+      twoFactorEnabled: this.settings.twoFactorEnabled
+    };
   }
 }

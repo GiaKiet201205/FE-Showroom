@@ -56,10 +56,7 @@
         </h2>
 
 
-        <form
-          #form="ngForm"
-          (ngSubmit)="sendMessage()"
-        >
+        <form [formGroup]="contactForm" (ngSubmit)="sendMessage()">
 
 
           <!-- FULL NAME -->
@@ -73,13 +70,8 @@
             <input
               id="fullName"
 
-              name="fullName"
-
               type="text"
-
-              [(ngModel)]="contactForm.fullName"
-
-              #fullName="ngModel"
+              formControlName="fullName"
 
               placeholder="Your name"
 
@@ -89,8 +81,7 @@
             <small
               class="error"
               *ngIf="
-                fullName.invalid &&
-                fullName.touched
+                invalid('fullName')
               "
             >
               Full name is required.
@@ -110,13 +101,8 @@
             <input
               id="email"
 
-              name="email"
-
               type="email"
-
-              [(ngModel)]="contactForm.email"
-
-              #email="ngModel"
+              formControlName="email"
 
               placeholder="your.email@example.com"
 
@@ -127,8 +113,7 @@
             <small
               class="error"
               *ngIf="
-                email.invalid &&
-                email.touched
+                invalid('email')
               "
             >
               Please enter a valid email address.
@@ -148,13 +133,8 @@
             <input
               id="phone"
 
-              name="phone"
-
               type="tel"
-
-              [(ngModel)]="contactForm.phone"
-
-              #phone="ngModel"
+              formControlName="phone"
 
               placeholder="+1 (555) 000-0000"
 
@@ -164,8 +144,7 @@
             <small
               class="error"
               *ngIf="
-                phone.invalid &&
-                phone.touched
+                invalid('phone')
               "
             >
               Phone number is required.
@@ -185,11 +164,7 @@
             <select
               id="subject"
 
-              name="subject"
-
-              [(ngModel)]="
-                contactForm.subject
-              "
+              formControlName="subject"
             >
 
               <option
@@ -218,13 +193,7 @@
             <textarea
               id="message"
 
-              name="message"
-
-              [(ngModel)]="
-                contactForm.message
-              "
-
-              #message="ngModel"
+              formControlName="message"
 
               placeholder="Type your message here..."
 
@@ -234,8 +203,7 @@
             <small
               class="error"
               *ngIf="
-                message.invalid &&
-                message.touched
+                invalid('message')
               "
             >
               Message is required.
@@ -251,7 +219,6 @@
 
             type="submit"
 
-            [disabled]="form.invalid"
           >
             Send Message
           </button>
