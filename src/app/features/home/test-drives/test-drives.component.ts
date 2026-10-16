@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../../core/services/notification.service';
 
 type TestDriveStatus =
   | 'upcoming'
@@ -37,7 +38,7 @@ interface TestDrive {
 
   imports: [
     CommonModule,
-    FormsModule
+    ReactiveFormsModule
   ],
 
   templateUrl: './test-drives.component.html',
@@ -63,14 +64,16 @@ export class TestDrivesComponent {
   // FORM
   // =========================
 
-  fullName = '';
-  email = '';
-  phone = '';
-
-  selectedVehicleId: number | null = null;
-
-  preferredDate = '';
-  preferredTime = '';
+  private fb = inject(FormBuilder);
+  private notification = inject(NotificationService);
+  bookingForm = this.fb.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    phone: ['', [Validators.required, Validators.pattern(/^[+]?[-\d\s().]{7,20}$/)]],
+    selectedVehicleId: this.fb.control<number | null>(null, Validators.required),
+    preferredDate: ['', Validators.required],
+    preferredTime: ['', Validators.required]
+  });
 
 
   // =========================
@@ -189,7 +192,7 @@ export class TestDrivesComponent {
       );
 
     if (vehicleId) {
-      this.selectedVehicleId = vehicleId;
+      this.bookingForm.controls.selectedVehicleId.setValue(vehicleId);
     }
 
   }
@@ -223,27 +226,17 @@ export class TestDrivesComponent {
   // =========================
 
   bookTestDrive(): void {
-
-    if (
-      !this.fullName ||
-      !this.email ||
-      !this.phone ||
-      !this.selectedVehicleId ||
-      !this.preferredDate ||
-      !this.preferredTime
-    ) {
-      alert(
-        'Please fill in all required information.'
-      );
-
+    if (this.bookingForm.invalid) {
+      this.bookingForm.markAllAsTouched();
       return;
     }
 
+    const { selectedVehicleId, preferredDate, preferredTime } = this.bookingForm.getRawValue();
 
     const vehicle =
       this.vehicles.find(
         item =>
-          item.id === this.selectedVehicleId
+          item.id === selectedVehicleId
       );
 
 
@@ -272,11 +265,11 @@ export class TestDrivesComponent {
 
       date:
         this.formatDate(
-          this.preferredDate
+          preferredDate
         ),
 
       time:
-        this.preferredTime,
+        preferredTime,
 
       location:
         vehicle.location,
@@ -294,6 +287,7 @@ export class TestDrivesComponent {
     this.activeTab = 'upcoming';
 
     this.showSuccess = true;
+    this.notification.showSuccess('Test drive booked successfully.');
 
     this.resetForm();
 
@@ -365,14 +359,12 @@ export class TestDrivesComponent {
   // =========================
 
   private resetForm(): void {
+    this.bookingForm.reset({ selectedVehicleId: this.bookingForm.controls.selectedVehicleId.value });
+  }
 
-    this.fullName = '';
-    this.email = '';
-    this.phone = '';
-
-    this.preferredDate = '';
-    this.preferredTime = '';
-
+  invalid(name: keyof typeof this.bookingForm.controls): boolean {
+    const control = this.bookingForm.controls[name];
+    return control.invalid && control.touched;
   }
 
 }

@@ -97,10 +97,7 @@
       </h2>
 
 
-      <form
-        #profileForm="ngForm"
-        (ngSubmit)="saveChanges(profileForm)"
-      >
+      <form [formGroup]="profileForm" (ngSubmit)="saveChanges()">
 
         <div class="form-grid">
 
@@ -118,20 +115,13 @@
 
               type="text"
 
-              name="fullName"
-
-              [(ngModel)]="profile.fullName"
-
-              #fullName="ngModel"
-
-              required
+              formControlName="fullName"
             >
 
             <small
               class="error"
               *ngIf="
-                fullName.invalid &&
-                fullName.touched
+                invalid('fullName')
               "
             >
               Full name is required.
@@ -153,21 +143,13 @@
 
               type="email"
 
-              name="email"
-
-              [(ngModel)]="profile.email"
-
-              #email="ngModel"
-
-              required
-              email
+              formControlName="email"
             >
 
             <small
               class="error"
               *ngIf="
-                email.invalid &&
-                email.touched
+                invalid('email')
               "
             >
               Please enter a valid email.
@@ -189,20 +171,13 @@
 
               type="tel"
 
-              name="phone"
-
-              [(ngModel)]="profile.phone"
-
-              #phone="ngModel"
-
-              required
+              formControlName="phone"
             >
 
             <small
               class="error"
               *ngIf="
-                phone.invalid &&
-                phone.touched
+                invalid('phone')
               "
             >
               Phone number is required.
@@ -224,12 +199,12 @@
 
               type="text"
 
-              name="location"
-
-              [(ngModel)]="profile.location"
-
-              required
+              formControlName="location"
             >
+
+            <small class="error" *ngIf="invalid('location')">
+              Location is required.
+            </small>
 
           </div>
 

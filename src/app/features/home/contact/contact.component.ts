@@ -1,10 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import {
-  ContactSubject,
-  FaqItem
-} from '../../../core/models/site-content.model';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NotificationService } from '../../../core/services/notification.service';
 
 import {
   SiteContentService
@@ -18,7 +15,7 @@ import {
 
   imports: [
     CommonModule,
-    FormsModule
+    ReactiveFormsModule
   ],
 
   templateUrl: './contact.component.html',
@@ -27,12 +24,16 @@ import {
 export class ContactComponent {
 
   submitted = false;
-
-  contactForm = {
-
-    fullName: '',
-
-    email: '',
+  private fb = inject(FormBuilder);
+  private notification = inject(NotificationService);
+  messages: ContactFormData[] = [];
+  contactForm = this.fb.nonNullable.group({
+    fullName: ['', [Validators.required, Validators.minLength(2)]],
+    email: ['', [Validators.required, Validators.email]],
+    phone: ['', [Validators.required, Validators.pattern(/^[+]?[-\d\s().]{7,20}$/)]],
+    subject: ['general', Validators.required],
+    message: ['', [Validators.required, Validators.minLength(10)]]
+  });
 
     phone: '',
 
@@ -71,39 +72,19 @@ export class ContactComponent {
   }
 
   sendMessage(): void {
-    if (
-      !this.contactForm.fullName ||
-      !this.contactForm.email ||
-      !this.contactForm.phone ||
-      !this.contactForm.subject ||
-      !this.contactForm.message
-    ) {
+    if (this.contactForm.invalid) {
+      this.contactForm.markAllAsTouched();
       return;
     }
-
-
-    console.log(
-      this.contactForm
-    );
-
-
+    this.messages = [...this.messages, this.contactForm.getRawValue()];
     this.submitted = true;
+    this.notification.showSuccess('Your message has been sent successfully.');
+    this.contactForm.reset({ subject: 'general' });
+  }
 
-
-    this.contactForm = {
-
-      fullName: '',
-
-      email: '',
-
-      phone: '',
-
-      subject: 'general',
-
-      message: ''
-
-    };
-
+  invalid(name: keyof ContactFormData): boolean {
+    const control = this.contactForm.controls[name];
+    return control.invalid && control.touched;
   }
 
 
@@ -115,4 +96,5 @@ export class ContactComponent {
       !this.faqs[index].open;
 
   }
+
 }

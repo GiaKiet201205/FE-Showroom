@@ -1,13 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-
-// Tài khoản Admin cố định (chưa có backend thật).
-// Muốn đổi email/mật khẩu, chỉ cần sửa 2 dòng này.
-const FIXED_ADMIN_EMAIL = 'admin@giakiet.com';
-const FIXED_ADMIN_PASSWORD = 'admin123';
 
 @Component({
   selector: 'app-login',
@@ -16,10 +11,12 @@ const FIXED_ADMIN_PASSWORD = 'admin123';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
+
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   submitting = false;
   errorMessage = '';
@@ -48,17 +45,20 @@ export class LoginComponent {
     this.submitting = true;
     this.errorMessage = '';
 
-    const { email, password } = this.form.getRawValue();
+    this.auth.login(this.form.getRawValue()).subscribe({
+      next: () => {
+        this.submitting = false;
+        this.router.navigateByUrl(this.getRedirectUrl());
+      },
+      error: (error: Error) => {
+        this.submitting = false;
+        this.errorMessage = error.message;
+      }
+    });
+  }
 
-    // So khớp với tài khoản Admin cố định — đúng cả 2 mới cho vào.
-    if (email !== FIXED_ADMIN_EMAIL || password !== FIXED_ADMIN_PASSWORD) {
-      this.submitting = false;
-      this.errorMessage = 'Email hoặc mật khẩu không đúng.';
-      return;
-    }
-
-    this.auth.loginAsAdmin();
-    this.submitting = false;
-    this.router.navigateByUrl('/admin/dashboard');
+  private getRedirectUrl(): string {
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+    return redirectTo?.startsWith('/admin/') ? redirectTo : '/admin/dashboard';
   }
 }

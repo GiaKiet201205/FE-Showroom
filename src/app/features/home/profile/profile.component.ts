@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import {
-  FormsModule,
-  NgForm
-} from '@angular/forms';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   RouterLink,
   RouterLinkActive
@@ -11,6 +8,7 @@ import {
 
 import { FavoriteService }
   from '../../../core/services/favorite.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 
 interface UserProfile {
@@ -28,7 +26,7 @@ interface UserProfile {
 
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     RouterLink,
     RouterLinkActive
   ],
@@ -56,18 +54,20 @@ export class ProfileComponent {
   // FORM
   // =========================================
 
-  profile: UserProfile = {
+  private readonly initialProfile: UserProfile = {
     fullName: 'Jonathan Vance',
-
-    email:
-      'jonathan.vance@beverlyhills.org',
-
-    phone:
-      '+1 (310) 555-8422',
-
-    location:
-      'Beverly Hills, CA'
+    email: 'jonathan.vance@beverlyhills.org',
+    phone: '+1 (310) 555-8422',
+    location: 'Beverly Hills, CA'
   };
+  private notification = inject(NotificationService);
+  savedProfiles: UserProfile[] = [{ ...this.initialProfile }];
+  profileForm = inject(FormBuilder).nonNullable.group({
+    fullName: [this.initialProfile.fullName, [Validators.required, Validators.minLength(2)]],
+    email: [this.initialProfile.email, [Validators.required, Validators.email]],
+    phone: [this.initialProfile.phone, [Validators.required, Validators.pattern(/^[+]?[-\d\s().]{7,20}$/)]],
+    location: [this.initialProfile.location, [Validators.required, Validators.minLength(2)]]
+  });
 
 
   // =========================================
@@ -96,32 +96,25 @@ export class ProfileComponent {
   // SAVE
   // =========================================
 
-  saveChanges(form: NgForm): void {
-
-    if (form.invalid) {
-      form.control.markAllAsTouched();
+  saveChanges(): void {
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
       return;
     }
-
-
-    console.log(
-      'Updated profile:',
-      this.profile
-    );
-
-
-    // Đồng bộ tên trên header của profile
-    this.user.name =
-      this.profile.fullName;
-
-
+    const profile = this.profileForm.getRawValue();
+    this.savedProfiles = [...this.savedProfiles, profile];
+    this.user.name = profile.fullName;
     this.showSuccess = true;
-
-
+    this.notification.showSuccess('Your profile has been updated successfully.');
     setTimeout(() => {
       this.showSuccess = false;
     }, 3000);
 
+  }
+
+  invalid(name: keyof UserProfile): boolean {
+    const control = this.profileForm.controls[name];
+    return control.invalid && control.touched;
   }
 
 }
