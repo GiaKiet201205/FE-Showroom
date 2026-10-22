@@ -1,6 +1,10 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptors,
+  withFetch,
+} from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { routes } from './app.routes';
@@ -15,11 +19,11 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(
       withFetch(),
-      withInterceptors([apiPrefixInterceptor, errorInterceptor]),
+      withInterceptors([
+        apiPrefixInterceptor,
+        authInterceptor,
+        errorInterceptor,
+      ]),
     ),
-    provideHttpClient(
-  withFetch(),
-  withInterceptors([apiPrefixInterceptor, authInterceptor, errorInterceptor]),
-),
   ],
 };
