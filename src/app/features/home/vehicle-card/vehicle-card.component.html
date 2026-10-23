@@ -1,0 +1,86 @@
+<article
+  class="vehicle-card"
+  (click)="viewDetails()"
+>
+
+  <!-- ===================================== -->
+  <!-- IMAGE -->
+  <!-- ===================================== -->
+
+  <div class="vehicle-image">
+
+    <img
+      [src]="
+        vehicle.imageUrl ||
+        '/images/no-image.jpg'
+      "
+      [alt]="
+        vehicle.brand +
+        ' ' +
+        vehicle.model
+      "
+    >
+
+
+    <button
+      type="button"
+      class="favorite-button"
+
+      aria-label="Add to wishlist"
+
+      (click)="
+        $event.stopPropagation()
+      "
+    >
+
+      <i
+        class="fa-regular fa-heart"
+      ></i>
+
+    </button>
+
+  </div>
+
+
+  <!-- ===================================== -->
+  <!-- CONTENT -->
+  <!-- ===================================== -->
+
+  <div class="vehicle-content">
+
+    <h3>
+
+      {{ vehicle.brand }}
+      {{ vehicle.model }}
+
+    </h3>
+
+
+    <p>
+
+      {{ vehicle.year }}
+
+      •
+
+      {{
+        vehicle.transmission || '-'
+      }}
+
+    </p>
+
+
+    <strong>
+
+      {{
+        vehicle.price
+          | currency:
+            'USD':
+            'symbol':
+            '1.0-0'
+      }}
+
+    </strong>
+
+  </div>
+
+</article>
