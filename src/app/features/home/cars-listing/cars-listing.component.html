@@ -20,28 +20,48 @@
         </label>
 
         <div class="condition-tabs">
-
           <button
-            [class.active]="condition === 'all'"
-            (click)="condition = 'all'"
+            type="button"
+
+            [class.active]="
+              condition === 'all'
+            "
+
+            (click)="
+              condition = 'all';
+              applyFilters()
+            "
           >
             All
           </button>
-
           <button
-            [class.active]="condition === 'new'"
-            (click)="condition = 'new'"
+            type="button"
+
+            [class.active]="
+              condition === 'new'
+            "
+
+            (click)="
+              condition = 'new';
+              applyFilters()
+            "
           >
             New
           </button>
-
           <button
-            [class.active]="condition === 'used'"
-            (click)="condition = 'used'"
+            type="button"
+
+            [class.active]="
+              condition === 'used'
+            "
+
+            (click)="
+              condition = 'used';
+              applyFilters()
+            "
           >
             Used
           </button>
-
         </div>
 
       </div>
@@ -61,10 +81,11 @@
         <select
           id="brand"
           [(ngModel)]="selectedBrand"
+          (ngModelChange)="applyFilters()"
         >
 
           <option value="">
-            BMW, Porsche, Tesla
+            All Brands
           </option>
 
           <option value="BMW">
@@ -95,20 +116,40 @@
         <div class="price-label">
 
           <strong>
-            {{ minPrice | currency:'USD':'symbol':'1.0-0' }}
+            {{
+              minPrice
+                | currency:
+                  'USD':
+                  'symbol':
+                  '1.0-0'
+            }}
           </strong>
 
+
           <strong>
-            {{ maxPrice | currency:'USD':'symbol':'1.0-0' }}+
+            {{
+              maxPrice
+                | currency:
+                  'USD':
+                  'symbol':
+                  '1.0-0'
+            }}
           </strong>
 
         </div>
 
         <input
           type="range"
-          min="20000"
-          max="150000"
+
+          min="0"
+
+          max="250000"
+
+          step="5000"
+
           [(ngModel)]="maxPrice"
+
+          (change)="applyFilters()"
         >
 
       </div>
@@ -124,15 +165,28 @@
 
         <div class="year-inputs">
 
-          <input
-            type="number"
-            [(ngModel)]="minYear"
-          >
+        <input
+          type="number"
 
-          <input
-            type="number"
-            [(ngModel)]="maxYear"
-          >
+          min="1990"
+          max="2026"
+
+          [(ngModel)]="minYear"
+
+          (change)="applyFilters()"
+        >
+
+
+        <input
+          type="number"
+
+          min="1990"
+          max="2026"
+
+          [(ngModel)]="maxYear"
+
+          (change)="applyFilters()"
+        >
 
         </div>
 
@@ -152,6 +206,7 @@
           <input
             type="checkbox"
             [(ngModel)]="bodyTypes.sedan"
+            (change)="applyFilters()"
           >
 
           <span>
@@ -201,6 +256,16 @@
 
       </div>
 
+      <button
+        type="button"
+
+        class="reset-filter-button"
+
+        (click)="resetFilters()"
+      >
+        Reset Filters
+      </button>
+
     </aside>
 
 
@@ -208,12 +273,44 @@
 
     <section class="cars-content">
 
+      <div class="search-bar">
+
+        <div class="search-input">
+
+          <i
+            class="fa-solid fa-magnifying-glass"
+          ></i>
+
+          <input
+            type="text"
+
+            [(ngModel)]="search"
+
+            placeholder="Search by brand, model, color..."
+
+            (keyup.enter)="searchCars()"
+          >
+
+        </div>
+
+
+        <button
+          type="button"
+          class="search-button"
+
+          (click)="searchCars()"
+        >
+          Search
+        </button>
+
+      </div>
+
       <!-- TOP BAR -->
 
       <div class="cars-toolbar">
 
         <strong>
-          Showing 42 premium vehicles
+          Showing {{ total }} premium vehicles
         </strong>
 
 
@@ -225,19 +322,25 @@
               Sort by:
             </span>
 
-            <select>
-              <option>
+            <select
+              [(ngModel)]="sort"
+              (ngModelChange)="changeSort()"
+            >
+              <option value="newest">
                 Newest Arrival
               </option>
 
-              <option>
+              <option value="price-asc">
                 Price Low to High
               </option>
 
-              <option>
+              <option value="price-desc">
                 Price High to Low
               </option>
 
+              <option value="year-desc">
+                Newest Model Year
+              </option>
             </select>
 
           </div>
@@ -374,38 +477,81 @@
 
 
       <!-- PAGINATION -->
+      <div
+      class="pagination"
+      *ngIf="totalPages > 1"
+    >
 
-      <div class="pagination">
+      <!-- PREVIOUS -->
 
-        <button>
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
+      <button
+        type="button"
 
-        <button class="active">
-          1
-        </button>
+        [disabled]="
+          currentPage === 1
+        "
 
-        <button>
-          2
-        </button>
+        (click)="
+          goToPage(
+            currentPage - 1
+          )
+        "
+      >
 
-        <button>
-          3
-        </button>
+        <i
+          class="fa-solid fa-chevron-left"
+        ></i>
 
-        <button>
-          ...
-        </button>
+      </button>
 
-        <button>
-          8
-        </button>
 
-        <button>
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
+      <!-- PAGE NUMBERS -->
 
-      </div>
+      <button
+        type="button"
+
+        *ngFor="
+          let page of pages
+        "
+
+        [class.active]="
+          page === currentPage
+        "
+
+        (click)="
+          goToPage(page)
+        "
+      >
+
+        {{ page }}
+
+      </button>
+
+
+      <!-- NEXT -->
+
+      <button
+        type="button"
+
+        [disabled]="
+          currentPage ===
+          totalPages
+        "
+
+        (click)="
+          goToPage(
+            currentPage + 1
+          )
+        "
+      >
+
+        <i
+          class="fa-solid fa-chevron-right"
+        ></i>
+
+      </button>
+
+    </div>
 
     </section>
 
