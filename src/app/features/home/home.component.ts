@@ -29,6 +29,9 @@ import {
 import {
   Vehicle
 } from '../../core/models/vehicle.model';
+import {
+  VehicleCardComponent
+} from './vehicle-card/vehicle-card.component';
 
 
 @Component({
@@ -39,7 +42,8 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink
+    RouterLink,
+    VehicleCardComponent
   ],
 
   templateUrl: './home.component.html',
