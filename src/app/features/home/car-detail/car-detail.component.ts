@@ -1,169 +1,181 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FavoriteService } from '../../../core/services/favorite.service';
 
-interface Specification {
-  label: string;
-  value: string;
-}
+import {
+  Component
+} from '@angular/core';
 
-interface Seller {
-  name: string;
-  avatar: string;
-  rating: number;
-  reviews: number;
-  address: string;
-  phone: string;
-}
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
 
-interface CarDetail {
-  id: number;
+import {
+  Vehicle,
+  VehicleSpecification
+} from '../../../core/models/vehicle.model';
 
-  listingId: string;
+import {
+  VehicleService
+} from '../../../core/services/vehicle/vehicle.service';
 
-  name: string;
-  year: number;
-  price: number;
+import {
+  FavoriteService
+} from '../../../core/services/favorite.service';
 
-  images: string[];
-
-  seller: Seller;
-
-  specifications: Specification[];
-
-  highlights: string[];
-
-  description: string;
-}
 
 @Component({
   selector: 'app-car-detail',
+
   standalone: true,
 
   imports: [
     CommonModule
   ],
 
-  templateUrl: './car-detail.component.html',
-  styleUrl: './car-detail.component.scss'
+  templateUrl:
+    './car-detail.component.html',
+
+  styleUrl:
+    './car-detail.component.scss'
 })
 export class CarDetailComponent {
 
+  car?: Vehicle;
+
   selectedImage = '';
 
-  car?: CarDetail;
-
-
-  cars: CarDetail[] = [
-    {
-      id: 1,
-
-      listingId: 'AD-84029',
-
-      name: 'Porsche 911 GT3 RS',
-      year: 2024,
-
-      price: 223800,
-
-      images: [
-        '/images/detail/porsche-main.jpg',
-        '/images/detail/porsche-1.jpg',
-        '/images/detail/porsche-2.jpg',
-        '/images/detail/porsche-3.jpg',
-        '/images/detail/porsche-4.jpg'
-      ],
-
-      seller: {
-        name: 'Metropolitan Porsche',
-        avatar: '/images/seller.jpg',
-
-        rating: 4.9,
-        reviews: 124,
-
-        address: 'Beverly Hills, CA',
-
-        phone: '+1 (310) 555-0199'
-      },
-
-      specifications: [
-        {
-          label: 'Engine',
-          value: '4.0L Naturally Aspirated Boxer-6'
-        },
-        {
-          label: 'Horsepower',
-          value: '518 hp'
-        },
-        {
-          label: 'Fuel Type',
-          value: 'Premium Petrol'
-        },
-        {
-          label: 'Transmission',
-          value: '7-Speed PDK Auto'
-        },
-        {
-          label: 'Mileage',
-          value: '15 mi (New)'
-        },
-        {
-          label: 'Body Type',
-          value: 'Coupe'
-        },
-        {
-          label: 'Drivetrain',
-          value: 'RWD'
-        },
-        {
-          label: 'Exterior Color',
-          value: 'GT Silver Metallic'
-        }
-      ],
-
-      highlights: [
-        'Carbon Ceramic Brakes (PCCB)',
-        'Weissach Performance Package',
-        'Alcantara Race-tex Racing Bucket Seats',
-        'Front Axle Lift System',
-        'Bespoke Sport Chrono Package',
-        'Matrix LED Headlights with PDLS+'
-      ],
-
-      description:
-        'The 2024 Porsche 911 GT3 RS is designed for maximum track performance. Powered by high-revving boxer unit, its state of the art active aerodynamics yield unprecedented high-cornering downforce capabilities. Hand-crafted lightweight carbon weave doors and bespoke motorsport suspension configurations.'
-    }
-  ];
+  specifications:
+    VehicleSpecification[] = [];
 
 
   constructor(
     private route: ActivatedRoute,
+
     private router: Router,
-    public favoriteService: FavoriteService
+
+    private vehicleService:
+      VehicleService,
+
+    public favoriteService:
+      FavoriteService
   ) {
 
     const id =
       Number(
-        this.route.snapshot.paramMap.get('id')
+        this.route.snapshot
+          .paramMap
+          .get('id')
       );
 
-    this.car =
-      this.cars.find(
-        (car) => car.id === id
-      );
 
-    if (this.car) {
-      this.selectedImage =
-        this.car.images[0];
-    }
+    this.vehicleService
+      .getById(id)
+      .subscribe(vehicle => {
+
+        this.car = vehicle;
+
+
+        if (!vehicle) {
+          return;
+        }
+
+
+        this.selectedImage =
+          vehicle.images?.[0]
+          ?? vehicle.imageUrl
+          ?? '';
+
+
+        this.specifications =
+          this.buildSpecifications(
+            vehicle
+          );
+
+      });
 
   }
 
 
-  selectImage(image: string): void {
-    this.selectedImage = image;
+  // =========================================
+  // SPECIFICATIONS
+  // =========================================
+
+  private buildSpecifications(
+    vehicle: Vehicle
+  ): VehicleSpecification[] {
+
+    return [
+
+      {
+        label: 'Engine',
+        value:
+          vehicle.engine ?? '-'
+      },
+
+      {
+        label: 'Horsepower',
+        value:
+          vehicle.horsepower ?? '-'
+      },
+
+      {
+        label: 'Fuel Type',
+        value:
+          vehicle.fuelType ?? '-'
+      },
+
+      {
+        label: 'Transmission',
+        value:
+          vehicle.transmission ?? '-'
+      },
+
+      {
+        label: 'Mileage',
+        value:
+          `${vehicle.mileage.toLocaleString()} mi`
+      },
+
+      {
+        label: 'Body Type',
+        value:
+          vehicle.bodyType ?? '-'
+      },
+
+      {
+        label: 'Drivetrain',
+        value:
+          vehicle.drivetrain ?? '-'
+      },
+
+      {
+        label: 'Exterior Color',
+        value:
+          vehicle.color
+      }
+
+    ];
+
   }
 
+
+  // =========================================
+  // IMAGE
+  // =========================================
+
+  selectImage(
+    image: string
+  ): void {
+
+    this.selectedImage =
+      image;
+
+  }
+
+
+  // =========================================
+  // TEST DRIVE
+  // =========================================
 
   scheduleTestDrive(): void {
 
@@ -176,7 +188,8 @@ export class CarDetailComponent {
       ['/test-drives'],
       {
         queryParams: {
-          vehicleId: this.car.id
+          vehicleId:
+            this.car.id
         }
       }
     );
@@ -184,13 +197,23 @@ export class CarDetailComponent {
   }
 
 
+  // =========================================
+  // CONTACT
+  // =========================================
+
   contactDealer(): void {
+
     console.log(
       'Contact dealer:',
-      this.car?.seller.name
+      this.car?.seller?.name
     );
+
   }
 
+
+  // =========================================
+  // FAVORITE
+  // =========================================
 
   toggleFavorite(): void {
 
@@ -198,35 +221,34 @@ export class CarDetailComponent {
       return;
     }
 
+
     this.favoriteService.toggle({
-      id: this.car.id,
 
-      name: this.car.name,
-      image: this.car.images[0],
+      id:
+        this.car.id,
 
-      price: this.car.price,
-      year: this.car.year,
+      name:
+        `${this.car.brand} ${this.car.model}`,
+
+      image:
+        this.car.imageUrl ?? '',
+
+      price:
+        this.car.price,
+
+      year:
+        this.car.year,
 
       mileage:
-        this.getSpecification('Mileage'),
+        `${this.car.mileage.toLocaleString()} mi`,
 
       fuel:
-        this.getSpecification('Fuel Type'),
+        this.car.fuelType ?? '-',
 
       transmission:
-        this.getSpecification('Transmission')
+        this.car.transmission ?? '-'
+
     });
-
-    
-
-  }
-
-  getSpecification(label: string): string {
-    return (
-      this.car?.specifications.find(
-        spec => spec.label === label
-      )?.value ?? '-'
-    );
 
   }
 

@@ -1,87 +1,382 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { UserAccount, UserListResult } from '../../models/user.model';
-import { MOCK_USERS, MOCK_USER_STATS } from './user.mock';
+
+import {
+  Observable,
+  of
+} from 'rxjs';
+
+import {
+  UserAccount,
+  UserListResult
+} from '../../models/user.model';
+
+import {
+  MOCK_CURRENT_USER,
+  MOCK_USERS,
+  MOCK_USER_STATS
+} from './user.mock';
+
 
 export interface UserQuery {
   search?: string;
+
   role?: string;
+
   status?: string;
+
   page: number;
+
   pageSize: number;
 }
 
-@Injectable({ providedIn: 'root' })
+
+@Injectable({
+  providedIn: 'root'
+})
 export class UserService {
-  // Khởi tạo mảng dữ liệu đệm nội bộ
-  private users: UserAccount[] = MOCK_USERS.map(u => ({ ...u }));
 
-  getList(query: UserQuery): Observable<UserListResult> {
-    let result = [...this.users];
+  // =====================================================
+  // MOCK DATA
+  // =====================================================
 
-    // Xử lý bộ lọc tìm kiếm
-    const search = query.search?.trim().toLowerCase();
-    if (search) {
-      result = result.filter(u => 
-        u.fullName.toLowerCase().includes(search) || 
-        u.email.toLowerCase().includes(search) ||
-        u.phone.includes(search)
-      );
-    }
+  private users: UserAccount[] =
+    MOCK_USERS.map(
+      user => ({
+        ...user
+      })
+    );
 
-    if (query.role && query.role !== 'all') {
-      result = result.filter(u => u.role === query.role);
-    }
 
-    if (query.status && query.status !== 'all') {
-      result = result.filter(u => u.status === query.status);
-    }
+  private currentUser: UserAccount = {
+    ...MOCK_CURRENT_USER
+  };
 
-    // Xử lý phân trang
-    const total = result.length;
-    const start = (query.page - 1) * query.pageSize;
-    const items = result.slice(start, start + query.pageSize);
+
+  // =====================================================
+  // CURRENT USER
+  // =====================================================
+
+  getCurrentUser():
+    Observable<UserAccount> {
 
     return of({
-      items,
-      total,
-      page: query.page,
-      pageSize: query.pageSize,
-      stats: MOCK_USER_STATS
+      ...this.currentUser
     });
+
   }
 
-  create(user: Omit<UserAccount, 'id'>): Observable<UserAccount> {
-    const newUser: UserAccount = {
-      ...user,
-      id: Math.max(0, ...this.users.map(u => u.id)) + 1
+
+  updateCurrentUser(
+    changes: Partial<UserAccount>
+  ): Observable<UserAccount> {
+
+    this.currentUser = {
+      ...this.currentUser,
+      ...changes
     };
-    this.users = [...this.users, newUser];
-    return of(newUser);
-  }
 
-  update(id: number, changes: Partial<UserAccount>): Observable<UserAccount> {
-    const index = this.users.findIndex(u => u.id === id);
-    if (index === -1) {
-      throw new Error('Không tìm thấy dữ liệu');
-    }
-    const updated = { ...this.users[index], ...changes };
-    this.users = this.users.map(u => u.id === id ? updated : u);
-    return of(updated);
-  }
 
-  delete(id: number): Observable<void> {
-    this.users = this.users.filter(u => u.id !== id);
-    return of(undefined);
-  }
+    // Đồng bộ current user
+    // vào danh sách user admin
+    this.users =
+      this.users.map(
+        user =>
+          user.id === this.currentUser.id
+            ? {
+                ...user,
+                ...this.currentUser
+              }
+            : user
+      );
 
-  toggleBlock(id: number): Observable<void> {
-    this.users = this.users.map(u => {
-      if (u.id === id) {
-        return { ...u, status: u.status === 'blocked' ? 'active' : 'blocked' };
-      }
-      return u;
+
+    return of({
+      ...this.currentUser
     });
-    return of(undefined);
+
   }
+
+
+  // =====================================================
+  // GET LIST
+  // =====================================================
+
+  getList(
+    query: UserQuery
+  ): Observable<UserListResult> {
+
+    let result = [
+      ...this.users
+    ];
+
+
+    // ===============================
+    // SEARCH
+    // ===============================
+
+    const search =
+      query.search
+        ?.trim()
+        .toLowerCase();
+
+
+    if (search) {
+
+      result =
+        result.filter(
+          user =>
+
+            user.fullName
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            user.email
+              .toLowerCase()
+              .includes(search)
+
+            ||
+
+            user.phone
+              .toLowerCase()
+              .includes(search)
+        );
+
+    }
+
+
+    // ===============================
+    // ROLE
+    // ===============================
+
+    if (
+      query.role &&
+      query.role !== 'all'
+    ) {
+
+      result =
+        result.filter(
+          user =>
+            user.role === query.role
+        );
+
+    }
+
+
+    // ===============================
+    // STATUS
+    // ===============================
+
+    if (
+      query.status &&
+      query.status !== 'all'
+    ) {
+
+      result =
+        result.filter(
+          user =>
+            user.status === query.status
+        );
+
+    }
+
+
+    // ===============================
+    // PAGINATION
+    // ===============================
+
+    const total =
+      result.length;
+
+
+    const start =
+      (query.page - 1)
+      * query.pageSize;
+
+
+    const items =
+      result.slice(
+        start,
+        start + query.pageSize
+      );
+
+
+    return of({
+
+      items,
+
+      total,
+
+      page:
+        query.page,
+
+      pageSize:
+        query.pageSize,
+
+      stats:
+        MOCK_USER_STATS
+
+    });
+
+  }
+
+
+  // =====================================================
+  // CREATE
+  // =====================================================
+
+  create(
+    user:
+      Omit<UserAccount, 'id'>
+  ): Observable<UserAccount> {
+
+    const newUser: UserAccount = {
+
+      ...user,
+
+      id:
+        Math.max(
+          0,
+          ...this.users.map(
+            user => user.id
+          )
+        ) + 1
+
+    };
+
+
+    this.users = [
+      ...this.users,
+      newUser
+    ];
+
+
+    return of(newUser);
+
+  }
+
+
+  // =====================================================
+  // UPDATE
+  // =====================================================
+
+  update(
+    id: number,
+    changes:
+      Partial<UserAccount>
+  ): Observable<UserAccount> {
+
+    const index =
+      this.users.findIndex(
+        user =>
+          user.id === id
+      );
+
+
+    if (index === -1) {
+
+      throw new Error(
+        'Không tìm thấy dữ liệu'
+      );
+
+    }
+
+
+    const updated: UserAccount = {
+
+      ...this.users[index],
+
+      ...changes
+
+    };
+
+
+    this.users =
+      this.users.map(
+        user =>
+          user.id === id
+            ? updated
+            : user
+      );
+
+
+    // Nếu admin sửa đúng user
+    // đang đăng nhập thì cập nhật profile
+    if (
+      id === this.currentUser.id
+    ) {
+
+      this.currentUser = {
+        ...updated
+      };
+
+    }
+
+
+    return of(updated);
+
+  }
+
+
+  // =====================================================
+  // DELETE
+  // =====================================================
+
+  delete(
+    id: number
+  ): Observable<void> {
+
+    this.users =
+      this.users.filter(
+        user =>
+          user.id !== id
+      );
+
+
+    return of(undefined);
+
+  }
+
+
+  // =====================================================
+  // BLOCK / UNBLOCK
+  // =====================================================
+
+  toggleBlock(
+    id: number
+  ): Observable<void> {
+
+    this.users =
+      this.users.map(
+        user => {
+
+          if (
+            user.id === id
+          ) {
+
+            return {
+
+              ...user,
+
+              status:
+                user.status === 'blocked'
+                  ? 'active'
+                  : 'blocked'
+
+            };
+
+          }
+
+
+          return user;
+
+        }
+      );
+
+
+    return of(undefined);
+
+  }
+
 }

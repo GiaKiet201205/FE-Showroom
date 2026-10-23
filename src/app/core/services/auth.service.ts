@@ -1,44 +1,33 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Injectable, computed, signal } from '@angular/core';
+import { Observable, of, tap, throwError } from 'rxjs';
 import { AuthUser, LoginRequest, LoginResponse } from '../models/auth.model';
+import { MOCK_ADMIN_CREDENTIALS, MOCK_ADMIN_LOGIN_RESPONSE } from './auth.mock';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'auth_user';
 
-/**
- * AuthService chịu trách nhiệm toàn bộ logic đăng nhập/đăng xuất/phiên làm việc.
- * Dùng Signal (thay vì Observable) vì đây là state đơn giản, đọc đồng bộ,
- * nhiều nơi trong UI (sidebar, topbar, guard) cần đọc trực tiếp giá trị hiện tại.
- */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-
-  // Signal riêng tư, chỉ AuthService được phép ghi
   private currentUserSignal = signal<AuthUser | null>(this.readUserFromStorage());
 
-  // Signal chỉ-đọc để component/guard bên ngoài dùng, không thể gán đè
   readonly currentUser = this.currentUserSignal.asReadonly();
   readonly isLoggedIn = computed(() => this.currentUserSignal() !== null);
   readonly isAdmin = computed(() => this.currentUserSignal()?.role === 'admin');
 
   login(payload: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>('/auth/login', payload).pipe(
-      tap((res) => this.setSession(res))
-    );
+    const isValidCredentials =
+      payload.email === MOCK_ADMIN_CREDENTIALS.email &&
+      payload.password === MOCK_ADMIN_CREDENTIALS.password;
+
+    if (!isValidCredentials) {
+      return throwError(() => new Error('Email hoặc mật khẩu không đúng.'));
+    }
+
+    return of(MOCK_ADMIN_LOGIN_RESPONSE).pipe(tap((res) => this.setSession(res)));
   }
 
   loginAsAdmin(): void {
-    this.setSession({
-      accessToken: 'demo-token',
-      user: {
-        id: 1,
-        fullName: 'Alex Mercer',
-        email: 'admin@autodrive.dev',
-        role: 'admin'
-      }
-    });
+    this.setSession(MOCK_ADMIN_LOGIN_RESPONSE);
   }
 
   logout(): void {

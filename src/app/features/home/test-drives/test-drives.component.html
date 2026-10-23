@@ -251,10 +251,7 @@
       </h2>
 
 
-      <form
-        #testDriveForm="ngForm"
-        (ngSubmit)="bookTestDrive()"
-      >
+      <form [formGroup]="bookingForm" (ngSubmit)="bookTestDrive()">
 
         <div class="form-grid">
 
@@ -272,14 +269,13 @@
 
               type="text"
 
-              name="fullName"
-
-              [(ngModel)]="fullName"
+              formControlName="fullName"
 
               placeholder="Enter your full name"
 
-              required
             >
+
+            <small class="error" *ngIf="invalid('fullName')">Enter your full name.</small>
 
           </div>
 
@@ -297,14 +293,13 @@
 
               type="email"
 
-              name="email"
-
-              [(ngModel)]="email"
+              formControlName="email"
 
               placeholder="your.email@example.com"
 
-              required
             >
+
+            <small class="error" *ngIf="invalid('email')">Enter a valid email address.</small>
 
           </div>
 
@@ -322,14 +317,13 @@
 
               type="tel"
 
-              name="phone"
-
-              [(ngModel)]="phone"
+              formControlName="phone"
 
               placeholder="+1 (555) 000-0000"
 
-              required
             >
+
+            <small class="error" *ngIf="invalid('phone')">Enter a valid phone number.</small>
 
           </div>
 
@@ -345,13 +339,7 @@
             <select
               id="vehicle"
 
-              name="vehicle"
-
-              [(ngModel)]="
-                selectedVehicleId
-              "
-
-              required
+              formControlName="selectedVehicleId"
             >
 
               <option
@@ -374,6 +362,8 @@
 
             </select>
 
+            <small class="error" *ngIf="invalid('selectedVehicleId')">Select a vehicle.</small>
+
           </div>
 
 
@@ -390,14 +380,10 @@
 
               type="date"
 
-              name="date"
-
-              [(ngModel)]="
-                preferredDate
-              "
-
-              required
+              formControlName="preferredDate"
             >
+
+            <small class="error" *ngIf="invalid('preferredDate')">Select a preferred date.</small>
 
           </div>
 
@@ -413,13 +399,7 @@
             <select
               id="time"
 
-              name="time"
-
-              [(ngModel)]="
-                preferredTime
-              "
-
-              required
+              formControlName="preferredTime"
             >
 
               <option
@@ -441,6 +421,8 @@
               </option>
 
             </select>
+
+            <small class="error" *ngIf="invalid('preferredTime')">Select a preferred time.</small>
 
           </div>
 

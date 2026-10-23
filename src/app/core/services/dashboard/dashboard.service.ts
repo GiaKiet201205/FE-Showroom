@@ -11,14 +11,7 @@ import { MOCK_DASHBOARD_OVERVIEW } from './dashboard.mock';
  */
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-  private http = inject(HttpClient);
-  private endpoint = '/admin/dashboard/overview';
-
   getOverview(): Observable<DashboardOverview> {
-    return this.http.get<DashboardOverview>(this.endpoint).pipe(
-      // Backend chưa sẵn sàng -> tạm dùng dữ liệu mẫu để không chặn phát triển UI.
-      // Khi có API thật, xoá catchError này đi.
-      catchError(() => of(MOCK_DASHBOARD_OVERVIEW))
-    );
+    return of(MOCK_DASHBOARD_OVERVIEW);
   }
 }
