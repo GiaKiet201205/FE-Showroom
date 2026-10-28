@@ -65,17 +65,10 @@
       </div>
       <div class="field">
         <label for="email">Email Address</label>
-        <input
-          id="email"
-          type="email"
-          autocomplete="email"
-          placeholder="name@example.com"
-          formControlName="email"
-        />
-        @if (isInvalid("email")) {
-          <span class="field-error">Please enter a valid email address.</span>
-        }
+        <input id="email" type="email" autocomplete="email" placeholder="name@example.com" formControlName="email" />
+        @if (isInvalid('email')) { <span class="field-error">Please enter a valid email address.</span> }
       </div>
+      @if (form.controls.email.pending) { <p role="status">Đang kiểm tra email...</p> }
       <div class="field">
         <label for="phone">Phone Number</label>
         <input
@@ -142,15 +135,8 @@
         }
       </div>
 
-      <label class="terms"
-        ><input type="checkbox" formControlName="acceptTerms" /><span
-          >I agree to the <a href="#">Terms of Service</a> and
-          <a href="#">Privacy Policy</a></span
-        ></label
-      >
-      @if (isInvalid("acceptTerms")) {
-        <span class="field-error terms-error">Please agree to the terms.</span>
-      }
+      <label class="terms"><input type="checkbox" formControlName="acceptTerms" /><span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span></label>
+      @if (isInvalid('acceptTerms')) { <span class="field-error terms-error">Please agree to the terms.</span> }
       <button class="primary-button" type="submit">Create Account</button>
       <div class="divider"><span>OR</span></div>
       <button class="secondary-button" type="button">

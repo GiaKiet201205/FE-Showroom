@@ -17,3 +17,8 @@ export interface LoginResponse {
   accessToken: string;
   user: AuthUser;
 }
+
+export interface RegisterRequest extends LoginRequest {
+  fullName: string;
+  phone: string;
+}

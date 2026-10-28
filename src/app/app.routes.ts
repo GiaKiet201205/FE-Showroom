@@ -129,6 +129,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     canActivate: [adminGuard],
+    canActivateChild: [adminGuard],
     loadComponent: () =>
       import('./features/admin/layout/admin-layout.component').then(
         (m) => m.AdminLayoutComponent,
@@ -182,22 +183,22 @@ export const routes: Routes = [
           ),
         data: { title: 'Người bán', icon: 'storefront' },
       },
-      {
-        path: 'orders',
-        loadComponent: () =>
-          import('./features/admin/orders/orders.component').then(
-            (m) => m.AdminOrdersComponent,
-          ),
-        data: { title: 'Đơn hàng', icon: 'shopping_cart' },
-      },
-      {
-        path: 'reports',
-        loadComponent: () =>
-          import('./features/admin/reports/reports.component').then(
-            (m) => m.AdminReportsComponent,
-          ),
-        data: { title: 'Báo cáo', icon: 'description' },
-      },
+      // {
+      //   path: 'orders',
+      //   loadComponent: () =>
+      //     import('./features/admin/orders/orders.component').then(
+      //       (m) => m.AdminOrdersComponent,
+      //     ),
+      //   data: { title: 'Đơn hàng', icon: 'shopping_cart' },
+      // },
+      // {
+      //   path: 'reports',
+      //   loadComponent: () =>
+      //     import('./features/admin/reports/reports.component').then(
+      //       (m) => m.AdminReportsComponent,
+      //     ),
+      //   data: { title: 'Báo cáo', icon: 'description' },
+      // },
       {
         path: 'settings',
         loadComponent: () =>

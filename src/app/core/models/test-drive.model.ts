@@ -2,6 +2,10 @@ export type TestDriveBookingStatus = 'confirmed' | 'pending' | 'completed' | 'ca
 
 export interface TestDriveBooking {
   id: string; // ví dụ: TD-8402
+  customerId: number;
+  vehicleId: number;
+  sellerId: number;
+  sellerName: string;
   customerName: string;
   customerAvatarUrl?: string;
   vehicleName: string;
@@ -30,3 +34,5 @@ export interface TestDriveListResult {
   pageSize: number;
   stats: TestDriveStats;
 }
+
+export type TestDriveInput = Pick<TestDriveBooking, 'customerId' | 'vehicleId' | 'sellerId' | 'preferredDate' | 'timeSlot' | 'location' | 'status'>;

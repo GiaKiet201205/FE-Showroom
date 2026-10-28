@@ -1,3 +1,4 @@
+import { BrandService } from '../../../core/services/brand/brand.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -47,9 +48,11 @@ export class AdminVehiclesComponent implements OnInit {
   pageSize = 10;
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
+  pages = computed(() => Array.from({ length: this.totalPages() }, (_, index) => index + 1));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
 
-  brandOptions = ['Lamborghini', 'Ferrari', 'Audi', 'Porsche', 'BMW', 'Bugatti', 'Maserati', 'Rolls-Royce'];
+  private brandService = inject(BrandService);
+  get brandOptions(): string[] { return this.brandService.getSnapshot().map(brand => brand.name); }
   yearOptions = [2024, 2023, 2022, 2021];
 
   // ---------------------------------------------------------------------------
@@ -82,7 +85,7 @@ export class AdminVehiclesComponent implements OnInit {
       [Validators.required, Validators.min(1900), Validators.max(this.currentYear + 1)]
     ],
     price: [0, [Validators.required, Validators.min(1)]],
-    mileage: [0, [Validators.required, Validators.min(0)]],
+    stockQuantity: [0, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
     color: ['', Validators.required],
     status: ['available', Validators.required],
     imageUrl: ['', Validators.pattern(/^(https?:\/\/\S+)?$/)] // rỗng hoặc URL http(s)
@@ -175,7 +178,7 @@ private buildQuery() {
       model: '',
       year: this.currentYear,
       price: 0,
-      mileage: 0,
+      stockQuantity: 0,
       color: '',
       status: 'available',
       imageUrl: ''
@@ -195,6 +198,7 @@ private buildQuery() {
   }
 
   saveVehicle(): void {
+    if (this.saving()) return;
     if (this.vehicleForm.invalid) {
       this.vehicleForm.markAllAsTouched(); // hiện toàn bộ lỗi validator
       return;

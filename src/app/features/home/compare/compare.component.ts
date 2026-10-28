@@ -16,7 +16,7 @@ interface CompareVehicle {
   price: number;
   year: number;
 
-  mileage: string;
+  stockQuantity: number;
   engine: string;
   horsepower: string;
 

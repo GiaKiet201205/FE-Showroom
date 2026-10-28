@@ -23,7 +23,7 @@ import {
   tap
 } from 'rxjs';
 import { UserService } from '../../../core/services/user/user.service';
-import { UserAccount, UserStats } from '../../../core/models/user.model';
+import { UserAccount, UserStats, UserAccountInput } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-admin-users',
@@ -47,6 +47,7 @@ export class AdminUsersComponent implements OnInit {
   pageSize = 8;
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
+  pages = computed(() => Array.from({ length: this.totalPages() }, (_, index) => index + 1));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
 
   filterForm = this.fb.nonNullable.group({
@@ -60,11 +61,16 @@ export class AdminUsersComponent implements OnInit {
   showModal = signal(false);
   editingUser = signal<UserAccount | null>(null);
   saving = signal(false);
+  errorMessage = signal('');
+  showPassword = signal(false);
+  currentPassword = signal('');
+  showCurrentPassword = signal(false);
 
   userForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.maxLength(80)]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', Validators.required],
+    password: ['', Validators.minLength(6)],
     role: ['user', Validators.required],
     status: ['active', Validators.required]
   });
@@ -130,6 +136,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   toggleBlock(user: UserAccount): void {
+    if (user.role === 'admin') return;
     const action = user.status === 'blocked' ? 'mở khoá' : 'khoá';
     if (!confirm(`Xác nhận ${action} tài khoản ${user.fullName}.`)) return;
     
@@ -138,11 +145,12 @@ export class AdminUsersComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.loadUsers(),
-        error: () => {}
+        error: (error: Error) => this.errorMessage.set(error.message)
       });
   }
 
   deleteUser(user: UserAccount): void {
+    if (user.role === 'admin') return;
     if (!confirm(`Xác nhận xoá tài khoản ${user.fullName}. Hành động này không thể hoàn tác.`)) return;
     
     this.userService
@@ -150,16 +158,23 @@ export class AdminUsersComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.loadUsers(),
-        error: () => {}
+        error: (error: Error) => this.errorMessage.set(error.message)
       });
   }
 
   openAddModal(): void {
+    this.currentPassword.set('');
+    this.showCurrentPassword.set(false);
+    this.errorMessage.set('');
     this.editingUser.set(null);
+    this.showPassword.set(false);
+    this.f.password.setValidators([Validators.required, Validators.minLength(6)]);
+    this.f.password.updateValueAndValidity();
     this.userForm.reset({
       fullName: '',
       email: '',
       phone: '',
+      password: '',
       role: 'user',
       status: 'active'
     });
@@ -167,23 +182,34 @@ export class AdminUsersComponent implements OnInit {
   }
 
   openEditModal(user: UserAccount): void {
+    if (user.role === 'admin') return;
+    this.errorMessage.set('');
     this.editingUser.set(user);
+    this.currentPassword.set(this.userService.getMockPassword(user.id));
+    this.showCurrentPassword.set(false);
+    this.showPassword.set(false);
+    this.f.password.setValidators([Validators.minLength(6)]);
+    this.f.password.updateValueAndValidity();
     this.userForm.reset();
     this.userForm.patchValue(user);
     this.showModal.set(true);
   }
 
   closeModal(): void {
+    this.currentPassword.set('');
+    this.showCurrentPassword.set(false);
     this.showModal.set(false);
   }
 
   saveUser(): void {
+    if (this.saving()) return;
+    this.errorMessage.set('');
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
     }
 
-    const data = this.userForm.getRawValue() as Omit<UserAccount, 'id'>;
+    const data = this.userForm.getRawValue() as UserAccountInput;
     const current = this.editingUser();
 
     const request$ = (
@@ -203,7 +229,7 @@ export class AdminUsersComponent implements OnInit {
           this.closeModal();
           this.loadUsers();
         },
-        error: () => {}
+        error: (error: Error) => this.errorMessage.set(error.message)
       });
   }
 }

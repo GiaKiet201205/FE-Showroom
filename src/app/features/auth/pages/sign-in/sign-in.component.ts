@@ -1,3 +1,9 @@
+import { DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -10,6 +16,11 @@ import { RouterLink } from '@angular/router';
 })
 
 export class SignInComponent {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
+  submitting = false;
+  errorMessage = '';
     private fb = inject(FormBuilder);
 
     showPassword = false;
@@ -31,11 +42,20 @@ export class SignInComponent {
     }
 
     submit(): void {
+        if (this.submitting || this.form.pending) return;
         if (this.form.invalid) {
             this.form.markAllAsTouched();
             return;
         }
 
-        // The user sign-in API flow has not been connected to this page yet.
+        this.submitting = true;
+        this.errorMessage = '';
+        this.auth.login(this.form.getRawValue()).pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.submitting = false)
+        ).subscribe({
+          next: () => this.router.navigateByUrl(this.auth.isAdmin() ? '/admin/dashboard' : '/home'),
+          error: (error: HttpErrorResponse) => this.errorMessage = error.error?.message ?? 'Không thể hoàn tất yêu cầu.'
+        });
     }
 }

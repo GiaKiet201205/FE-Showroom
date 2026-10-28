@@ -7,7 +7,7 @@ export interface FavoriteVehicle {
   price: number;
   year: number;
 
-  mileage: string;
+  stockQuantity: number;
   fuel: string;
   transmission: string;
 }

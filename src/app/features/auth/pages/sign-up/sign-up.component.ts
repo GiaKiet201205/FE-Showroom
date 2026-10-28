@@ -1,3 +1,9 @@
+import { DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { finalize, timer, switchMap, map, catchError, of } from 'rxjs';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -15,13 +21,26 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
   styleUrl: './sign-up.component.scss',
 })
 export class SignUpComponent {
+  private auth = inject(AuthService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
+  submitting = false;
+  errorMessage = '';
   private fb = inject(FormBuilder);
 
   showPassword = false;
 
   form = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', {
+      validators: [Validators.required, Validators.email],
+      asyncValidators: [(control: AbstractControl) => timer(300).pipe(
+        switchMap(() => this.auth.emailAvailable(String(control.value))),
+        map(result => result.available ? null : { emailTaken: true }),
+        catchError(() => of({ emailCheckFailed: true }))
+      )],
+      updateOn: 'blur'
+    }],
     phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9()\s-]{7,20}$/)]],
     password: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required],
@@ -39,11 +58,20 @@ export class SignUpComponent {
   }
 
   submit(): void {
-    if (this.form.invalid) {
+    if (this.submitting || this.form.pending) return;
+        if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    // The registration API flow has not been connected to this page yet.
+    this.submitting = true;
+        this.errorMessage = '';
+        this.auth.register(this.form.getRawValue()).pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.submitting = false)
+        ).subscribe({
+          next: () => this.router.navigateByUrl(this.auth.isAdmin() ? '/admin/dashboard' : '/home'),
+          error: (error: HttpErrorResponse) => this.errorMessage = error.error?.message ?? 'Không thể hoàn tất yêu cầu.'
+        });
   }
 }

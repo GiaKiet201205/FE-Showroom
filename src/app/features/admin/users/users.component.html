@@ -1,13 +1,14 @@
 <div class="users-page">
   <div class="breadcrumb">Main / Users</div>
   <h1 class="page-title">User Management</h1>
+  @if (errorMessage() && !showModal()) { <p class="field-error" role="alert">{{ errorMessage() }}</p> }
 
   @if (stats(); as s) {
     <section class="stat-grid">
       <div class="stat-card">
         <div class="stat-icon total"><mat-icon>group</mat-icon></div>
         <div class="stat-label">TOTAL USERS</div>
-        <div class="stat-value">{{ (s.totalUsers / 1000).toFixed(1) }}K</div>
+        <div class="stat-value">{{ s.totalUsers | number }}</div>
         <div class="stat-growth" [class.negative]="s.totalUsersGrowth < 0">
           {{ s.totalUsersGrowth > 0 ? '+' : '' }}{{ s.totalUsersGrowth }}% vs last month
         </div>
@@ -16,7 +17,7 @@
       <div class="stat-card">
         <div class="stat-icon active"><mat-icon>person</mat-icon></div>
         <div class="stat-label">ACTIVE USERS</div>
-        <div class="stat-value">{{ (s.activeUsers / 1000).toFixed(1) }}K</div>
+        <div class="stat-value">{{ s.activeUsers | number }}</div>
         <div class="stat-growth" [class.negative]="s.activeUsersGrowth < 0">
           {{ s.activeUsersGrowth > 0 ? '+' : '' }}{{ s.activeUsersGrowth }}% vs last month
         </div>
@@ -64,7 +65,7 @@
 
     <button class="btn-primary" (click)="openAddModal()">
       <mat-icon>add_circle</mat-icon>
-      Add Internal User
+      Add User
     </button>
   </section>
 
@@ -98,11 +99,15 @@
                 <td><span class="role-badge" [class]="u.role">{{ u.role }}</span></td>
                 <td><span class="status-badge" [class]="u.status">{{ u.status }}</span></td>
                 <td class="col-actions">
+                  @if (u.role === 'admin') {
+                    <span>Tài khoản quản trị cố định</span>
+                  } @else {
                   <button class="icon-btn edit" title="Sửa" (click)="openEditModal(u)"><mat-icon>edit</mat-icon></button>
                   <button class="icon-btn lock" title="Khoá/Mở khoá" (click)="toggleBlock(u)">
                     <mat-icon>{{ u.status === 'blocked' ? 'lock' : 'lock_open' }}</mat-icon>
                   </button>
                   <button class="icon-btn delete" title="Xoá" (click)="deleteUser(u)"><mat-icon>delete</mat-icon></button>
+                  }
                 </td>
               </tr>
             }
@@ -117,14 +122,8 @@
       </div>
       <div class="pagination-controls">
         <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
-        @for (p of [1, 2, 3]; track p) {
-          @if (p <= totalPages()) {
-            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
-          }
-        }
-        @if (totalPages() > 4) {
-          <span class="page-dots">...</span>
-          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        @for (p of pages(); track p) {
+          <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
         }
         <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
       </div>
@@ -189,10 +188,29 @@
           }
         </div>
 
+        @if (editingUser()) {
+          <div class="form-group">
+            <label for="user-current-password">Mật khẩu hiện tại</label>
+            <div class="password-control">
+              <input id="user-current-password" class="form-control" [type]="showCurrentPassword() ? 'text' : 'password'" [value]="currentPassword()" readonly autocomplete="off" />
+              <button type="button" class="password-toggle" (click)="showCurrentPassword.set(!showCurrentPassword())" [attr.aria-label]="showCurrentPassword() ? 'Ẩn mật khẩu hiện tại' : 'Hiện mật khẩu hiện tại'" [attr.aria-pressed]="showCurrentPassword()"><mat-icon>{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+            </div>
+          </div>
+        }
+
+        <div class="form-group">
+          <label for="user-password">{{ editingUser() ? 'Mật khẩu mới' : 'Mật khẩu' }}</label>
+          <div class="password-control">
+            <input id="user-password" class="form-control" [type]="showPassword() ? 'text' : 'password'" formControlName="password" autocomplete="new-password" [class.is-invalid]="f.password.touched && f.password.invalid" />
+            <button type="button" class="password-toggle" (click)="showPassword.set(!showPassword())" [attr.aria-label]="showPassword() ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'"><mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon></button>
+          </div>
+          @if (editingUser()) { <small>Để trống để giữ nguyên mật khẩu hiện tại.</small> }
+          @if (f.password.touched && f.password.invalid) { <small class="field-error">Mật khẩu phải có ít nhất 6 ký tự.</small> }
+        </div>
+
         <div class="form-group">
           <label>Role</label>
           <select formControlName="role" class="form-control">
-            <option value="admin">Admin</option>
             <option value="seller">Seller</option>
             <option value="user">User</option>
           </select>
@@ -208,6 +226,7 @@
         </div>
       </div>
 
+      @if (errorMessage()) { <p class="field-error" role="alert">{{ errorMessage() }}</p> }
       <div class="modal-actions">
         <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
         <button type="submit" class="btn-primary" [disabled]="saving()">

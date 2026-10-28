@@ -42,6 +42,10 @@
       Compare
     </a>
 
+    <a routerLink="/test-drives" routerLinkActive="active">
+      Test-drive
+    </a>
+
     <a
       routerLink="/services"
       routerLinkActive="active"
@@ -86,23 +90,15 @@
 
     </a>
 
-    <a
-      routerLink="/profile"
-      class="avatar-link"
-    >
-      <img
-        src="/images/avt.jpg"
-        alt="User avatar"
-        class="avatar"
-      />
-    </a>
-
-    <a
-      routerLink="/sign-in"
-      class="sign-in-button"
-    >
-      Sign In
-    </a>
+    @if (auth.currentUser(); as user) {
+      <a routerLink="/profile" class="avatar-link" [attr.aria-label]="'Tài khoản ' + user.fullName">
+        <img [src]="user.avatarUrl || '/images/avt.jpg'" alt="User avatar" class="avatar" />
+        <span class="account-name">{{ user.fullName }}</span>
+      </a>
+      <button type="button" class="sign-in-button" (click)="logout()">Đăng xuất</button>
+    } @else {
+      <a routerLink="/sign-in" class="sign-in-button">Sign In</a>
+    }
 
   </div>
 

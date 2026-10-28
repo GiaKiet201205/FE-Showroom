@@ -1,25 +1,33 @@
-import { TestDriveBooking, TestDriveStats } from '../../models/test-drive.model';
+import { TestDriveBooking, TestDriveBookingStatus, TestDriveStats } from '../../models/test-drive.model';
+import { MOCK_USERS } from '../user/user.mock';
+import { MOCK_VEHICLES } from '../vehicle/vehicle.mock';
+import { MOCK_SELLERS } from '../seller/seller.mock';
 
+const customers = MOCK_USERS.filter(user => user.role === 'user' && user.status === 'active');
+const sellers = MOCK_SELLERS.filter(seller => seller.status === 'verified');
+const slots = ['09:00 AM', '10:30 AM', '02:30 PM', '04:00 PM'];
+const statuses: TestDriveBookingStatus[] = ['pending', 'confirmed', 'completed', 'cancelled'];
+
+// Each row has its own day/time pair, keeping customer and seller schedules conflict-free.
+export const MOCK_TEST_DRIVES: TestDriveBooking[] = Array.from({ length: 48 }, (_, index) => {
+  const customer = customers[index % customers.length];
+  const vehicle = MOCK_VEHICLES[index % MOCK_VEHICLES.length];
+  const seller = sellers[index % sellers.length];
+  const status = statuses[index % statuses.length];
+  const historical = status === 'completed' || status === 'cancelled';
+  const day = String(1 + Math.floor(index / slots.length)).padStart(2, '0');
+  return {
+    id: `TD-${8402 + index}`, customerId: customer.id, vehicleId: vehicle.id, sellerId: seller.id,
+    customerName: customer.fullName, customerAvatarUrl: customer.avatarUrl, sellerName: seller.fullName,
+    vehicleName: `${vehicle.brand} ${vehicle.model}`, vehicleImageUrl: vehicle.imageUrl,
+    preferredDate: `2026-${historical ? '10' : '11'}-${day}`,
+    timeSlot: slots[index % slots.length], location: 'Showroom', status
+  };
+});
+export const MOCK_TEST_DRIVES_TOTAL = MOCK_TEST_DRIVES.length;
 export const MOCK_TEST_DRIVE_STATS: TestDriveStats = {
-  totalBookings: 1482,
-  totalBookingsGrowth: 12.3,
-  pending: 28,
-  pendingGrowth: 2.5,
-  confirmed: 1120,
-  confirmedGrowth: 8.1,
-  completed: 334,
-  completedGrowth: 14.5
+  totalBookings: MOCK_TEST_DRIVES.length, totalBookingsGrowth: 0,
+  pending: MOCK_TEST_DRIVES.filter(booking => booking.status === 'pending').length, pendingGrowth: 0,
+  confirmed: MOCK_TEST_DRIVES.filter(booking => booking.status === 'confirmed').length, confirmedGrowth: 0,
+  completed: MOCK_TEST_DRIVES.filter(booking => booking.status === 'completed').length, completedGrowth: 0
 };
-
-export const MOCK_TEST_DRIVES: TestDriveBooking[] = [
-  { id: 'TD-8402', customerName: 'Marcus Sterling', vehicleName: 'Porsche Taycan Turbo S', preferredDate: 'Oct 24, 2024', timeSlot: '10:30 AM', location: 'Austin North', status: 'confirmed' },
-  { id: 'TD-8403', customerName: 'Helena Vance', vehicleName: 'BMW M4 Coupe', preferredDate: 'Oct 24, 2024', timeSlot: '01:15 PM', location: 'Austin Downtown', status: 'pending' },
-  { id: 'TD-8404', customerName: 'Julian Brooks', vehicleName: 'Tesla Model S Plaid', preferredDate: 'Oct 25, 2024', timeSlot: '09:00 AM', location: 'Austin North', status: 'completed' },
-  { id: 'TD-8405', customerName: 'Clara Oswald', vehicleName: 'Audi RS Q8', preferredDate: 'Oct 25, 2024', timeSlot: '03:45 PM', location: 'Austin Downtown', status: 'confirmed' },
-  { id: 'TD-8406', customerName: 'Sarah Connor', vehicleName: 'Mercedes-Benz AMG GT', preferredDate: 'Oct 26, 2024', timeSlot: '11:00 AM', location: 'Austin North', status: 'confirmed' },
-  { id: 'TD-8407', customerName: 'David Miller', vehicleName: 'Tesla Model 3', preferredDate: 'Oct 26, 2024', timeSlot: '02:30 PM', location: 'Austin Downtown', status: 'cancelled' },
-  { id: 'TD-8408', customerName: 'Emily Watson', vehicleName: 'Audi e-tron GT', preferredDate: 'Oct 27, 2024', timeSlot: '10:00 AM', location: 'Austin North', status: 'pending' },
-  { id: 'TD-8409', customerName: 'Michael Chang', vehicleName: 'Porsche Taycan 4S', preferredDate: 'Oct 27, 2024', timeSlot: '04:00 PM', location: 'Austin Downtown', status: 'completed' }
-];
-
-export const MOCK_TEST_DRIVES_TOTAL = 92;

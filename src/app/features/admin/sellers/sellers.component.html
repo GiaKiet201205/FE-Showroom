@@ -1,6 +1,7 @@
 <div class="sellers-page">
   <div class="breadcrumb">Main / Sellers</div>
   <h1 class="page-title">Seller Management</h1>
+  @if (errorMessage() && !showModal()) { <p class="field-error" role="alert">{{ errorMessage() }}</p> }
 
   @if (stats(); as s) {
     <section class="stat-grid">
@@ -62,6 +63,7 @@
       <option value="pending">Pending</option>
       <option value="suspended">Suspended</option>
     </select>
+    <button type="button" class="btn-primary" (click)="openAddModal()"><mat-icon>add_circle</mat-icon> Thêm seller</button>
   </section>
 
   <section class="panel">
@@ -76,11 +78,12 @@
             <th>LISTINGS</th>
             <th>STATUS</th>
             <th>JOIN DATE</th>
+            <th>ACTIONS</th>
           </tr>
         </thead>
         <tbody>
           @if (loading()) {
-            <tr><td colspan="7" class="loading-cell">Đang tải dữ liệu...</td></tr>
+            <tr><td colspan="8" class="loading-cell">Đang tải dữ liệu...</td></tr>
           } @else {
             @for (s of sellers(); track s.id) {
               <tr>
@@ -94,6 +97,10 @@
                 <td class="cell-strong">{{ s.listings }} cars</td>
                 <td><span class="status-badge" [class]="s.status">{{ s.status }}</span></td>
                 <td class="cell-muted">{{ s.joinDate }}</td>
+                <td class="col-actions">
+                  <button type="button" class="icon-btn edit" title="Sửa seller" [attr.aria-label]="'Sửa ' + s.fullName" (click)="openEditModal(s)"><mat-icon>edit</mat-icon></button>
+                  <button type="button" class="icon-btn delete" title="Xoá seller" [attr.aria-label]="'Xoá ' + s.fullName" (click)="deleteSeller(s)"><mat-icon>delete</mat-icon></button>
+                </td>
               </tr>
             }
           }
@@ -107,17 +114,56 @@
       </div>
       <div class="pagination-controls">
         <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
-        @for (p of [1, 2, 3]; track p) {
-          @if (p <= totalPages()) {
-            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
-          }
-        }
-        @if (totalPages() > 4) {
-          <span class="page-dots">...</span>
-          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        @for (p of pages(); track p) {
+          <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
         }
         <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
       </div>
     </div>
   </section>
 </div>
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <form class="modal-content" role="dialog" aria-modal="true" aria-labelledby="seller-modal-title" [formGroup]="sellerForm" (ngSubmit)="saveSeller()" (click)="$event.stopPropagation()" (keydown.escape)="closeModal()" novalidate>
+      <h2 id="seller-modal-title">{{ editingSeller() ? 'Sửa seller' : 'Thêm seller' }}</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="seller-name">Họ và tên</label>
+          <input id="seller-name" class="form-control" formControlName="fullName" autocomplete="name" />
+          @if (invalid('fullName')) { <small class="field-error">Nhập họ tên, tối đa 80 ký tự.</small> }
+        </div>
+        <div class="form-group">
+          <label for="seller-email">Email</label>
+          <input id="seller-email" class="form-control" type="email" formControlName="email" autocomplete="email" />
+          @if (invalid('email')) { <small class="field-error">Nhập email hợp lệ.</small> }
+        </div>
+        <div class="form-group">
+          <label for="seller-phone">Số điện thoại</label>
+          <input id="seller-phone" class="form-control" type="tel" formControlName="phone" autocomplete="tel" />
+          @if (invalid('phone')) { <small class="field-error">Nhập số điện thoại hợp lệ.</small> }
+        </div>
+        <div class="form-group">
+          <label for="seller-company">Công ty / Showroom</label>
+          <input id="seller-company" class="form-control" formControlName="company" />
+          @if (invalid('company')) { <small class="field-error">Nhập công ty, tối đa 100 ký tự.</small> }
+        </div>
+        <div class="form-group">
+          <label for="seller-status">Trạng thái</label>
+          <select id="seller-status" class="form-control" formControlName="status">
+            <option value="verified">Verified</option><option value="pending">Pending</option><option value="suspended">Suspended</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="seller-joined">Ngày tham gia</label>
+          <input id="seller-joined" class="form-control" type="date" formControlName="joinDate" />
+          @if (invalid('joinDate')) { <small class="field-error">Chọn ngày tham gia.</small> }
+        </div>
+      </div>
+      @if (errorMessage()) { <p class="field-error" role="alert">{{ errorMessage() }}</p> }
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()" [disabled]="saving()">Huỷ</button>
+        <button type="submit" class="btn-primary" [disabled]="saving()">{{ saving() ? 'Đang lưu...' : 'Lưu seller' }}</button>
+      </div>
+    </form>
+  </div>
+}

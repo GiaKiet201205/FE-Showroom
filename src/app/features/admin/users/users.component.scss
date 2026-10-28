@@ -235,3 +235,12 @@
     background: $admin-bg;
   }
 }
+.password-control {
+  display: flex; align-items: center; gap: 8px;
+  .form-control { flex: 1; min-width: 0; }
+}
+.password-toggle {
+  display: inline-flex; align-items: center; justify-content: center; padding: 6px;
+  border: 0; border-radius: 6px; background: $admin-bg; color: $admin-text-muted; cursor: pointer;
+}
+.field-error { color: $admin-danger; }

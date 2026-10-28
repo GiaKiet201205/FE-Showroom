@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { AuthService } from '../../core/services/auth.service';
+import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import {
   RouterLink,
   RouterLinkActive
@@ -17,6 +19,13 @@ import { FavoriteService } from '../../core/services/favorite.service';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
+  auth = inject(AuthService);
+  private router = inject(Router);
+  logout(): void {
+    this.auth.logout();
+    this.router.navigateByUrl('/home');
+  }
+
   constructor(
     public favoriteService: FavoriteService
   ) {}
