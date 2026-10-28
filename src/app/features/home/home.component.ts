@@ -30,6 +30,9 @@ import {
 import {
   Vehicle
 } from '../../core/models/vehicle.model';
+import {
+  VehicleCardComponent
+} from './vehicle-card/vehicle-card.component';
 
 
 @Component({
@@ -40,7 +43,8 @@ import {
   imports: [
     CommonModule,
     FormsModule,
-    RouterLink
+    RouterLink,
+    VehicleCardComponent
   ],
 
   templateUrl: './home.component.html',
@@ -118,18 +122,61 @@ export class HomeComponent
 
   browseCars(): void {
 
+    let minPrice:
+      number | null = null;
+
+    let maxPrice:
+      number | null = null;
+
+
+    if (
+      this.selectedPrice
+    ) {
+
+      const parts =
+        this.selectedPrice
+          .split('-');
+
+
+      if (
+        parts.length === 2
+      ) {
+
+        minPrice =
+          Number(parts[0]);
+
+        maxPrice =
+          Number(parts[1]);
+
+      }
+
+      else {
+
+        minPrice =
+          Number(parts[0]);
+
+      }
+
+    }
+
+
     this.router.navigate(
       ['/cars'],
       {
         queryParams: {
-          make:
-            this.selectedMake || null,
 
-          model:
-            this.selectedModel || null,
+          brand:
+            this.selectedMake ||
+            null,
 
-          price:
-            this.selectedPrice || null
+          bodyType:
+            this.selectedModel ||
+            null,
+
+          minPrice,
+
+          maxPrice
+
         }
       }
     );
