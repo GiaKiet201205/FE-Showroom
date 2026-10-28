@@ -92,48 +92,20 @@
     </div>
 
     <div class="vehicle-grid">
-      <article
-        class="vehicle-card"
-        *ngFor="let vehicle of vehicles"
-        (click)="viewVehicle(vehicle.id)"
+      <app-vehicle-card
+
+        *ngFor="
+          let vehicle of vehicles
+        "
+
+        [vehicle]="vehicle"
+
+        (selected)="
+          viewVehicle($event)
+        "
       >
-        <div class="vehicle-image">
-          <img
-            [src]="vehicle.imageUrl || '/images/no-image.jpg'"
-            [alt]="vehicle.brand + ' ' + vehicle.model"
-          />
+      </app-vehicle-card>
 
-          <h3>
-            {{ vehicle.brand }} {{ vehicle.model }}
-          </h3>
-
-          <p>
-            {{ vehicle.year }} • {{ vehicle.transmission || '-' }}
-          </p>
-          <button
-            type="button"
-            class="favorite-button"
-            aria-label="Add to wishlist"
-            (click)="$event.stopPropagation()"
-          >
-            <i class="fa-regular fa-heart"></i>
-          </button>
-        </div>
-
-        <div class="vehicle-content">
-          <h3>
-            {{ vehicle.brand }} {{ vehicle.model }}
-          </h3>
-
-          <p>
-            {{ vehicle.year }} • {{ vehicle.transmission || '-' }}
-          </p>
-
-          <strong>
-            {{ vehicle.price | currency: "USD" : "symbol" : "1.0-0" }}
-          </strong>
-        </div>
-      </article>
     </div>
   </section>
 
