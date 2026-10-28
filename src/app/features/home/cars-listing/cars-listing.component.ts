@@ -12,7 +12,7 @@ import { FavoriteService } from '../../../core/services/favorite.service';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './cars-listing.component.html',
-  styleUrl: './cars-listing.component.scss'
+  styleUrl: './cars-listing.component.scss',
 })
 export class CarsListingComponent implements OnInit {
   // SEARCH
@@ -21,6 +21,7 @@ export class CarsListingComponent implements OnInit {
   // FILTER
   condition = 'new';
   selectedBrand = '';
+  brands: string[] = [];
 
   minPrice = 0;
   maxPrice = 250000;
@@ -32,7 +33,7 @@ export class CarsListingComponent implements OnInit {
     sedan: false,
     suv: false,
     hatchback: false,
-    coupe: false
+    coupe: false,
   };
 
   // SORT
@@ -51,7 +52,7 @@ export class CarsListingComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private vehicleService: VehicleService,
-    public favoriteService: FavoriteService
+    public favoriteService: FavoriteService,
   ) {}
 
   ngOnInit(): void {
@@ -103,15 +104,15 @@ export class CarsListingComponent implements OnInit {
         bodyTypes: this.getSelectedBodyTypes(),
         sort: this.sort,
         page: this.currentPage,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
       })
-      .subscribe(result => {
+      .subscribe((result) => {
         this.cars = result.items;
         this.total = result.total;
 
         this.totalPages = Math.max(
           1,
-          Math.ceil(result.total / result.pageSize)
+          Math.ceil(result.total / result.pageSize),
         );
       });
   }
@@ -143,7 +144,7 @@ export class CarsListingComponent implements OnInit {
       sedan: false,
       suv: false,
       hatchback: false,
-      coupe: false
+      coupe: false,
     };
 
     this.sort = 'newest';
@@ -203,11 +204,7 @@ export class CarsListingComponent implements OnInit {
 
   // PAGINATION
   goToPage(page: number): void {
-    if (
-      page < 1 ||
-      page > this.totalPages ||
-      page === this.currentPage
-    ) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
       return;
     }
 
@@ -216,15 +213,12 @@ export class CarsListingComponent implements OnInit {
 
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }
 
   get pages(): number[] {
-    return Array.from(
-      { length: this.totalPages },
-      (_, index) => index + 1
-    );
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
   }
 
   // VIEW DETAIL
@@ -242,9 +236,9 @@ export class CarsListingComponent implements OnInit {
       image: car.imageUrl ?? '',
       price: car.price,
       year: car.year,
-      mileage: `${car.mileage.toLocaleString()} mi`,
+      stockQuantity: car.stockQuantity,
       fuel: car.fuelType ?? '-',
-      transmission: car.transmission ?? '-'
+      transmission: car.transmission ?? '-',
     });
   }
 }
