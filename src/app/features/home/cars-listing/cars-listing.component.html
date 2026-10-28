@@ -11,9 +11,8 @@
       </h2>
 
 
-      <!-- CONDITION -->
-
       <div class="filter-group">
+<<<<<<< Updated upstream
 
         <label class="filter-title">
           CONDITION
@@ -44,8 +43,11 @@
 
         </div>
 
+=======
+        <span class="filter-title">CONDITION</span>
+        <p>Xe mới 100%</p>
+>>>>>>> Stashed changes
       </div>
-
 
       <!-- BRAND -->
 
@@ -67,17 +69,7 @@
             BMW, Porsche, Tesla
           </option>
 
-          <option value="BMW">
-            BMW
-          </option>
-
-          <option value="Porsche">
-            Porsche
-          </option>
-
-          <option value="Tesla">
-            Tesla
-          </option>
+          @for (brand of brands; track brand) { <option [value]="brand">{{ brand }}</option> }
 
         </select>
 
@@ -106,8 +98,18 @@
 
         <input
           type="range"
+<<<<<<< Updated upstream
           min="20000"
           max="150000"
+=======
+
+          min="0"
+
+          max="6000000"
+
+          step="5000"
+
+>>>>>>> Stashed changes
           [(ngModel)]="maxPrice"
         >
 
@@ -312,11 +314,11 @@
               <div>
 
                 <span>
-                  MILEAGE
+                  TỒN KHO
                 </span>
 
                 <strong>
-                  {{ car.mileage | number }} mi
+                  {{ car.stockQuantity | number }} xe
                 </strong>
 
               </div>

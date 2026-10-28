@@ -1,3 +1,4 @@
+import { MOCK_VEHICLES } from './vehicle/vehicle.mock';
 import {
   Injectable,
   PLATFORM_ID,
@@ -42,7 +43,14 @@ export class FavoriteService {
     }
 
     try {
-      return JSON.parse(data);
+      const saved: FavoriteVehicle[] = JSON.parse(data);
+      if (!Array.isArray(saved)) return [];
+      return saved.map(vehicle => ({
+        ...vehicle,
+        stockQuantity: Number.isInteger(vehicle.stockQuantity) && vehicle.stockQuantity >= 0
+          ? vehicle.stockQuantity
+          : MOCK_VEHICLES.find(item => item.id === vehicle.id)?.stockQuantity ?? 0
+      }));
     } catch {
       return [];
     }

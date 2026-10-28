@@ -1,4 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,6 +21,7 @@ export class LoginComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
+  private destroyRef = inject(DestroyRef);
   submitting = false;
   errorMessage = '';
 
@@ -37,6 +41,7 @@ export class LoginComponent {
   }
 
   submit(): void {
+    if (this.submitting) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -45,14 +50,19 @@ export class LoginComponent {
     this.submitting = true;
     this.errorMessage = '';
 
-    this.auth.login(this.form.getRawValue()).subscribe({
+    this.auth.login(this.form.getRawValue()).pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.submitting = false)).subscribe({
       next: () => {
         this.submitting = false;
+        if (!this.auth.isAdmin()) {
+          this.auth.logout();
+          this.errorMessage = 'Tài khoản này không có quyền quản trị.';
+          return;
+        }
         this.router.navigateByUrl(this.getRedirectUrl());
       },
-      error: (error: Error) => {
+      error: (error: HttpErrorResponse) => {
         this.submitting = false;
-        this.errorMessage = error.message;
+        this.errorMessage = error.error?.message ?? 'Không thể đăng nhập.';
       }
     });
   }

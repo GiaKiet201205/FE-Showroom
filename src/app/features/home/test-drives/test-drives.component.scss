@@ -670,3 +670,12 @@
   }
 
 }
+.page-description { margin: -12px 0 24px; color: #64748b; line-height: 1.6; }
+.account-notice { padding: 16px; margin-bottom: 24px; background: #eff6ff; border-radius: 7px; }
+.error-message, .error { color: #b91c1c; }
+.error-message { padding: 14px; background: #fef2f2; border-radius: 7px; }
+.status.pending { background: #fef3c7; color: #92400e; }
+fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+fieldset:disabled .book-button { opacity: .55; cursor: not-allowed; }
+.form-group input[readonly] { background: #f5f7fa; color: #64748b; }
+.vehicle-section .booking-id { margin-bottom: 4px; }

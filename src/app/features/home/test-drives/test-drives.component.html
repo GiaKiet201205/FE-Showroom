@@ -7,9 +7,15 @@
     <!-- ====================================== -->
 
     <h1>
-      My Test Drives
+      Lịch lái thử của tôi
     </h1>
 
+
+    <p class="page-description">Đăng ký lái thử và theo dõi trạng thái xác nhận từ showroom.</p>
+    @if (!auth.isLoggedIn()) {
+      <p class="account-notice">Vui lòng <a routerLink="/sign-in">đăng nhập</a> để đăng ký và xem lịch lái thử của bạn.</p>
+    }
+    @if (errorMessage) { <p class="error-message" role="alert">{{ errorMessage }}</p> }
 
     <!-- ====================================== -->
     <!-- SUCCESS MESSAGE -->
@@ -17,6 +23,7 @@
 
     <div
       class="success-message"
+      role="status"
       *ngIf="showSuccess"
     >
 
@@ -25,9 +32,7 @@
       </div>
 
       <span>
-        Test drive booked successfully!
-        A confirmation email and calendar invite
-        have been sent to your inbox.
+        Đã ghi nhận lịch lái thử và seller đi cùng. Vui lòng chờ showroom xác nhận.
       </span>
 
 
@@ -54,7 +59,7 @@
         "
         (click)="setTab('upcoming')"
       >
-        Upcoming
+        Sắp tới
       </button>
 
 
@@ -64,7 +69,7 @@
         "
         (click)="setTab('completed')"
       >
-        Completed
+        Đã hoàn thành
       </button>
 
 
@@ -74,7 +79,7 @@
         "
         (click)="setTab('cancelled')"
       >
-        Cancelled
+        Đã hủy
       </button>
 
     </div>
@@ -111,6 +116,7 @@
               {{ testDrive.vehicleName }}
             </h2>
 
+            <p class="booking-id">Mã lịch: {{ testDrive.id }}</p>
             <p>
               {{ testDrive.vehicleDescription }}
             </p>
@@ -125,7 +131,7 @@
         <div class="drive-info">
 
           <strong>
-            {{ testDrive.date }}
+            {{ testDrive.date | date:'dd/MM/yyyy' }}
           </strong>
 
           <span>
@@ -140,7 +146,7 @@
         <div class="drive-info location-info">
 
           <strong>
-            Location
+            Địa điểm
           </strong>
 
           <span>
@@ -163,8 +169,8 @@
             "
           >
 
-            <span class="status confirmed">
-              Confirmed
+            <span class="status" [class.pending]="testDrive.bookingStatus === 'pending'" [class.confirmed]="testDrive.bookingStatus === 'confirmed'">
+              {{ testDrive.bookingStatus === 'pending' ? 'Đang chờ xác nhận' : 'Đã xác nhận' }}
             </span>
 
 
@@ -178,7 +184,7 @@
                 )
               "
             >
-              Cancel
+              Hủy lịch
             </button>
 
           </ng-container>
@@ -193,7 +199,7 @@
               testDrive.status === 'completed'
             "
           >
-            Completed
+            Đã hoàn thành
           </span>
 
 
@@ -206,7 +212,7 @@
               testDrive.status === 'cancelled'
             "
           >
-            Cancelled
+            Đã hủy
           </span>
 
         </div>
@@ -227,12 +233,11 @@
         <i class="fa-regular fa-calendar"></i>
 
         <h3>
-          No {{ activeTab }} test drives
+          {{ activeTab === 'upcoming' ? 'Chưa có lịch lái thử sắp tới' : activeTab === 'completed' ? 'Chưa có lịch đã hoàn thành' : 'Chưa có lịch đã hủy' }}
         </h3>
 
         <p>
-          Your {{ activeTab }} test drives
-          will appear here.
+          Lịch của tài khoản đang đăng nhập sẽ xuất hiện tại đây.
         </p>
 
       </div>
@@ -247,11 +252,13 @@
     <section class="booking-card">
 
       <h2>
-        Schedule a Test Drive
+        Đăng ký lịch lái thử
       </h2>
 
 
+      <p class="page-description">Xe và seller được lấy từ danh sách showroom do admin quản lý. Lịch đăng ký sẽ chờ admin xác nhận.</p>
       <form [formGroup]="bookingForm" (ngSubmit)="bookTestDrive()">
+        <fieldset [disabled]="!auth.isLoggedIn() || submitting">
 
         <div class="form-grid">
 
@@ -261,7 +268,7 @@
           <div class="form-group">
 
             <label for="fullName">
-              Full Name
+              Họ và tên
             </label>
 
             <input
@@ -270,12 +277,13 @@
               type="text"
 
               formControlName="fullName"
+              readonly
 
               placeholder="Enter your full name"
 
             >
 
-            <small class="error" *ngIf="invalid('fullName')">Enter your full name.</small>
+            <small class="error" *ngIf="invalid('fullName')">Vui lòng kiểm tra họ tên trong tài khoản.</small>
 
           </div>
 
@@ -294,36 +302,13 @@
               type="email"
 
               formControlName="email"
+              readonly
 
               placeholder="your.email@example.com"
 
             >
 
-            <small class="error" *ngIf="invalid('email')">Enter a valid email address.</small>
-
-          </div>
-
-
-          <!-- PHONE -->
-
-          <div class="form-group">
-
-            <label for="phone">
-              Phone Number
-            </label>
-
-            <input
-              id="phone"
-
-              type="tel"
-
-              formControlName="phone"
-
-              placeholder="+1 (555) 000-0000"
-
-            >
-
-            <small class="error" *ngIf="invalid('phone')">Enter a valid phone number.</small>
+            <small class="error" *ngIf="invalid('email')">Vui lòng kiểm tra email trong tài khoản.</small>
 
           </div>
 
@@ -333,7 +318,7 @@
           <div class="form-group">
 
             <label for="vehicle">
-              Select Vehicle
+              Chọn xe
             </label>
 
             <select
@@ -346,7 +331,7 @@
                 [ngValue]="null"
                 disabled
               >
-                Choose vehicle...
+                Chọn xe lái thử...
               </option>
 
 
@@ -362,17 +347,25 @@
 
             </select>
 
-            <small class="error" *ngIf="invalid('selectedVehicleId')">Select a vehicle.</small>
+            <small class="error" *ngIf="invalid('selectedVehicleId')">Vui lòng chọn xe.</small>
 
           </div>
 
 
+          <div class="form-group">
+            <label for="seller">Seller đi cùng</label>
+            <select id="seller" formControlName="sellerId">
+              <option [ngValue]="0">Chọn seller</option>
+              @for (seller of sellers; track seller.id) { <option [ngValue]="seller.id">{{ seller.fullName }}</option> }
+            </select>
+            @if (invalid('sellerId')) { <small class="error">Vui lòng chọn seller đi cùng.</small> }
+          </div>
           <!-- DATE -->
 
           <div class="form-group">
 
             <label for="date">
-              Preferred Date
+              Ngày lái thử
             </label>
 
             <input
@@ -381,9 +374,10 @@
               type="date"
 
               formControlName="preferredDate"
+              [min]="today"
             >
 
-            <small class="error" *ngIf="invalid('preferredDate')">Select a preferred date.</small>
+            <small class="error" *ngIf="invalid('preferredDate')">Vui lòng chọn ngày lái thử.</small>
 
           </div>
 
@@ -393,7 +387,7 @@
           <div class="form-group">
 
             <label for="time">
-              Preferred Time
+              Khung giờ
             </label>
 
             <select
@@ -406,7 +400,7 @@
                 value=""
                 disabled
               >
-                Choose time slot...
+                Chọn khung giờ...
               </option>
 
 
@@ -422,7 +416,7 @@
 
             </select>
 
-            <small class="error" *ngIf="invalid('preferredTime')">Select a preferred time.</small>
+            <small class="error" *ngIf="invalid('preferredTime')">Vui lòng chọn khung giờ.</small>
 
           </div>
 
@@ -435,9 +429,10 @@
           class="book-button"
           type="submit"
         >
-          Book Test Drive
+          {{ submitting ? 'Đang đăng ký...' : 'Đăng ký lái thử' }}
         </button>
 
+        </fieldset>
       </form>
 
     </section>

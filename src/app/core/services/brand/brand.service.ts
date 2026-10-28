@@ -1,5 +1,6 @@
+import { MOCK_VEHICLES } from '../vehicle/vehicle.mock';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Brand, BrandListResult } from '../../models/brand.model';
 import { MOCK_BRANDS } from './brand.mock';
 
@@ -12,8 +13,12 @@ export interface BrandQuery {
 
 @Injectable({ providedIn: 'root' })
 export class BrandService {
-  private brands: Brand[] = MOCK_BRANDS.map(b => ({ ...b }));
+  private brands: Brand[] = MOCK_BRANDS.map(b => ({ ...b, listedVehicles: MOCK_VEHICLES.filter(vehicle => vehicle.brand === b.name).length }));
 
+  getSnapshot(): Brand[] { return this.brands.map(brand => ({ ...brand })); }
+  syncVehicleCounts(vehicles: { brand: string }[]): void {
+    this.brands = this.brands.map(brand => ({ ...brand, listedVehicles: vehicles.filter(vehicle => vehicle.brand === brand.name).length }));
+  }
   getList(query: BrandQuery): Observable<BrandListResult> {
     let result = [...this.brands];
 
@@ -55,12 +60,14 @@ export class BrandService {
     if (index === -1) {
       throw new Error('Không tìm thấy dữ liệu');
     }
+    if (changes.name && changes.name !== this.brands[index].name && this.brands[index].listedVehicles > 0) return throwError(() => new Error('Thương hiệu đang có xe, không thể đổi tên.'));
     const updated = { ...this.brands[index], ...changes };
     this.brands = this.brands.map(b => b.id === id ? updated : b);
     return of(updated);
   }
 
   delete(id: number): Observable<void> {
+    if (this.brands.find(brand => brand.id === id)?.listedVehicles) return throwError(() => new Error('Thương hiệu đang có xe, không thể xoá.'));
     this.brands = this.brands.filter(b => b.id !== id);
     return of(undefined);
   }

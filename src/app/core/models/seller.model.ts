@@ -2,6 +2,7 @@ export type SellerStatus = 'verified' | 'pending' | 'suspended';
 
 export interface Seller {
   id: number;
+  userId: number;
   fullName: string;
   email: string;
   phone: string;
@@ -30,3 +31,4 @@ export interface SellerListResult {
   pageSize: number;
   stats: SellerStats;
 }
+export type SellerInput = Pick<Seller, 'fullName' | 'email' | 'phone' | 'company' | 'status' | 'joinDate'>;

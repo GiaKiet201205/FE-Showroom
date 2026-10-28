@@ -13,7 +13,6 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import {
   EMPTY,
-  Observable,
   Subject,
   catchError,
   debounceTime,
@@ -23,7 +22,7 @@ import {
   tap
 } from 'rxjs';
 import { TestDriveService } from '../../../core/services/test-drive/test-drive.service';
-import { TestDriveBooking, TestDriveStats } from '../../../core/models/test-drive.model';
+import { TestDriveBooking, TestDriveStats, TestDriveInput } from '../../../core/models/test-drive.model';
 
 @Component({
   selector: 'app-admin-test-drives',
@@ -47,6 +46,7 @@ export class AdminTestDrivesComponent implements OnInit {
   pageSize = 8;
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
+  pages = computed(() => Array.from({ length: this.totalPages() }, (_, index) => index + 1));
   rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
 
   // Bộ lọc: Reactive Forms + debounceTime + switchMap
@@ -63,10 +63,13 @@ export class AdminTestDrivesComponent implements OnInit {
   showModal = signal(false);
   editingBooking = signal<TestDriveBooking | null>(null);
   saving = signal(false);
+  errorMessage = signal('');
+  options = this.testDriveService.getOptions();
 
   bookingForm = this.fb.nonNullable.group({
-    customerName: ['', [Validators.required, Validators.maxLength(80)]],
-    vehicleName: ['', [Validators.required, Validators.maxLength(80)]],
+    customerId: [0, [Validators.required, Validators.min(1)]],
+    vehicleId: [0, [Validators.required, Validators.min(1)]],
+    sellerId: [0, [Validators.required, Validators.min(1)]],
     preferredDate: ['', Validators.required],
     timeSlot: ['', Validators.required],
     location: ['', Validators.required],
@@ -138,26 +141,16 @@ export class AdminTestDrivesComponent implements OnInit {
     this.loadBookings();
   }
 
-  deleteBooking(booking: TestDriveBooking): void {
-    if (!confirm(`Xác nhận huỷ lịch lái thử ${booking.id} của khách hàng ${booking.customerName}?`)) return;
-    this.testDriveService
-      .delete(booking.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => this.loadBookings(),
-        error: () => {
-          /* lỗi đã được errorInterceptor hiển thị, không reload như một thao tác thành công */
-        }
-      });
-  }
-
   // ---- Modal -----------------------------------------------------------------
 
   openAddModal(): void {
     this.editingBooking.set(null);
+    this.options = this.testDriveService.getOptions();
+    this.errorMessage.set('');
     this.bookingForm.reset({
-      customerName: '',
-      vehicleName: '',
+      customerId: 0,
+      vehicleId: 0,
+      sellerId: 0,
       preferredDate: '',
       timeSlot: '',
       location: '',
@@ -167,10 +160,20 @@ export class AdminTestDrivesComponent implements OnInit {
   }
 
   openEditModal(booking: TestDriveBooking): void {
+    this.options = this.testDriveService.getOptions(booking);
+    this.errorMessage.set('');
     this.editingBooking.set(booking);
-    this.bookingForm.reset(); // xoá trạng thái touched/dirty của lần mở trước
-    this.bookingForm.patchValue(booking);
+    this.bookingForm.reset({ ...booking });
     this.showModal.set(true);
+  }
+
+  deleteBooking(booking: TestDriveBooking): void {
+    if (!confirm(`Huỷ lịch lái thử ${booking.id} của ${booking.customerName}?`)) return;
+    this.errorMessage.set('');
+    this.testDriveService.delete(booking.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.loadBookings(),
+      error: (error: Error) => this.errorMessage.set(error.message)
+    });
   }
 
   closeModal(): void {
@@ -178,19 +181,18 @@ export class AdminTestDrivesComponent implements OnInit {
   }
 
   saveBooking(): void {
+    if (this.saving()) return;
+    this.errorMessage.set('');
     if (this.bookingForm.invalid) {
       this.bookingForm.markAllAsTouched(); // hiện toàn bộ lỗi validator
       return;
     }
 
-    const data = this.bookingForm.getRawValue() as Omit<TestDriveBooking, 'id'>;
+    const data = this.bookingForm.getRawValue() as TestDriveInput;
     const current = this.editingBooking();
-
-    const request$ = (
-      current
-        ? this.testDriveService.update(current.id, data)
-        : this.testDriveService.create(data)
-    ) as Observable<unknown>;
+    const request$ = current
+      ? this.testDriveService.update(current.id, data)
+      : this.testDriveService.create(data);
 
     this.saving.set(true);
     request$
@@ -203,9 +205,7 @@ export class AdminTestDrivesComponent implements OnInit {
           this.closeModal(); // chỉ đóng modal khi lưu THÀNH CÔNG
           this.loadBookings();
         },
-        error: () => {
-          /* giữ modal mở để người dùng thử lại; thông báo lỗi do errorInterceptor hiển thị */
-        }
+        error: (error: Error) => this.errorMessage.set(error.message)
       });
   }
 }

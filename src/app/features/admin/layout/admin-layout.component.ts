@@ -38,8 +38,8 @@ export class AdminLayoutComponent {
     { label: 'Test Drives', icon: 'event_available', route: '/admin/test-drives' },
     { label: 'Brands', icon: 'sell', route: '/admin/brands' },
     { label: 'Sellers', icon: 'storefront', route: '/admin/sellers' },
-    { label: 'Orders', icon: 'shopping_cart', route: '/admin/orders' },
-    { label: 'Reports', icon: 'description', route: '/admin/reports' },
+    // { label: 'Orders', icon: 'shopping_cart', route: '/admin/orders' },
+    // { label: 'Reports', icon: 'description', route: '/admin/reports' },
     { label: 'Settings', icon: 'settings', route: '/admin/settings' }
   ];
 
