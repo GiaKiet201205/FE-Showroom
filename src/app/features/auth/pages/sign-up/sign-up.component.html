@@ -58,17 +58,43 @@
           autocomplete="name"
           placeholder="John Doe"
           formControlName="fullName"
+          [attr.aria-invalid]="isInvalid('fullName')"
+          [attr.aria-describedby]="
+            isInvalid('fullName') ? 'full-name-error' : null
+          "
         />
         @if (isInvalid("fullName")) {
-          <span class="field-error">Please enter your full name.</span>
+          <span id="full-name-error" class="field-error">
+            Please enter your full name.
+          </span>
         }
       </div>
       <div class="field">
         <label for="email">Email Address</label>
-        <input id="email" type="email" autocomplete="email" placeholder="name@example.com" formControlName="email" />
-        @if (isInvalid('email')) { <span class="field-error">Email không hợp lệ hoặc đã được sử dụng.</span> }
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          placeholder="name@example.com"
+          formControlName="email"
+          [attr.aria-invalid]="isInvalid('email')"
+          [attr.aria-describedby]="
+            form.controls.email.pending
+              ? 'signup-email-pending'
+              : isInvalid('email')
+                ? 'signup-email-error'
+                : null
+          "
+        />
+        @if (isInvalid("email")) {
+          <span id="signup-email-error" class="field-error">
+            Email không hợp lệ hoặc đã được sử dụng.
+          </span>
+        }
       </div>
-      @if (form.controls.email.pending) { <p role="status">Đang kiểm tra email...</p> }
+      @if (form.controls.email.pending) {
+        <p id="signup-email-pending" role="status">Đang kiểm tra email...</p>
+      }
       <div class="field">
         <label for="phone">Phone Number</label>
         <input
@@ -77,9 +103,13 @@
           autocomplete="tel"
           placeholder="+1 (555) 000-0000"
           formControlName="phone"
+          [attr.aria-invalid]="isInvalid('phone')"
+          [attr.aria-describedby]="isInvalid('phone') ? 'phone-error' : null"
         />
         @if (isInvalid("phone")) {
-          <span class="field-error">Please enter a valid phone number.</span>
+          <span id="phone-error" class="field-error">
+            Please enter a valid phone number.
+          </span>
         }
       </div>
       <div class="field password-field">
@@ -91,6 +121,10 @@
             autocomplete="new-password"
             placeholder="••••••••"
             formControlName="password"
+            [attr.aria-invalid]="isInvalid('password')"
+            [attr.aria-describedby]="
+              isInvalid('password') ? 'signup-password-error' : null
+            "
           />
           <button
             class="visibility-button"
@@ -116,9 +150,9 @@
           </button>
         </div>
         @if (isInvalid("password")) {
-          <span class="field-error"
-            >Password must be at least 6 characters.</span
-          >
+          <span id="signup-password-error" class="field-error">
+            Password must be at least 6 characters.
+          </span>
         }
       </div>
       <div class="field confirm-field">
@@ -129,16 +163,48 @@
           autocomplete="new-password"
           placeholder="••••••••"
           formControlName="confirmPassword"
+          [attr.aria-invalid]="confirmPasswordInvalid"
+          [attr.aria-describedby]="
+            confirmPasswordInvalid ? 'confirm-password-error' : null
+          "
         />
         @if (confirmPasswordInvalid) {
-          <span class="field-error">Passwords must match.</span>
+          <span id="confirm-password-error" class="field-error">
+            Passwords must match.
+          </span>
         }
       </div>
 
-      <label class="terms"><input type="checkbox" formControlName="acceptTerms" /><span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span></label>
-      @if (isInvalid('acceptTerms')) { <span class="field-error terms-error">Please agree to the terms.</span> }
-      @if (errorMessage) { <p class="field-error" role="alert">{{ errorMessage }}</p> }
-      <button class="primary-button" type="submit" [disabled]="submitting || form.pending">{{ submitting ? 'Đang xử lý...' : 'Create Account' }}</button>
+      <label class="terms"
+        ><input
+          type="checkbox"
+          formControlName="acceptTerms"
+          [attr.aria-invalid]="isInvalid('acceptTerms')"
+          [attr.aria-describedby]="
+            isInvalid('acceptTerms') ? 'terms-error' : null
+          "
+        />
+        <span
+          >I agree to the <a href="#">Terms of Service</a> and
+          <a href="#">Privacy Policy</a></span
+        ></label
+      >
+
+      @if (isInvalid("acceptTerms")) {
+        <span id="terms-error" class="field-error terms-error">
+          Please agree to the terms.
+        </span>
+      }
+      @if (errorMessage) {
+        <p class="field-error" role="alert">{{ errorMessage }}</p>
+      }
+      <button
+        class="primary-button"
+        type="submit"
+        [disabled]="submitting || form.pending"
+      >
+        {{ submitting ? "Đang xử lý..." : "Create Account" }}
+      </button>
       <div class="divider"><span>OR</span></div>
       <button class="secondary-button" type="button">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">

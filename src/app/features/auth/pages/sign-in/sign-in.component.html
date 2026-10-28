@@ -23,7 +23,13 @@
   </header>
 
   <main class="hero">
-    <form class="login-card" aria-labelledby="sign-in-title" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <form
+      class="login-card"
+      aria-labelledby="sign-in-title"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
+      novalidate
+    >
       <span class="brand-mark card-mark" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none">
           <circle
@@ -53,8 +59,14 @@
           formControlName="email"
           autocomplete="email"
           placeholder="name@example.com"
+          [attr.aria-invalid]="emailInvalid"
+          [attr.aria-describedby]="emailInvalid ? 'email-error' : null"
         />
-        @if (emailInvalid) { <span class="field-error">Please enter a valid email address.</span> }
+        @if (emailInvalid) {
+          <span id="email-error" class="field-error">
+            Please enter a valid email address.
+          </span>
+        }
       </div>
 
       <div class="field password-field">
@@ -66,6 +78,8 @@
             formControlName="password"
             autocomplete="current-password"
             placeholder="••••••••"
+            [attr.aria-invalid]="passwordInvalid"
+            [attr.aria-describedby]="passwordInvalid ? 'password-error' : null"
           />
           <button
             class="visibility-button"
@@ -90,18 +104,31 @@
             </svg>
           </button>
         </div>
-        @if (passwordInvalid) { <span class="field-error">Password must be at least 6 characters.</span> }
+        @if (passwordInvalid) {
+          <span id="password-error" class="field-error">
+            Password must be at least 6 characters.
+          </span>
+        }
       </div>
 
       <div class="options">
         <label class="remember-me"
-          ><input type="checkbox" formControlName="rememberMe" /> Remember me</label
+          ><input type="checkbox" formControlName="rememberMe" /> Remember
+          me</label
         >
         <a routerLink="/forgot-password">Forgot Password?</a>
       </div>
 
-      @if (errorMessage) { <p class="field-error" role="alert">{{ errorMessage }}</p> }
-      <button class="sign-in-button" type="submit" [disabled]="submitting || form.pending">{{ submitting ? 'Đang xử lý...' : 'Sign In' }}</button>
+      @if (errorMessage) {
+        <p class="field-error" role="alert">{{ errorMessage }}</p>
+      }
+      <button
+        class="sign-in-button"
+        type="submit"
+        [disabled]="submitting || form.pending"
+      >
+        {{ submitting ? "Đang xử lý..." : "Sign In" }}
+      </button>
 
       <div class="divider"><span>OR</span></div>
 
@@ -127,7 +154,9 @@
         Continue with Google
       </button>
 
-      <p class="signup">Don't have an account? <a routerLink="/sign-up">Sign Up</a></p>
+      <p class="signup">
+        Don't have an account? <a routerLink="/sign-up">Sign Up</a>
+      </p>
     </form>
   </main>
 </div>

@@ -1,332 +1,187 @@
 <main class="cars-page">
-
   <div class="cars-container">
-
     <!-- ================= FILTER SIDEBAR ================= -->
 
     <aside class="filter-sidebar">
-
-      <h2>
-        Filters
-      </h2>
-
+      <h2>Filters</h2>
 
       <div class="filter-group">
-
-        <label class="filter-title">
-          CONDITION
-        </label>
+        <label class="filter-title"> CONDITION </label>
 
         <div class="condition-tabs">
           <button
             type="button"
-
-            [class.active]="
-              condition === 'all'
-            "
-
-            (click)="
-              condition = 'all';
-              applyFilters()
-            "
+            [class.active]="condition === 'all'"
+            (click)="condition = 'all'; applyFilters()"
           >
             All
           </button>
           <button
             type="button"
-
-            [class.active]="
-              condition === 'new'
-            "
-
-            (click)="
-              condition = 'new';
-              applyFilters()
-            "
+            [class.active]="condition === 'new'"
+            (click)="condition = 'new'; applyFilters()"
           >
             New
           </button>
           <button
             type="button"
-
-            [class.active]="
-              condition === 'used'
-            "
-
-            (click)="
-              condition = 'used';
-              applyFilters()
-            "
+            [class.active]="condition === 'used'"
+            (click)="condition = 'used'; applyFilters()"
           >
             Used
           </button>
         </div>
-
       </div>
 
       <!-- BRAND -->
 
       <div class="filter-group">
-
-        <label
-          class="filter-title"
-          for="brand"
-        >
-          BRAND
-        </label>
+        <label class="filter-title" for="brand"> BRAND </label>
 
         <select
           id="brand"
           [(ngModel)]="selectedBrand"
           (ngModelChange)="applyFilters()"
         >
+          <option value="">All Brands</option>
 
-          <option value="">
-            All Brands
-          </option>
-
-          @for (brand of brands; track brand) { <option [value]="brand">{{ brand }}</option> }
-
+          @for (brand of brands; track brand) {
+            <option [value]="brand">{{ brand }}</option>
+          }
         </select>
-
       </div>
-
 
       <!-- PRICE -->
 
       <div class="filter-group">
-
-        <label class="filter-title">
-          PRICE RANGE
-        </label>
+        <label class="filter-title"> PRICE RANGE </label>
 
         <div class="price-label">
-
           <strong>
-            {{
-              minPrice
-                | currency:
-                  'USD':
-                  'symbol':
-                  '1.0-0'
-            }}
+            {{ minPrice | currency: "USD" : "symbol" : "1.0-0" }}
           </strong>
 
-
           <strong>
-            {{
-              maxPrice
-                | currency:
-                  'USD':
-                  'symbol':
-                  '1.0-0'
-            }}
+            {{ maxPrice | currency: "USD" : "symbol" : "1.0-0" }}
           </strong>
-
         </div>
 
-<input
-  type="range"
-  min="0"
-  max="250000"
-  step="5000"
-  [(ngModel)]="maxPrice"
-  (change)="applyFilters()"
->
-
+        <input
+          type="range"
+          min="0"
+          max="250000"
+          step="5000"
+          [(ngModel)]="maxPrice"
+          (change)="applyFilters()"
+        />
       </div>
-
 
       <!-- YEAR -->
 
       <div class="filter-group">
-
-        <label class="filter-title">
-          YEAR RANGE
-        </label>
+        <label class="filter-title"> YEAR RANGE </label>
 
         <div class="year-inputs">
+          <input
+            type="number"
+            min="1990"
+            max="2026"
+            [(ngModel)]="minYear"
+            (change)="applyFilters()"
+          />
 
-        <input
-          type="number"
-
-          min="1990"
-          max="2026"
-
-          [(ngModel)]="minYear"
-
-          (change)="applyFilters()"
-        >
-
-
-        <input
-          type="number"
-
-          min="1990"
-          max="2026"
-
-          [(ngModel)]="maxYear"
-
-          (change)="applyFilters()"
-        >
-
+          <input
+            type="number"
+            min="1990"
+            max="2026"
+            [(ngModel)]="maxYear"
+            (change)="applyFilters()"
+          />
         </div>
-
       </div>
-
 
       <!-- BODY TYPE -->
 
       <div class="filter-group">
-
-        <label class="filter-title">
-          BODY TYPE
-        </label>
+        <label class="filter-title"> BODY TYPE </label>
 
         <label class="checkbox-item">
-
           <input
             type="checkbox"
             [(ngModel)]="bodyTypes.sedan"
             (change)="applyFilters()"
-          >
+          />
 
-          <span>
-            Sedan
-          </span>
-
+          <span> Sedan </span>
         </label>
 
         <label class="checkbox-item">
+          <input type="checkbox" [(ngModel)]="bodyTypes.suv" />
 
-          <input
-            type="checkbox"
-            [(ngModel)]="bodyTypes.suv"
-          >
-
-          <span>
-            SUV
-          </span>
-
+          <span> SUV </span>
         </label>
 
         <label class="checkbox-item">
+          <input type="checkbox" [(ngModel)]="bodyTypes.hatchback" />
 
-          <input
-            type="checkbox"
-            [(ngModel)]="bodyTypes.hatchback"
-          >
-
-          <span>
-            Hatchback
-          </span>
-
+          <span> Hatchback </span>
         </label>
 
         <label class="checkbox-item">
+          <input type="checkbox" [(ngModel)]="bodyTypes.coupe" />
 
-          <input
-            type="checkbox"
-            [(ngModel)]="bodyTypes.coupe"
-          >
-
-          <span>
-            Coupe
-          </span>
-
+          <span> Coupe </span>
         </label>
-
       </div>
 
       <button
         type="button"
-
         class="reset-filter-button"
-
         (click)="resetFilters()"
       >
         Reset Filters
       </button>
-
     </aside>
-
 
     <!-- ================= CAR CONTENT ================= -->
 
     <section class="cars-content">
-
       <div class="search-bar">
-
         <div class="search-input">
-
-          <i
-            class="fa-solid fa-magnifying-glass"
-          ></i>
+          <i class="fa-solid fa-magnifying-glass"></i>
 
           <input
             type="text"
-
             [(ngModel)]="search"
-
             placeholder="Search by brand, model, color..."
-
             (keyup.enter)="searchCars()"
-          >
-
+          />
         </div>
 
-
-        <button
-          type="button"
-          class="search-button"
-
-          (click)="searchCars()"
-        >
+        <button type="button" class="search-button" (click)="searchCars()">
           Search
         </button>
-
       </div>
 
       <!-- TOP BAR -->
 
       <div class="cars-toolbar">
-
-        <strong>
-          Showing {{ total }} premium vehicles
-        </strong>
-
+        <strong> Showing {{ total }} premium vehicles </strong>
 
         <div class="toolbar-right">
-
           <div class="sort">
+            <span> Sort by: </span>
 
-            <span>
-              Sort by:
-            </span>
+            <select [(ngModel)]="sort" (ngModelChange)="changeSort()">
+              <option value="newest">Newest Arrival</option>
 
-            <select
-              [(ngModel)]="sort"
-              (ngModelChange)="changeSort()"
-            >
-              <option value="newest">
-                Newest Arrival
-              </option>
+              <option value="price-asc">Price Low to High</option>
 
-              <option value="price-asc">
-                Price Low to High
-              </option>
+              <option value="price-desc">Price High to Low</option>
 
-              <option value="price-desc">
-                Price High to Low
-              </option>
-
-              <option value="year-desc">
-                Newest Model Year
-              </option>
+              <option value="year-desc">Newest Model Year</option>
             </select>
-
           </div>
-
 
           <button class="view-button active">
             <i class="fa-solid fa-border-all"></i>
@@ -335,39 +190,28 @@
           <button class="view-button">
             <i class="fa-solid fa-list"></i>
           </button>
-
         </div>
-
       </div>
-
 
       <!-- CARS -->
 
       <div class="cars-grid">
-
-        <article
-          class="car-card"
-          *ngFor="let car of cars"
-        >
-
+        <article class="car-card" *ngFor="let car of cars">
           <div class="car-image">
-
-            <img
-              [src]="car.imageUrl"
-              [alt]="car.brand + ' ' + car.model"
-            >
+            <img [src]="car.imageUrl" [alt]="car.brand + ' ' + car.model" />
 
             <button
               class="favorite-button"
               type="button"
-
-              [class.active]="
+              [attr.aria-label]="
                 favoriteService.isFavorite(car.id)
+                  ? 'Xóa khỏi danh sách yêu thích'
+                  : 'Thêm vào danh sách yêu thích'
               "
-
+              [attr.aria-pressed]="favoriteService.isFavorite(car.id)"
+              [class.active]="favoriteService.isFavorite(car.id)"
               (click)="toggleFavorite(car, $event)"
             >
-
               <i
                 [class]="
                   favoriteService.isFavorite(car.id)
@@ -375,168 +219,84 @@
                     : 'fa-regular fa-heart'
                 "
               ></i>
-
             </button>
-
           </div>
 
-
           <div class="car-info">
+            <h3>{{ car.brand }} {{ car.model }}</h3>
 
-            <h3>
-              {{ car.brand }} {{ car.model }}
-            </h3>
-
-            <p class="car-year">
-              Model Year: {{ car.year }}
-            </p>
-
+            <p class="car-year">Model Year: {{ car.year }}</p>
 
             <div class="car-properties">
-
               <div>
+                <span> TỒN KHO </span>
 
-                <span>
-                  TỒN KHO
-                </span>
-
-                <strong>
-                  {{ car.stockQuantity | number }} xe
-                </strong>
-
+                <strong> {{ car.stockQuantity | number }} xe </strong>
               </div>
 
-
               <div>
-
-                <span>
-                  FUEL
-                </span>
+                <span> FUEL </span>
 
                 <strong>
                   {{ car.fuelType }}
                 </strong>
-
               </div>
 
-
               <div>
-
-                <span>
-                  TRANS.
-                </span>
+                <span> TRANS. </span>
 
                 <strong>
                   {{ car.transmission }}
                 </strong>
-
               </div>
-
             </div>
-
 
             <div class="car-footer">
-
               <strong class="price">
-                {{ car.price | currency:'USD':'symbol':'1.0-0' }}
+                {{ car.price | currency: "USD" : "symbol" : "1.0-0" }}
               </strong>
 
-
-              <button
-                class="details-button"
-                (click)="viewCar(car.id)"
-              >
+              <button class="details-button" (click)="viewCar(car.id)">
                 View Details
               </button>
-
             </div>
-
           </div>
-
         </article>
-
       </div>
 
-
       <!-- PAGINATION -->
-      <div
-      class="pagination"
-      *ngIf="totalPages > 1"
-    >
+      <div class="pagination" *ngIf="totalPages > 1">
+        <!-- PREVIOUS -->
 
-      <!-- PREVIOUS -->
+        <button
+          type="button"
+          [disabled]="currentPage === 1"
+          (click)="goToPage(currentPage - 1)"
+        >
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
 
-      <button
-        type="button"
+        <!-- PAGE NUMBERS -->
 
-        [disabled]="
-          currentPage === 1
-        "
+        <button
+          type="button"
+          *ngFor="let page of pages"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
 
-        (click)="
-          goToPage(
-            currentPage - 1
-          )
-        "
-      >
+        <!-- NEXT -->
 
-        <i
-          class="fa-solid fa-chevron-left"
-        ></i>
-
-      </button>
-
-
-      <!-- PAGE NUMBERS -->
-
-      <button
-        type="button"
-
-        *ngFor="
-          let page of pages
-        "
-
-        [class.active]="
-          page === currentPage
-        "
-
-        (click)="
-          goToPage(page)
-        "
-      >
-
-        {{ page }}
-
-      </button>
-
-
-      <!-- NEXT -->
-
-      <button
-        type="button"
-
-        [disabled]="
-          currentPage ===
-          totalPages
-        "
-
-        (click)="
-          goToPage(
-            currentPage + 1
-          )
-        "
-      >
-
-        <i
-          class="fa-solid fa-chevron-right"
-        ></i>
-
-      </button>
-
-    </div>
-
+        <button
+          type="button"
+          [disabled]="currentPage === totalPages"
+          (click)="goToPage(currentPage + 1)"
+        >
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
     </section>
-
   </div>
-
 </main>
