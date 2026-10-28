@@ -242,7 +242,7 @@ export class CarsListingComponent implements OnInit {
       image: car.imageUrl ?? '',
       price: car.price,
       year: car.year,
-      mileage: `${car.mileage.toLocaleString()} mi`,
+      stockQuantity: car.stockQuantity,
       fuel: car.fuelType ?? '-',
       transmission: car.transmission ?? '-'
     });
