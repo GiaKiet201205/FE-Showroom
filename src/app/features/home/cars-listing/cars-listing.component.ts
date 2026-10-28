@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Vehicle } from '../../../core/models/vehicle.model';
 import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
 import { FavoriteService } from '../../../core/services/favorite.service';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 @Component({
   selector: 'app-cars-listing',
@@ -21,6 +22,7 @@ export class CarsListingComponent implements OnInit {
   // FILTER
   condition = 'new';
   selectedBrand = '';
+  brands: string[] = [];
 
   minPrice = 0;
   maxPrice = 250000;
@@ -51,10 +53,12 @@ export class CarsListingComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private vehicleService: VehicleService,
+    private brandService: BrandService,
     public favoriteService: FavoriteService
   ) {}
 
   ngOnInit(): void {
+    this.brands = this.brandService.getSnapshot().map(brand => brand.name);
     this.readQueryParams();
     this.loadCars();
   }
