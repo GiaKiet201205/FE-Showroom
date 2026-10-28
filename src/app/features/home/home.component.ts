@@ -1,3 +1,4 @@
+import { BrandService } from '../../core/services/brand/brand.service';
 import {
   Component,
   OnInit,
@@ -66,7 +67,8 @@ export class HomeComponent
   selectedPrice = '';
 
 
-  makes: string[] = [];
+  private brandService = inject(BrandService);
+  get makes(): string[] { return this.brandService.getSnapshot().map(brand => brand.name); }
 
   models: string[] = [];
 
@@ -94,8 +96,7 @@ export class HomeComponent
       .getHomeContent()
       .subscribe(data => {
 
-        this.makes =
-          data.makes;
+
 
         this.models =
           data.models;

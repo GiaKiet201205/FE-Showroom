@@ -4,9 +4,7 @@ export type VehicleStatus =
   | 'sold'
   | 'draft';
 
-export type VehicleCondition =
-  | 'new'
-  | 'used';
+export type VehicleCondition = 'new';
 
 
 export interface VehicleSeller {
@@ -38,7 +36,7 @@ export interface Vehicle {
 
   price: number;
 
-  mileage: number;
+  stockQuantity: number;
 
   color: string;
 

@@ -11,8 +11,6 @@
       </h2>
 
 
-      <!-- CONDITION -->
-
       <div class="filter-group">
 
         <label class="filter-title">
@@ -66,7 +64,6 @@
 
       </div>
 
-
       <!-- BRAND -->
 
       <div class="filter-group">
@@ -88,17 +85,7 @@
             All Brands
           </option>
 
-          <option value="BMW">
-            BMW
-          </option>
-
-          <option value="Porsche">
-            Porsche
-          </option>
-
-          <option value="Tesla">
-            Tesla
-          </option>
+          @for (brand of brands; track brand) { <option [value]="brand">{{ brand }}</option> }
 
         </select>
 
@@ -138,19 +125,14 @@
 
         </div>
 
-        <input
-          type="range"
-
-          min="0"
-
-          max="250000"
-
-          step="5000"
-
-          [(ngModel)]="maxPrice"
-
-          (change)="applyFilters()"
-        >
+<input
+  type="range"
+  min="0"
+  max="250000"
+  step="5000"
+  [(ngModel)]="maxPrice"
+  (change)="applyFilters()"
+>
 
       </div>
 
@@ -415,11 +397,11 @@
               <div>
 
                 <span>
-                  MILEAGE
+                  TỒN KHO
                 </span>
 
                 <strong>
-                  {{ car.mileage | number }} mi
+                  {{ car.stockQuantity | number }} xe
                 </strong>
 
               </div>

@@ -1,6 +1,7 @@
 <div class="test-drives-page">
   <div class="breadcrumb">Main / Test Drives</div>
   <h1 class="page-title">Test Drive Management</h1>
+  @if (errorMessage() && !showModal()) { <p role="alert">{{ errorMessage() }}</p> }
 
   <section class="section-header">
     <div>
@@ -83,17 +84,18 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>CUSTOMER</th>
-            <th>VEHICLE</th>
+            <th>CUSTOMER/VEHICLE</th>
+            <th>SELLER </th>
             <th>PREFERRED DATE</th>
             <th>TIME SLOT</th>
             <th>LOCATION</th>
             <th>STATUS</th>
+            <th class="col-actions">ACTION</th>
           </tr>
         </thead>
         <tbody>
           @if (loading()) {
-            <tr><td colspan="8" class="loading-cell">Đang tải dữ liệu...</td></tr>
+            <tr><td colspan="9" class="loading-cell">Đang tải dữ liệu...</td></tr>
           } @else {
             @for (b of bookings(); track b.id) {
               <tr>
@@ -106,14 +108,16 @@
                   <div class="vehicle-thumb"><mat-icon>directions_car</mat-icon></div>
                   <span>{{ b.vehicleName }}</span>
                 </td>
+                <td>{{ b.sellerName }}</td>
                 <td class="cell-muted">{{ b.preferredDate }}</td>
                 <td class="cell-muted">{{ b.timeSlot }}</td>
                 <td class="cell-muted">{{ b.location }}</td>
                 <td><span class="status-badge" [class]="b.status">{{ b.status }}</span></td>
                 <td class="col-actions">
-                  <button class="icon-btn edit" title="Sửa" (click)="openEditModal(b)"><mat-icon>edit</mat-icon></button>
-                  <button class="icon-btn delete" title="Huỷ lịch" (click)="deleteBooking(b)"><mat-icon>delete</mat-icon></button>
+                  <button type="button" class="icon-btn edit" title="Sửa lịch lái thử" [attr.aria-label]="'Sửa lịch ' + b.id" (click)="openEditModal(b)"><mat-icon>edit</mat-icon></button>
+                  <button type="button" class="icon-btn delete" title="Huỷ lịch lái thử" [attr.aria-label]="'Huỷ lịch ' + b.id" (click)="deleteBooking(b)"><mat-icon>delete</mat-icon></button>
                 </td>
+
               </tr>
             }
           }
@@ -127,14 +131,8 @@
       </div>
       <div class="pagination-controls">
         <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
-        @for (p of [1, 2, 3]; track p) {
-          @if (p <= totalPages()) {
-            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
-          }
-        }
-        @if (totalPages() > 4) {
-          <span class="page-dots">...</span>
-          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        @for (p of pages(); track p) {
+          <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
         }
         <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
       </div>
@@ -156,35 +154,28 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Customer Name</label>
-          <input
-            type="text"
-            formControlName="customerName"
-            class="form-control"
-            [class.is-invalid]="f.customerName.touched && f.customerName.invalid"
-          />
-          @if (f.customerName.touched && f.customerName.errors?.['required']) {
-            <small class="field-error">Vui lòng nhập tên khách hàng</small>
-          }
-          @if (f.customerName.errors?.['maxlength']) {
-            <small class="field-error">Tối đa 80 ký tự</small>
-          }
+          <label>Khách hàng (User)</label>
+          <select formControlName="customerId" class="form-control">
+            <option [ngValue]="0">Chọn khách hàng</option>
+            @for (user of options.customers; track user.id) { <option [ngValue]="user.id">{{ user.fullName }} — {{ user.email }}</option> }
+          </select>
+          @if (f.customerId.touched && f.customerId.invalid) { <small class="field-error">Chọn khách hàng có trong User.</small> }
         </div>
-
         <div class="form-group">
-          <label>Vehicle Name</label>
-          <input
-            type="text"
-            formControlName="vehicleName"
-            class="form-control"
-            [class.is-invalid]="f.vehicleName.touched && f.vehicleName.invalid"
-          />
-          @if (f.vehicleName.touched && f.vehicleName.errors?.['required']) {
-            <small class="field-error">Vui lòng nhập tên xe</small>
-          }
-          @if (f.vehicleName.errors?.['maxlength']) {
-            <small class="field-error">Tối đa 80 ký tự</small>
-          }
+          <label>Xe lái thử</label>
+          <select formControlName="vehicleId" class="form-control">
+            <option [ngValue]="0">Chọn xe</option>
+            @for (vehicle of options.vehicles; track vehicle.id) { <option [ngValue]="vehicle.id">{{ vehicle.brand }} {{ vehicle.model }}</option> }
+          </select>
+          @if (f.vehicleId.touched && f.vehicleId.invalid) { <small class="field-error">Chọn xe còn trong kho.</small> }
+        </div>
+        <div class="form-group">
+          <label>Seller đi cùng</label>
+          <select formControlName="sellerId" class="form-control">
+            <option [ngValue]="0">Chọn seller</option>
+            @for (seller of options.sellers; track seller.id) { <option [ngValue]="seller.id">{{ seller.fullName }}</option> }
+          </select>
+          @if (f.sellerId.touched && f.sellerId.invalid) { <small class="field-error">Chọn seller đi cùng.</small> }
         </div>
 
         <div class="form-group">
@@ -238,6 +229,7 @@
         </div>
       </div>
 
+      @if (errorMessage()) { <p class="field-error" role="alert">{{ errorMessage() }}</p> }
       <div class="modal-actions">
         <!-- type="button" để nút Cancel không kích hoạt submit của form -->
         <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>

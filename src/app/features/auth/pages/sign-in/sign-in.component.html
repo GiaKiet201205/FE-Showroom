@@ -100,7 +100,8 @@
         <a routerLink="/forgot-password">Forgot Password?</a>
       </div>
 
-      <button class="sign-in-button" type="submit">Sign In</button>
+      @if (errorMessage) { <p class="field-error" role="alert">{{ errorMessage }}</p> }
+      <button class="sign-in-button" type="submit" [disabled]="submitting || form.pending">{{ submitting ? 'Đang xử lý...' : 'Sign In' }}</button>
 
       <div class="divider"><span>OR</span></div>
 

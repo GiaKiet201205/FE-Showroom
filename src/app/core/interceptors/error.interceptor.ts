@@ -20,7 +20,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           message = 'Không kết nối được máy chủ. Vui lòng kiểm tra mạng.';
           break;
         case 401:
-          message = 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
+          message = req.url.includes('/auth/login') ? 'Email hoặc mật khẩu không đúng.' : 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
           // Request đăng nhập bị 401 (sai mật khẩu) thì không chuyển hướng
           if (!req.url.includes('/auth/login')) {
             auth.logout();

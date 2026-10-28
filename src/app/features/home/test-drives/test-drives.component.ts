@@ -1,370 +1,117 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationService } from '../../../core/services/notification.service';
+import { TestDriveService } from '../../../core/services/test-drive/test-drive.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { TestDriveBooking } from '../../../core/models/test-drive.model';
 
-type TestDriveStatus =
-  | 'upcoming'
-  | 'completed'
-  | 'cancelled';
-
-interface VehicleOption {
-  id: number;
-  name: string;
-  image: string;
-  location: string;
-}
-
-interface TestDrive {
-  id: number;
-
-  vehicleId: number;
-  vehicleName: string;
-  vehicleImage: string;
-  vehicleDescription: string;
-
-  date: string;
-  time: string;
-
-  location: string;
-
-  status: TestDriveStatus;
+type TestDriveStatus = 'upcoming' | 'completed' | 'cancelled';
+interface DriveView {
+  id: string; vehicleName: string; vehicleImage: string; vehicleDescription: string;
+  date: string; time: string; location: string; status: TestDriveStatus; bookingStatus: string; sellerName: string;
 }
 
 @Component({
-  selector: 'app-test-drives',
-  standalone: true,
-
-  imports: [
-    CommonModule,
-    ReactiveFormsModule
-  ],
-
-  templateUrl: './test-drives.component.html',
-  styleUrl: './test-drives.component.scss'
+  selector: 'app-test-drives', standalone: true, imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './test-drives.component.html', styleUrl: './test-drives.component.scss'
 })
 export class TestDrivesComponent {
-
-  // =========================
-  // TAB
-  // =========================
-
-  activeTab: TestDriveStatus = 'upcoming';
-
-
-  // =========================
-  // SUCCESS MESSAGE
-  // =========================
-
-  showSuccess = false;
-
-
-  // =========================
-  // FORM
-  // =========================
-
-  private fb = inject(FormBuilder);
+  private service = inject(TestDriveService);
+  auth = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
+  private route = inject(ActivatedRoute);
   private notification = inject(NotificationService);
+  private fb = inject(FormBuilder);
+  activeTab: TestDriveStatus = 'upcoming';
+  showSuccess = false;
+  errorMessage = '';
+  submitting = false;
+  readonly today = this.localDate();
+
+  private localDate(): string {
+    const date = new Date();
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  }
+  private customerId?: number;
+  options = this.service.getOptions();
+  vehicles = this.options.vehicles.map(vehicle => ({ id: vehicle.id, name: `${vehicle.brand} ${vehicle.model}` }));
+  sellers = this.options.sellers;
+  testDrives: DriveView[] = [];
+  timeSlots = ['08:00 AM', '09:00 AM', '10:30 AM', '01:00 PM', '02:30 PM', '04:00 PM'];
   bookingForm = this.fb.nonNullable.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.required, Validators.pattern(/^[+]?[-\d\s().]{7,20}$/)]],
     selectedVehicleId: this.fb.control<number | null>(null, Validators.required),
-    preferredDate: ['', Validators.required],
-    preferredTime: ['', Validators.required]
+    sellerId: [0, [Validators.required, Validators.min(1)]],
+    preferredDate: ['', Validators.required], preferredTime: ['', Validators.required]
   });
 
-
-  // =========================
-  // VEHICLES
-  // =========================
-
-  vehicles: VehicleOption[] = [
-    {
-      id: 1,
-      name: 'Porsche 911 GT3 RS (2024)',
-      image: '/images/detail/porsche-main.jpg',
-      location: 'Beverly Hills Porsche Center, CA'
-    },
-
-    {
-      id: 2,
-      name: 'BMW M4 Competition (2023)',
-      image: '/images/car-1.jpg',
-      location: 'BMW Beverly Hills, CA'
-    },
-
-    {
-      id: 3,
-      name: 'Tesla Model S Plaid (2022)',
-      image: '/images/car-2.jpg',
-      location: 'Tesla Center Los Angeles, CA'
-    },
-
-    {
-      id: 4,
-      name: 'Audi RS e-tron GT (2023)',
-      image: '/images/car-4.jpg',
-      location: 'Audi Beverly Hills, CA'
+  constructor() {
+    const current = this.options.customers.find(user => user.id === this.auth.currentUser()?.id);
+    if (current) {
+      this.customerId = current.id;
+      this.bookingForm.patchValue({ fullName: current.fullName, email: current.email });
+      this.loadBookings();
     }
-  ];
-
-
-  // =========================
-  // TIME SLOTS
-  // =========================
-
-  timeSlots = [
-    '08:00 AM',
-    '09:00 AM',
-    '10:30 AM',
-    '01:00 PM',
-    '02:30 PM',
-    '04:00 PM'
-  ];
-
-
-  // =========================
-  // TEST DRIVE DATA
-  // =========================
-
-  testDrives: TestDrive[] = [
-    {
-      id: 1,
-
-      vehicleId: 1,
-
-      vehicleName:
-        'Porsche 911 GT3 RS',
-
-      vehicleImage:
-        '/images/detail/porsche-main.jpg',
-
-      vehicleDescription:
-        'Weissach Package • GT Silver Metallic',
-
-      date: 'October 24, 2026',
-
-      time: '10:30 AM',
-
-      location:
-        'Beverly Hills Porsche Center, CA',
-
-      status: 'upcoming'
-    },
-
-    {
-      id: 2,
-
-      vehicleId: 2,
-
-      vehicleName:
-        'BMW M4 Competition',
-
-      vehicleImage:
-        '/images/car-1.jpg',
-
-      vehicleDescription:
-        'Competition Package • Isle of Man Green',
-
-      date: 'September 20, 2026',
-
-      time: '02:30 PM',
-
-      location:
-        'BMW Beverly Hills, CA',
-
-      status: 'completed'
-    }
-  ];
-
-
-  constructor(
-    private route: ActivatedRoute
-  ) {
-
-    const vehicleId =
-      Number(
-        this.route.snapshot.queryParamMap.get(
-          'vehicleId'
-        )
-      );
-
-    if (vehicleId) {
-      this.bookingForm.controls.selectedVehicleId.setValue(vehicleId);
-    }
-
+    const vehicleId = Number(this.route.snapshot.queryParamMap.get('vehicleId'));
+    if (this.vehicles.some(vehicle => vehicle.id === vehicleId)) this.bookingForm.controls.selectedVehicleId.setValue(vehicleId);
   }
-
-
-  // =========================
-  // FILTER BY TAB
-  // =========================
-
-  get filteredTestDrives(): TestDrive[] {
-
-    return this.testDrives.filter(
-      testDrive =>
-        testDrive.status === this.activeTab
-    );
-
-  }
-
-
-  // =========================
-  // CHANGE TAB
-  // =========================
-
-  setTab(tab: TestDriveStatus): void {
-    this.activeTab = tab;
-  }
-
-
-  // =========================
-  // BOOK
-  // =========================
+  get filteredTestDrives(): DriveView[] { return this.testDrives.filter(drive => drive.status === this.activeTab); }
+  setTab(tab: TestDriveStatus): void { this.activeTab = tab; }
 
   bookTestDrive(): void {
-    if (this.bookingForm.invalid) {
-      this.bookingForm.markAllAsTouched();
+    if (this.submitting) return;
+    this.showSuccess = false;
+    this.errorMessage = '';
+    if (this.bookingForm.invalid) { this.bookingForm.markAllAsTouched(); return; }
+    const data = this.bookingForm.getRawValue();
+    const customer = this.service.getOptions().customers.find(user => user.id === this.auth.currentUser()?.id);
+    if (!customer) {
+      this.errorMessage = 'Vui lòng đăng nhập bằng tài khoản User đang hoạt động và sử dụng email của tài khoản đó.';
       return;
     }
-
-    const { selectedVehicleId, preferredDate, preferredTime } = this.bookingForm.getRawValue();
-
-    const vehicle =
-      this.vehicles.find(
-        item =>
-          item.id === selectedVehicleId
-      );
-
-
-    if (!vehicle) {
+    if (data.preferredDate < this.localDate()) {
+      this.errorMessage = 'Vui lòng chọn ngày lái thử từ hôm nay trở đi.';
       return;
     }
-
-
-    const newTestDrive: TestDrive = {
-
-      id: Date.now(),
-
-      vehicleId: vehicle.id,
-
-      vehicleName:
-        vehicle.name.replace(
-          /\s\(\d{4}\)$/,
-          ''
-        ),
-
-      vehicleImage:
-        vehicle.image,
-
-      vehicleDescription:
-        'Premium Vehicle',
-
-      date:
-        this.formatDate(
-          preferredDate
-        ),
-
-      time:
-        preferredTime,
-
-      location:
-        vehicle.location,
-
-      status: 'upcoming'
-    };
-
-
-    this.testDrives = [
-      newTestDrive,
-      ...this.testDrives
-    ];
-
-
-    this.activeTab = 'upcoming';
-
-    this.showSuccess = true;
-    this.notification.showSuccess('Test drive booked successfully.');
-
-    this.resetForm();
-
+    this.submitting = true;
+    this.service.create({ customerId: customer.id, vehicleId: data.selectedVehicleId!, sellerId: data.sellerId,
+      preferredDate: data.preferredDate, timeSlot: data.preferredTime, location: 'Showroom', status: 'pending'
+    }).pipe(finalize(() => this.submitting = false), takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.customerId = customer.id;
+        this.loadBookings(); this.activeTab = 'upcoming'; this.showSuccess = true;
+        this.bookingForm.patchValue({ preferredDate: '', preferredTime: '' });
+        this.bookingForm.markAsUntouched();
+        this.notification.showSuccess('Đã đặt lịch lái thử và phân công seller đi cùng.');
+      },
+      error: (error: Error) => this.errorMessage = error.message
+    });
   }
-
-
-  // =========================
-  // CANCEL
-  // =========================
-
-  cancelTestDrive(id: number): void {
-
-    const confirmed =
-      confirm(
-        'Are you sure you want to cancel this test drive?'
-      );
-
-
-    if (!confirmed) {
-      return;
-    }
-
-
-    this.testDrives =
-      this.testDrives.map(
-        testDrive => {
-
-          if (testDrive.id === id) {
-
-            return {
-              ...testDrive,
-              status: 'cancelled' as TestDriveStatus
-            };
-
-          }
-
-          return testDrive;
-
-        }
-      );
-
+  cancelTestDrive(id: string): void {
+    this.errorMessage = '';
+    if (!this.testDrives.some(drive => drive.id === id && drive.status === 'upcoming')) return;
+    if (!confirm('Bạn muốn huỷ lịch lái thử này?')) return;
+    this.service.delete(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.loadBookings(), error: (error: Error) => this.errorMessage = error.message
+    });
   }
-
-
-  // =========================
-  // DATE FORMAT
-  // =========================
-
-  private formatDate(
-    value: string
-  ): string {
-
-    return new Date(
-      `${value}T00:00:00`
-    ).toLocaleDateString(
-      'en-US',
-      {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }
-    );
-
+  private loadBookings(): void {
+    if (this.customerId === undefined) return;
+    this.service.getList({ customerId: this.customerId, page: 1, pageSize: 1000 }).subscribe(result => {
+      this.testDrives = result.items.map((booking: TestDriveBooking) => ({
+        id: booking.id, vehicleName: booking.vehicleName, vehicleImage: booking.vehicleImageUrl ?? '/images/vehicle-placeholder.svg',
+        vehicleDescription: `Seller đi cùng: ${booking.sellerName}`, sellerName: booking.sellerName,
+        bookingStatus: booking.status, date: booking.preferredDate, time: booking.timeSlot, location: booking.location,
+        status: booking.status === 'completed' || booking.status === 'cancelled' ? booking.status : 'upcoming'
+      }));
+    });
   }
-
-
-  // =========================
-  // RESET
-  // =========================
-
-  private resetForm(): void {
-    this.bookingForm.reset({ selectedVehicleId: this.bookingForm.controls.selectedVehicleId.value });
-  }
-
   invalid(name: keyof typeof this.bookingForm.controls): boolean {
-    const control = this.bookingForm.controls[name];
-    return control.invalid && control.touched;
+    const control = this.bookingForm.controls[name]; return control.invalid && control.touched;
   }
-
 }

@@ -57,7 +57,7 @@
             <th>MODEL</th>
             <th>YEAR</th>
             <th>PRICE</th>
-            <th>MILEAGE</th>
+            <th>TỒN KHO</th>
             <th>COLOR</th>
             <th>STATUS</th>
             <th class="col-actions">ACTIONS</th>
@@ -83,7 +83,7 @@
                 <td class="cell-muted">{{ v.model }}</td>
                 <td class="cell-muted">{{ v.year }}</td>
                 <td class="cell-price">${{ v.price | number }}</td>
-                <td class="cell-muted">{{ v.mileage | number }} mi</td>
+                <td class="cell-muted">{{ v.stockQuantity | number }} xe</td>
                 <td class="cell-muted">{{ v.color }}</td>
                 <td><span class="status-badge" [class]="v.status">{{ v.status }}</span></td>
                 <td class="col-actions">
@@ -107,14 +107,8 @@
       </div>
       <div class="pagination-controls">
         <button class="page-btn" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Previous</button>
-        @for (p of [1, 2, 3]; track p) {
-          @if (p <= totalPages()) {
-            <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
-          }
-        }
-        @if (totalPages() > 4) {
-          <span class="page-dots">...</span>
-          <button class="page-btn" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        @for (p of pages(); track p) {
+          <button class="page-btn" [class.active]="page() === p" (click)="goToPage(p)">{{ p }}</button>
         }
         <button class="page-btn" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Next</button>
       </div>
@@ -192,15 +186,17 @@
         </div>
 
         <div class="form-group">
-          <label>Mileage (mi)</label>
+          <label>Số lượng trong kho</label>
           <input
             type="number"
-            formControlName="mileage"
+            formControlName="stockQuantity"
+            min="0"
+            step="1"
             class="form-control"
-            [class.is-invalid]="f.mileage.touched && f.mileage.invalid"
+            [class.is-invalid]="f.stockQuantity.touched && f.stockQuantity.invalid"
           />
-          @if (f.mileage.touched && f.mileage.invalid) {
-            <small class="field-error">Số dặm không được âm</small>
+          @if (f.stockQuantity.touched && f.stockQuantity.invalid) {
+            <small class="field-error">Số lượng phải là số nguyên không âm</small>
           }
         </div>
 

@@ -46,3 +46,6 @@ export interface UserListResult {
   stats: UserStats;
 }
 
+
+export type UserAccountInput = Omit<UserAccount, 'id'> & { password?: string };
+export type UserAccountChanges = Partial<UserAccount> & { password?: string };

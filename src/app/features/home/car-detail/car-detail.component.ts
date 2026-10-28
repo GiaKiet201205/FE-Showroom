@@ -131,9 +131,9 @@ export class CarDetailComponent {
       },
 
       {
-        label: 'Mileage',
+        label: 'Số lượng trong kho',
         value:
-          `${vehicle.mileage.toLocaleString()} mi`
+          `${vehicle.stockQuantity.toLocaleString()} xe`
       },
 
       {
@@ -239,8 +239,8 @@ export class CarDetailComponent {
       year:
         this.car.year,
 
-      mileage:
-        `${this.car.mileage.toLocaleString()} mi`,
+      stockQuantity:
+        this.car.stockQuantity,
 
       fuel:
         this.car.fuelType ?? '-',

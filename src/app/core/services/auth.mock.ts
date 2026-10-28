@@ -14,3 +14,9 @@ export const MOCK_ADMIN_LOGIN_RESPONSE: LoginResponse = {
     role: 'admin'
   }
 };
+
+/** The application has exactly one fixed administrator identity. */
+export function isSoleAdmin(user: { id: number; email: string; role: string } | null | undefined): boolean {
+  return user?.id === MOCK_ADMIN_LOGIN_RESPONSE.user.id &&
+    user.email.toLowerCase() === MOCK_ADMIN_CREDENTIALS.email && user.role === 'admin';
+}

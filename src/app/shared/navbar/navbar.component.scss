@@ -159,3 +159,18 @@ text-decoration: none;
     }
   }
 }
+.avatar-link { gap: 8px; color: $white; }
+.account-name { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+button.sign-in-button { border: none; cursor: pointer; font-family: inherit; }
+
+@media (max-width: 1250px) {
+  .navbar { height: auto; min-height: 72px; flex-wrap: wrap; padding: 16px 24px; gap: 16px; }
+  #brand { flex: 1; }
+  #nav-list { order: 3; flex-basis: 100%; justify-content: flex-start; gap: 24px; overflow-x: auto; padding-bottom: 4px; }
+  #nav-list a { white-space: nowrap; }
+}
+@media (max-width: 480px) {
+  #brand { min-width: 0; }
+  #info { min-width: 0; gap: 8px; }
+  .account-name { display: none; }
+}

@@ -24,8 +24,9 @@
       <div class="field">
         <label for="email">Email Address</label>
         <input id="email" type="email" autocomplete="email" placeholder="name@example.com" formControlName="email" />
-        @if (isInvalid('email')) { <span class="field-error">Please enter a valid email address.</span> }
+        @if (isInvalid('email')) { <span class="field-error">Email không hợp lệ hoặc đã được sử dụng.</span> }
       </div>
+      @if (form.controls.email.pending) { <p role="status">Đang kiểm tra email...</p> }
       <div class="field">
         <label for="phone">Phone Number</label>
         <input id="phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000" formControlName="phone" />
@@ -49,7 +50,8 @@
 
       <label class="terms"><input type="checkbox" formControlName="acceptTerms" /><span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span></label>
       @if (isInvalid('acceptTerms')) { <span class="field-error terms-error">Please agree to the terms.</span> }
-      <button class="primary-button" type="submit">Create Account</button>
+      @if (errorMessage) { <p class="field-error" role="alert">{{ errorMessage }}</p> }
+      <button class="primary-button" type="submit" [disabled]="submitting || form.pending">{{ submitting ? 'Đang xử lý...' : 'Create Account' }}</button>
       <div class="divider"><span>OR</span></div>
       <button class="secondary-button" type="button">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.5" /><path d="m9.5 9.5 5 5m0-5-5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" /></svg>

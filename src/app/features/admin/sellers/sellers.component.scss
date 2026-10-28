@@ -123,3 +123,52 @@
 }
 
 .page-dots { color: $admin-text-muted; font-size: 12px; padding: 0 4px; }
+.btn-primary {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  background: $admin-primary; color: #fff; border: none;
+  border-radius: $admin-radius-sm; padding: 10px 16px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  &:hover:not(:disabled) { background: $admin-primary-dark; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+.btn-cancel {
+  background: #fff; color: $admin-text-dark; border: 1px solid $admin-border;
+  border-radius: $admin-radius-sm; padding: 10px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  &:hover:not(:disabled) { background: $admin-bg; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+.col-actions { white-space: nowrap; text-align: right; }
+.seller-table th.col-actions { text-align: right; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; padding: 4px; border: none; border-radius: 6px;
+  background: $admin-bg; color: $admin-text-muted; cursor: pointer; vertical-align: middle;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  & + .icon-btn { margin-left: 4px; }
+  &.edit:hover { color: $admin-primary; background: rgba(91, 75, 245, .08); }
+  &.delete:hover { color: $admin-danger; background: rgba(239, 68, 68, .08); }
+  &:focus-visible { outline: 2px solid $admin-primary; outline-offset: 2px; }
+}
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000; background: rgba(0, 0, 0, .5);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-content {
+  background: $admin-card-bg; padding: 24px; border-radius: $admin-radius-md;
+  width: min(560px, 100%); max-height: 90vh; overflow-y: auto; box-shadow: $admin-shadow;
+  h2 { margin: 0 0 20px; color: $admin-text-dark; font-size: 20px; }
+}
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.form-group {
+  display: flex; flex-direction: column; gap: 6px;
+  label { font-size: 12px; font-weight: 600; color: $admin-text-muted; }
+}
+.form-control {
+  width: 100%; min-width: 0; box-sizing: border-box; padding: 10px 12px;
+  border: 1px solid $admin-border; border-radius: $admin-radius-sm; color: $admin-text-dark; background: #fff;
+  &:focus { outline: 2px solid $admin-primary; outline-offset: 1px; }
+}
+.field-error { color: $admin-danger; font-size: 13px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+@media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
