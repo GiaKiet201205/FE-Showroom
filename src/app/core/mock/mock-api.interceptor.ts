@@ -30,6 +30,7 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
       }
       // Deterministic error scenario for exercising the shared HTTP error handler.
       if (req.params.get('search') === '!error') return fail(500, 'Lỗi dữ liệu giả lập.');
+      if (path === '/vehicles/body-types' && req.method === 'GET') return vehicles.getBodyTypes().pipe(map(response));
       if (path === '/vehicles/featured') return vehicles.getFeatured(Number(req.params.get('limit') ?? 4)).pipe(map(response));
       if (path === '/vehicles/selection') return vehicles.getByIds((req.params.get('ids') ?? '').split(',').map(Number)).pipe(map(response));
       if (path === '/vehicles' && req.method === 'GET') {
@@ -43,7 +44,7 @@ export const mockApiInterceptor: HttpInterceptorFn = (req, next) => {
           sort: req.params.get('sort') ?? undefined,
           minPrice: numberParam('minPrice'), maxPrice: numberParam('maxPrice'),
           minYear: numberParam('minYear'), maxYear: numberParam('maxYear'),
-          bodyTypes: req.params.get('bodyTypes')?.split(','),
+          bodyTypes: req.params.get('bodyTypes')?.split(',').filter(Boolean),
           page: numberParam('page') ?? 1, pageSize: numberParam('pageSize') ?? 10
         };
         return vehicles.getList(query).pipe(map(response));

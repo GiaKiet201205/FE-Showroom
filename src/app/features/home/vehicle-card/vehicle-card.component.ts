@@ -2,7 +2,8 @@ import {
   Component,
   EventEmitter,
   Input,
-  Output
+  Output,
+  inject
 } from '@angular/core';
 
 import {
@@ -12,6 +13,7 @@ import {
 import {
   Vehicle
 } from '../../../core/models/vehicle.model';
+import { FavoriteService } from '../../../core/services/favorite.service';
 
 
 @Component({
@@ -30,6 +32,12 @@ import {
     './vehicle-card.component.scss'
 })
 export class VehicleCardComponent {
+  readonly favoriteService = inject(FavoriteService);
+
+  toggleFavorite(event: Event): void {
+    event.stopPropagation();
+    this.favoriteService.toggleVehicle(this.vehicle);
+  }
 
   // =========================================
   // INPUT

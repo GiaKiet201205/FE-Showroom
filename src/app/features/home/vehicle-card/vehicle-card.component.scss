@@ -60,6 +60,11 @@ transition: 0.25s;
     border-radius: 50%;
 
     font-size: 19px;
+    cursor: pointer;
+
+    &.active {
+      color: #ef4444;
+    }
     }
 }
 
