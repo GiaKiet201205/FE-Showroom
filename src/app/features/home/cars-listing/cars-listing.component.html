@@ -34,26 +34,21 @@
           </strong>
 
           <strong>
-            {{
-              (maxPrice ?? priceLimit)
-                | currency:
-                  'USD':
-                  'symbol':
-                  '1.0-0'
-            }}
+            {{ maxPrice ?? priceLimit | currency: "USD" : "symbol" : "1.0-0" }}
           </strong>
         </div>
 
-<input
-  type="range"
-  min="0"
-  [max]="priceLimit"
-  step="5000"
-  [ngModel]="maxPrice ?? priceLimit"
-  (ngModelChange)="maxPrice = +$event >= priceLimit ? undefined : +$event"
-  (change)="applyFilters()"
->
-
+        <input
+          type="range"
+          min="0"
+          [max]="priceLimit"
+          step="5000"
+          [ngModel]="maxPrice ?? priceLimit"
+          (ngModelChange)="
+            maxPrice = +$event >= priceLimit ? undefined : +$event
+          "
+          (change)="applyFilters()"
+        />
       </div>
 
       <!-- YEAR -->
@@ -70,29 +65,21 @@
             (change)="applyFilters()"
           />
 
-        <input
-          type="number"
+          <input
+            type="number"
+            min="1990"
+            placeholder="Any year"
+            [(ngModel)]="minYear"
+            (change)="applyFilters()"
+          />
 
-          min="1990"
-          placeholder="Any year"
-
-          [(ngModel)]="minYear"
-
-          (change)="applyFilters()"
-        >
-
-
-        <input
-          type="number"
-
-          min="1990"
-          placeholder="Any year"
-
-          [(ngModel)]="maxYear"
-
-          (change)="applyFilters()"
-        >
-
+          <input
+            type="number"
+            min="1990"
+            placeholder="Any year"
+            [(ngModel)]="maxYear"
+            (change)="applyFilters()"
+          />
         </div>
       </div>
 
@@ -106,7 +93,7 @@
             type="checkbox"
             [(ngModel)]="bodyTypes[type]"
             (change)="applyFilters()"
-          >
+          />
           <span>{{ type }}</span>
         </label>
       </div>
@@ -170,7 +157,6 @@
         </div>
       </div>
 
-
       <p *ngIf="loading">Loading vehicles...</p>
       <p *ngIf="!loading && cars.length === 0" class="empty-results">
         No vehicles found. Try another keyword or reset the filters.
@@ -187,9 +173,7 @@
               class="favorite-button"
               type="button"
               [attr.aria-pressed]="favoriteService.isFavorite(car.id)"
-              [attr.aria-label]="favoriteService.isFavorite(car.id) ? 'Remove from favorites and comparison' : 'Add to favorites and comparison'"
-
-              [class.active]="
+              [attr.aria-label]="
                 favoriteService.isFavorite(car.id)
                   ? 'Remove from favorites and comparison'
                   : 'Add to favorites and comparison'
@@ -284,5 +268,4 @@
       </div>
     </section>
   </div>
-
 </main>
