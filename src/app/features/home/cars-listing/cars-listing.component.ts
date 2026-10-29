@@ -19,32 +19,29 @@ export class CarsListingComponent implements OnInit {
   search = '';
 
   // FILTER
-  condition = 'new';
   selectedBrand = '';
   brands: string[] = [];
 
   minPrice = 0;
-  maxPrice = 250000;
+  maxPrice?: number;
+  priceLimit = 0;
 
-  minYear = 2018;
-  maxYear = 2026;
+  minYear?: number;
+  maxYear?: number;
 
-  bodyTypes = {
-    sedan: false,
-    suv: false,
-    hatchback: false,
-    coupe: false,
-  };
+  availableBodyTypes: string[] = [];
+  bodyTypes: Record<string, boolean> = {};
 
   // SORT
   sort = 'newest';
 
   // DATA
   cars: Vehicle[] = [];
+  loading = true;
 
   // PAGINATION
   currentPage = 1;
-  pageSize = 3;
+  pageSize = 6;
   total = 0;
   totalPages = 1;
 
@@ -56,6 +53,14 @@ export class CarsListingComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.brands = this.brandService.getSnapshot().map(brand => brand.name);
+    this.vehicleService.getBodyTypes().subscribe(types => {
+      this.availableBodyTypes = types;
+    });
+    this.vehicleService.getList({ status: 'available', sort: 'price-desc', page: 1, pageSize: 1 })
+      .subscribe(result => {
+        this.priceLimit = Math.max(5000, Math.ceil((result.items[0]?.price ?? 0) / 5000) * 5000);
+      });
     this.readQueryParams();
     this.loadCars();
   }
@@ -88,15 +93,15 @@ export class CarsListingComponent implements OnInit {
 
   // LOAD CARS
   loadCars(): void {
+    this.loading = true;
     this.vehicleService
       .getList({
-        search: this.search,
+        search: this.search.trim(),
         brand: this.selectedBrand || undefined,
 
         // User chỉ hiển thị xe available
         status: 'available',
 
-        condition: this.condition,
         minPrice: this.minPrice,
         maxPrice: this.maxPrice,
         minYear: this.minYear,
@@ -106,7 +111,8 @@ export class CarsListingComponent implements OnInit {
         page: this.currentPage,
         pageSize: this.pageSize,
       })
-      .subscribe((result) => {
+      .subscribe(result => {
+        this.loading = false;
         this.cars = result.items;
         this.total = result.total;
 
@@ -131,21 +137,15 @@ export class CarsListingComponent implements OnInit {
 
   resetFilters(): void {
     this.search = '';
-    this.condition = 'all';
     this.selectedBrand = '';
 
     this.minPrice = 0;
-    this.maxPrice = 250000;
+    this.maxPrice = undefined;
 
-    this.minYear = 2018;
-    this.maxYear = 2026;
+    this.minYear = undefined;
+    this.maxYear = undefined;
 
-    this.bodyTypes = {
-      sedan: false,
-      suv: false,
-      hatchback: false,
-      coupe: false,
-    };
+    this.bodyTypes = {};
 
     this.sort = 'newest';
     this.currentPage = 1;
@@ -155,45 +155,11 @@ export class CarsListingComponent implements OnInit {
 
   // BODY TYPE
   private getSelectedBodyTypes(): string[] {
-    const selected: string[] = [];
-
-    if (this.bodyTypes.sedan) {
-      selected.push('Sedan');
-    }
-
-    if (this.bodyTypes.suv) {
-      selected.push('SUV');
-    }
-
-    if (this.bodyTypes.hatchback) {
-      selected.push('Hatchback');
-    }
-
-    if (this.bodyTypes.coupe) {
-      selected.push('Coupe');
-    }
-
-    return selected;
+    return Object.keys(this.bodyTypes).filter(type => this.bodyTypes[type]);
   }
 
   private setBodyType(bodyType: string): void {
-    const type = bodyType.toLowerCase();
-
-    if (type === 'sedan') {
-      this.bodyTypes.sedan = true;
-    }
-
-    if (type === 'suv') {
-      this.bodyTypes.suv = true;
-    }
-
-    if (type === 'hatchback') {
-      this.bodyTypes.hatchback = true;
-    }
-
-    if (type === 'coupe') {
-      this.bodyTypes.coupe = true;
-    }
+    this.bodyTypes[bodyType] = true;
   }
 
   // SORT
@@ -230,15 +196,6 @@ export class CarsListingComponent implements OnInit {
   toggleFavorite(car: Vehicle, event: Event): void {
     event.stopPropagation();
 
-    this.favoriteService.toggle({
-      id: car.id,
-      name: `${car.brand} ${car.model}`,
-      image: car.imageUrl ?? '',
-      price: car.price,
-      year: car.year,
-      stockQuantity: car.stockQuantity,
-      fuel: car.fuelType ?? '-',
-      transmission: car.transmission ?? '-',
-    });
+    this.favoriteService.toggleVehicle(car);
   }
 }

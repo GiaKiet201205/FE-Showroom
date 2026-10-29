@@ -16,6 +16,13 @@ import { Vehicle } from '../../../core/models/vehicle.model';
   styleUrl: './vehicle-card.component.scss',
 })
 export class VehicleCardComponent {
+  readonly favoriteService = inject(FavoriteService);
+
+  toggleFavorite(event: Event): void {
+    event.stopPropagation();
+    this.favoriteService.toggleVehicle(this.vehicle);
+  }
+
   // =========================================
   // INPUT
   // Home truyền Vehicle xuống component này
@@ -32,4 +39,5 @@ export class VehicleCardComponent {
   viewDetails(): void {
     this.selected.emit(this.vehicle.id);
   }
+
 }

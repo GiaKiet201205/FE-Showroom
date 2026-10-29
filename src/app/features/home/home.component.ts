@@ -7,6 +7,7 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 
 import {
   Router,
@@ -92,20 +93,25 @@ export class HomeComponent
 
   private loadContent(): void {
 
-    this.siteContentService
-      .getHomeContent()
-      .subscribe(data => {
+    forkJoin({
+      content: this.siteContentService.getHomeContent(),
+      bodyTypes: this.vehicleService.getBodyTypes()
+    }).subscribe(({ content: data, bodyTypes }) => {
 
 
 
         this.models =
-          data.models;
+          bodyTypes;
 
         this.priceRanges =
           data.priceRanges;
 
         this.bodyTypes =
-          data.bodyTypes;
+          bodyTypes.map(name => ({
+            name,
+            icon: data.bodyTypes.find(type => type.name === name)?.icon
+              ?? 'fa-solid fa-car-side'
+          }));
 
         this.benefits =
           data.benefits;

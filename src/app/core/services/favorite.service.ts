@@ -9,11 +9,14 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 
 import { FavoriteVehicle } from '../models/favorite-vehicle.model';
+import { Vehicle } from '../models/vehicle.model';
+import { CompareService } from './compare.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavoriteService {
+  private compareService = inject(CompareService);
 
   private readonly STORAGE_KEY = 'favoriteVehicles';
 
@@ -81,6 +84,7 @@ export class FavoriteService {
   // =========================================
 
   add(vehicle: FavoriteVehicle): void {
+    this.compareService.add(vehicle.id);
 
     if (this.isFavorite(vehicle.id)) {
       return;
@@ -103,6 +107,7 @@ export class FavoriteService {
   // =========================================
 
   remove(id: number): void {
+    this.compareService.remove(id);
 
     this.favoritesSignal.update(
       current =>
@@ -130,6 +135,19 @@ export class FavoriteService {
 
   }
 
+  toggleVehicle(vehicle: Vehicle): void {
+    this.toggle({
+      id: vehicle.id,
+      name: `${vehicle.brand} ${vehicle.model}`,
+      image: vehicle.imageUrl ?? '/images/vehicle-placeholder.svg',
+      price: vehicle.price,
+      year: vehicle.year,
+      stockQuantity: vehicle.stockQuantity,
+      fuel: vehicle.fuelType ?? '-',
+      transmission: vehicle.transmission ?? '-'
+    });
+  }
+
 
   // =========================================
   // CHECK
@@ -145,6 +163,7 @@ export class FavoriteService {
 
 
   clear(): void {
+    this.favoritesSignal().forEach(vehicle => this.compareService.remove(vehicle.id));
 
     this.favoritesSignal.set([]);
 
