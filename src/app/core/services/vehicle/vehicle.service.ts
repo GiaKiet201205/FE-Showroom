@@ -33,10 +33,16 @@ export interface VehicleQuery {
 export class VehicleService {
   private http = inject(HttpClient);
 
+  getBodyTypes(): Observable<string[]> {
+    return this.http.get<string[]>('/vehicles/body-types');
+  }
+
   getList(query: VehicleQuery): Observable<VehicleListResult> {
     let params = new HttpParams();
     for (const [key, value] of Object.entries(query)) {
-      if (value !== undefined) params = params.set(key, Array.isArray(value) ? value.join(',') : String(value));
+      if (value === undefined || value === null || value === '') continue;
+      if (Array.isArray(value) && value.length === 0) continue;
+      params = params.set(key, Array.isArray(value) ? value.join(',') : String(value));
     }
     return this.http.get<VehicleListResult>('/vehicles', { params });
   }

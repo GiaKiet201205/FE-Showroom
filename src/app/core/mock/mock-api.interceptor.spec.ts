@@ -25,6 +25,41 @@ describe('Local mock HTTP pipeline', () => {
   });
   afterEach(() => localStorage.clear());
 
+  it('does not filter out all vehicles when no body types are selected', fakeAsync(() => {
+    vehicles.getList({ status: 'available', bodyTypes: [], page: 1, pageSize: 100 }).subscribe(result => {
+      expect(result.total).toBe(32);
+    });
+    tick(450);
+  }));
+
+  it('finds vehicles by partial brand and by brand with model, without a default price cap', fakeAsync(() => {
+    vehicles.getList({ search: ' Lam ', status: 'available', bodyTypes: [], page: 1, pageSize: 100 }).subscribe(result => {
+      expect(result.total).toBe(4);
+      expect(result.items.every(vehicle => vehicle.brand === 'Lamborghini')).toBeTrue();
+      expect(result.items.some(vehicle => vehicle.price > 250000)).toBeTrue();
+    });
+    vehicles.getList({ search: 'bmw m4', status: 'available', bodyTypes: [], page: 1, pageSize: 100 }).subscribe(result => {
+      expect(result.total).toBe(1);
+      expect(result.items[0].model).toBe('M4 Competition');
+    });
+    tick(450);
+  }));
+
+  it('returns only existing body types and supports filtering each type', fakeAsync(() => {
+    let types: string[] = [];
+    vehicles.getBodyTypes().subscribe(result => types = result);
+    tick(450);
+    expect(types).toEqual(['Convertible', 'Coupe', 'SUV', 'Sedan']);
+
+    for (const type of types) {
+      vehicles.getList({ status: 'available', bodyTypes: [type], page: 1, pageSize: 1 }).subscribe(result => {
+        expect(result.total).toBeGreaterThan(0);
+        expect(result.items[0].bodyType).toBe(type);
+      });
+    }
+    tick(450);
+  }));
+
   it('delays responses and cancels pending requests on unsubscribe', fakeAsync(() => {
     const received = jasmine.createSpy('received');
     const subscription = vehicles.getList({ page: 1, pageSize: 10 }).subscribe(received);

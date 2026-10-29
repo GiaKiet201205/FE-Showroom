@@ -11,59 +11,6 @@
       </h2>
 
 
-      <div class="filter-group">
-
-        <label class="filter-title">
-          CONDITION
-        </label>
-
-        <div class="condition-tabs">
-          <button
-            type="button"
-
-            [class.active]="
-              condition === 'all'
-            "
-
-            (click)="
-              condition = 'all';
-              applyFilters()
-            "
-          >
-            All
-          </button>
-          <button
-            type="button"
-
-            [class.active]="
-              condition === 'new'
-            "
-
-            (click)="
-              condition = 'new';
-              applyFilters()
-            "
-          >
-            New
-          </button>
-          <button
-            type="button"
-
-            [class.active]="
-              condition === 'used'
-            "
-
-            (click)="
-              condition = 'used';
-              applyFilters()
-            "
-          >
-            Used
-          </button>
-        </div>
-
-      </div>
-
       <!-- BRAND -->
 
       <div class="filter-group">
@@ -115,7 +62,7 @@
 
           <strong>
             {{
-              maxPrice
+              (maxPrice ?? priceLimit)
                 | currency:
                   'USD':
                   'symbol':
@@ -128,9 +75,10 @@
 <input
   type="range"
   min="0"
-  max="250000"
+  [max]="priceLimit"
   step="5000"
-  [(ngModel)]="maxPrice"
+  [ngModel]="maxPrice ?? priceLimit"
+  (ngModelChange)="maxPrice = +$event >= priceLimit ? undefined : +$event"
   (change)="applyFilters()"
 >
 
@@ -151,7 +99,7 @@
           type="number"
 
           min="1990"
-          max="2026"
+          placeholder="Any year"
 
           [(ngModel)]="minYear"
 
@@ -163,7 +111,7 @@
           type="number"
 
           min="1990"
-          max="2026"
+          placeholder="Any year"
 
           [(ngModel)]="maxYear"
 
@@ -183,57 +131,13 @@
           BODY TYPE
         </label>
 
-        <label class="checkbox-item">
-
+        <label class="checkbox-item" *ngFor="let type of availableBodyTypes">
           <input
             type="checkbox"
-            [(ngModel)]="bodyTypes.sedan"
+            [(ngModel)]="bodyTypes[type]"
             (change)="applyFilters()"
           >
-
-          <span>
-            Sedan
-          </span>
-
-        </label>
-
-        <label class="checkbox-item">
-
-          <input
-            type="checkbox"
-            [(ngModel)]="bodyTypes.suv"
-          >
-
-          <span>
-            SUV
-          </span>
-
-        </label>
-
-        <label class="checkbox-item">
-
-          <input
-            type="checkbox"
-            [(ngModel)]="bodyTypes.hatchback"
-          >
-
-          <span>
-            Hatchback
-          </span>
-
-        </label>
-
-        <label class="checkbox-item">
-
-          <input
-            type="checkbox"
-            [(ngModel)]="bodyTypes.coupe"
-          >
-
-          <span>
-            Coupe
-          </span>
-
+          <span>{{ type }}</span>
         </label>
 
       </div>
@@ -341,6 +245,11 @@
       </div>
 
 
+      <p *ngIf="loading">Loading vehicles...</p>
+      <p *ngIf="!loading && cars.length === 0" class="empty-results">
+        No vehicles found. Try another keyword or reset the filters.
+      </p>
+
       <!-- CARS -->
 
       <div class="cars-grid">
@@ -360,6 +269,8 @@
             <button
               class="favorite-button"
               type="button"
+              [attr.aria-pressed]="favoriteService.isFavorite(car.id)"
+              [attr.aria-label]="favoriteService.isFavorite(car.id) ? 'Remove from favorites and comparison' : 'Add to favorites and comparison'"
 
               [class.active]="
                 favoriteService.isFavorite(car.id)

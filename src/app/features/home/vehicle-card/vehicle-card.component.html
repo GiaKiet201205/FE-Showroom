@@ -26,15 +26,14 @@
       type="button"
       class="favorite-button"
 
-      aria-label="Add to wishlist"
-
-      (click)="
-        $event.stopPropagation()
-      "
+      [class.active]="favoriteService.isFavorite(vehicle.id)"
+      [attr.aria-pressed]="favoriteService.isFavorite(vehicle.id)"
+      [attr.aria-label]="favoriteService.isFavorite(vehicle.id) ? 'Remove from favorites and comparison' : 'Add to favorites and comparison'"
+      (click)="toggleFavorite($event)"
     >
 
       <i
-        class="fa-regular fa-heart"
+        [class]="favoriteService.isFavorite(vehicle.id) ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"
       ></i>
 
     </button>

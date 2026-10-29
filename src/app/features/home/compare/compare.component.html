@@ -9,11 +9,19 @@
     </h1>
 
 
+    <p class="comparison-note" *ngIf="vehicles.length > 1">
+      Green marks the lowest price, highest horsepower and newest model year.
+    </p>
+    <p *ngIf="loading">Loading comparison...</p>
+    <p *ngIf="error" role="alert">Unable to load vehicles. Please try again.</p>
+    <p *ngIf="!loading && vehicles.length === 1">Choose another vehicle using the heart button to compare.</p>
+
     <!-- ================= COMPARE GRID ================= -->
 
     <section
       class="compare-grid"
       [style.--column-count]="vehicles.length"
+      *ngIf="vehicles.length > 0"
     >
 
       <article
@@ -22,7 +30,6 @@
           let vehicle of vehicles;
           let i = index
         "
-        [class.featured]="vehicle.featured"
       >
 
         <!-- ===================================== -->
@@ -65,7 +72,7 @@
         <div class="vehicle-image">
 
           <img
-            [src]="vehicle.imageUrl"
+            [src]="vehicle.imageUrl || '/images/vehicle-placeholder.svg'"
             [alt]="vehicle.brand + ' ' + vehicle.model"
           >
 
@@ -88,7 +95,7 @@
             </span>
 
             <strong
-              [class.highlight]="vehicle.featured"
+              [class.highlight]="winners.price.has(vehicle.id)"
             >
               {{
                 vehicle.price
@@ -107,7 +114,7 @@
               Year
             </span>
 
-            <strong>
+            <strong [class.highlight]="winners.year.has(vehicle.id)">
               {{ vehicle.year }}
             </strong>
 
@@ -138,7 +145,7 @@
             </span>
 
             <strong>
-              {{ vehicle.engine }}
+              {{ vehicle.engine || '—' }}
             </strong>
 
           </div>
@@ -153,9 +160,9 @@
             </span>
 
             <strong
-              [class.highlight]="vehicle.featured"
+              [class.highlight]="winners.horsepower.has(vehicle.id)"
             >
-              {{ vehicle.horsepower }}
+              {{ vehicle.horsepower || '—' }}
             </strong>
 
           </div>
@@ -170,7 +177,7 @@
             </span>
 
             <strong>
-              {{ vehicle.fuelType }}
+              {{ vehicle.fuelType || '—' }}
             </strong>
 
           </div>
@@ -185,7 +192,7 @@
             </span>
 
             <strong>
-              {{ vehicle.transmission }}
+              {{ vehicle.transmission || '—' }}
             </strong>
 
           </div>
@@ -200,7 +207,7 @@
             </span>
 
             <strong>
-              {{ vehicle.bodyType }}
+              {{ vehicle.bodyType || '—' }}
             </strong>
 
           </div>
@@ -215,7 +222,7 @@
             </span>
 
             <strong>
-              {{ vehicle.drivetrain }}
+              {{ vehicle.drivetrain || '—' }}
             </strong>
 
           </div>
@@ -231,7 +238,7 @@
 
     <section
       class="empty-compare"
-      *ngIf="vehicles.length === 0"
+      *ngIf="!loading && !error && vehicles.length === 0"
     >
 
       <i class="fa-solid fa-car"></i>
@@ -241,9 +248,10 @@
       </h2>
 
       <p>
-        Select vehicles from the inventory to start comparing.
+        Use the heart button on Home or Cars to save vehicles and compare them.
       </p>
 
+      <a routerLink="/cars">Browse Cars</a>
     </section>
 
   </div>

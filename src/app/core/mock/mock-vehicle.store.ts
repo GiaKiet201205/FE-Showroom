@@ -40,6 +40,15 @@ export class MockVehicleStore {
   retainForBooking(id: number): void { this.bookingVehicles.add(id); }
   private vehicles: Vehicle[] = MOCK_VEHICLES.map(v => ({ ...v }));
 
+  getBodyTypes(): Observable<string[]> {
+    const types = this.vehicles
+      .filter(vehicle => vehicle.status === 'available')
+      .map(vehicle => vehicle.bodyType)
+      .filter((type): type is string => !!type?.trim());
+
+    return of([...new Set(types)].sort());
+  }
+
   getList(query: VehicleQuery): Observable<VehicleListResult> {
     let result = [
       ...this.vehicles
@@ -79,12 +88,7 @@ export class MockVehicleStore {
         ];
 
 
-        return values.some(
-          value =>
-            value
-              .toLowerCase()
-              .includes(search)
-        );
+        return values.join(' ').toLowerCase().includes(search);
 
       });
 

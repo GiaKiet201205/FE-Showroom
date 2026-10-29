@@ -6,6 +6,21 @@ describe('Showroom inventory', () => {
   let store: MockVehicleStore;
   beforeEach(() => store = TestBed.inject(MockVehicleStore));
 
+  it('updates body types after inventory changes and excludes unpublished vehicles', () => {
+    store.create({ ...MOCK_VEHICLES[0], bodyType: 'Van', status: 'draft' }).subscribe();
+    store.create({ ...MOCK_VEHICLES[0], bodyType: 'Truck', status: 'sold' }).subscribe();
+    let createdId = 0;
+    store.create({ ...MOCK_VEHICLES[0], bodyType: 'Roadster' }).subscribe(vehicle => createdId = vehicle.id);
+    store.getBodyTypes().subscribe(types => {
+      expect(types).toContain('Roadster');
+      expect(types).not.toContain('Van');
+      expect(types).not.toContain('Truck');
+      expect(types.filter(type => type === 'Coupe').length).toBe(1);
+    });
+    store.delete(createdId).subscribe();
+    store.getBodyTypes().subscribe(types => expect(types).not.toContain('Roadster'));
+  });
+
   it('contains only new vehicles with whole nonnegative stock quantities', () => {
     store.getList({ page: 1, pageSize: 100 }).subscribe(result => {
       expect(result.items.length).toBeGreaterThan(0);
