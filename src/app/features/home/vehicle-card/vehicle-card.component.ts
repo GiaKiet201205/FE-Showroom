@@ -1,35 +1,20 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  inject
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 
-import {
-  CommonModule
-} from '@angular/common';
+import { CommonModule } from '@angular/common';
 
-import {
-  Vehicle
-} from '../../../core/models/vehicle.model';
+import { Vehicle } from '../../../core/models/vehicle.model';
 import { FavoriteService } from '../../../core/services/favorite.service';
-
 
 @Component({
   selector: 'app-vehicle-card',
 
   standalone: true,
 
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
 
-  templateUrl:
-    './vehicle-card.component.html',
+  templateUrl: './vehicle-card.component.html',
 
-  styleUrl:
-    './vehicle-card.component.scss'
+  styleUrl: './vehicle-card.component.scss',
 })
 export class VehicleCardComponent {
   readonly favoriteService = inject(FavoriteService);
@@ -45,31 +30,15 @@ export class VehicleCardComponent {
   // =========================================
 
   @Input({
-    required: true
+    required: true,
   })
   vehicle!: Vehicle;
 
-
-  // =========================================
-  // OUTPUT
-  // Component con gửi id xe về Home
-  // =========================================
-
   @Output()
-  selected =
-    new EventEmitter<number>();
-
-
-  // =========================================
-  // CLICK VEHICLE
-  // =========================================
+  selected = new EventEmitter<number>();
 
   viewDetails(): void {
-
-    this.selected.emit(
-      this.vehicle.id
-    );
-
+    this.selected.emit(this.vehicle.id);
   }
 
 }

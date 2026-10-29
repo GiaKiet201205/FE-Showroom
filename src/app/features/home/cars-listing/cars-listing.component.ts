@@ -2,18 +2,18 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 import { Vehicle } from '../../../core/models/vehicle.model';
 import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
 import { FavoriteService } from '../../../core/services/favorite.service';
-import { BrandService } from '../../../core/services/brand/brand.service';
 
 @Component({
   selector: 'app-cars-listing',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './cars-listing.component.html',
-  styleUrl: './cars-listing.component.scss'
+  styleUrl: './cars-listing.component.scss',
 })
 export class CarsListingComponent implements OnInit {
   // SEARCH
@@ -51,7 +51,7 @@ export class CarsListingComponent implements OnInit {
     private router: Router,
     private vehicleService: VehicleService,
     private brandService: BrandService,
-    public favoriteService: FavoriteService
+    public favoriteService: FavoriteService,
   ) {}
 
   ngOnInit(): void {
@@ -111,7 +111,7 @@ export class CarsListingComponent implements OnInit {
         bodyTypes: this.getSelectedBodyTypes(),
         sort: this.sort,
         page: this.currentPage,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
       })
       .subscribe(result => {
         this.loading = false;
@@ -120,7 +120,7 @@ export class CarsListingComponent implements OnInit {
 
         this.totalPages = Math.max(
           1,
-          Math.ceil(result.total / result.pageSize)
+          Math.ceil(result.total / result.pageSize),
         );
       });
   }
@@ -172,11 +172,7 @@ export class CarsListingComponent implements OnInit {
 
   // PAGINATION
   goToPage(page: number): void {
-    if (
-      page < 1 ||
-      page > this.totalPages ||
-      page === this.currentPage
-    ) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
       return;
     }
 
@@ -185,15 +181,12 @@ export class CarsListingComponent implements OnInit {
 
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }
 
   get pages(): number[] {
-    return Array.from(
-      { length: this.totalPages },
-      (_, index) => index + 1
-    );
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
   }
 
   // VIEW DETAIL

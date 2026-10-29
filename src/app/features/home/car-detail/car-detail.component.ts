@@ -1,255 +1,202 @@
 import { CommonModule } from '@angular/common';
 
-import {
-  Component
-} from '@angular/core';
+import { Component } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import {
-  ActivatedRoute,
-  Router
-} from '@angular/router';
+  map,
+  distinctUntilChanged,
+  switchMap,
+  catchError,
+  tap,
+  of,
+} from 'rxjs';
+
+import { ActivatedRoute, Router } from '@angular/router';
 
 import {
   Vehicle,
-  VehicleSpecification
+  VehicleSpecification,
 } from '../../../core/models/vehicle.model';
 
-import {
-  VehicleService
-} from '../../../core/services/vehicle/vehicle.service';
+import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
 
-import {
-  FavoriteService
-} from '../../../core/services/favorite.service';
-
+import { FavoriteService } from '../../../core/services/favorite.service';
 
 @Component({
   selector: 'app-car-detail',
 
   standalone: true,
 
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
 
-  templateUrl:
-    './car-detail.component.html',
+  templateUrl: './car-detail.component.html',
 
-  styleUrl:
-    './car-detail.component.scss'
+  styleUrl: './car-detail.component.scss',
 })
 export class CarDetailComponent {
-
   car?: Vehicle;
 
   selectedImage = '';
 
-  specifications:
-    VehicleSpecification[] = [];
-
+  specifications: VehicleSpecification[] = [];
 
   constructor(
     private route: ActivatedRoute,
 
     private router: Router,
 
-    private vehicleService:
-      VehicleService,
+    private vehicleService: VehicleService,
 
-    public favoriteService:
-      FavoriteService
+    public favoriteService: FavoriteService,
   ) {
+    this.route.paramMap
+      .pipe(
+        // Lấy ID từ URL
+        map((params) => Number(params.get('id'))),
 
-    const id =
-      Number(
-        this.route.snapshot
-          .paramMap
-          .get('id')
-      );
+        // Chỉ xử lý khi ID thay đổi
+        distinctUntilChanged(),
 
+        // Xóa thông tin xe cũ
+        tap(() => {
+          this.car = undefined;
+          this.selectedImage = '';
+          this.specifications = [];
+        }),
 
-    this.vehicleService
-      .getById(id)
-      .subscribe(vehicle => {
+        // Lấy xe theo ID mới
+        switchMap((id) => {
+          if (!Number.isSafeInteger(id) || id <= 0) {
+            return of(undefined);
+          }
 
+          return this.vehicleService
+            .getById(id)
+            .pipe(catchError(() => of(undefined)));
+        }),
+
+        // Tự hủy subscription khi Component bị hủy
+        takeUntilDestroyed(),
+      )
+      .subscribe((vehicle) => {
         this.car = vehicle;
-
 
         if (!vehicle) {
           return;
         }
 
+        this.selectedImage = vehicle.images?.[0] ?? vehicle.imageUrl ?? '';
 
-        this.selectedImage =
-          vehicle.images?.[0]
-          ?? vehicle.imageUrl
-          ?? '';
-
-
-        this.specifications =
-          this.buildSpecifications(
-            vehicle
-          );
-
+        this.specifications = this.buildSpecifications(vehicle);
       });
-
   }
-
 
   // =========================================
   // SPECIFICATIONS
   // =========================================
 
-  private buildSpecifications(
-    vehicle: Vehicle
-  ): VehicleSpecification[] {
-
+  private buildSpecifications(vehicle: Vehicle): VehicleSpecification[] {
     return [
-
       {
         label: 'Engine',
-        value:
-          vehicle.engine ?? '-'
+        value: vehicle.engine ?? '-',
       },
 
       {
         label: 'Horsepower',
-        value:
-          vehicle.horsepower ?? '-'
+        value: vehicle.horsepower ?? '-',
       },
 
       {
         label: 'Fuel Type',
-        value:
-          vehicle.fuelType ?? '-'
+        value: vehicle.fuelType ?? '-',
       },
 
       {
         label: 'Transmission',
-        value:
-          vehicle.transmission ?? '-'
+        value: vehicle.transmission ?? '-',
       },
 
       {
         label: 'Số lượng trong kho',
-        value:
-          `${vehicle.stockQuantity.toLocaleString()} xe`
+        value: `${vehicle.stockQuantity.toLocaleString()} xe`,
       },
 
       {
         label: 'Body Type',
-        value:
-          vehicle.bodyType ?? '-'
+        value: vehicle.bodyType ?? '-',
       },
 
       {
         label: 'Drivetrain',
-        value:
-          vehicle.drivetrain ?? '-'
+        value: vehicle.drivetrain ?? '-',
       },
 
       {
         label: 'Exterior Color',
-        value:
-          vehicle.color
-      }
-
+        value: vehicle.color,
+      },
     ];
-
   }
-
 
   // =========================================
   // IMAGE
   // =========================================
 
-  selectImage(
-    image: string
-  ): void {
-
-    this.selectedImage =
-      image;
-
+  selectImage(image: string): void {
+    this.selectedImage = image;
   }
-
 
   // =========================================
   // TEST DRIVE
   // =========================================
 
   scheduleTestDrive(): void {
-
     if (!this.car) {
       return;
     }
 
-
-    this.router.navigate(
-      ['/test-drives'],
-      {
-        queryParams: {
-          vehicleId:
-            this.car.id
-        }
-      }
-    );
-
+    this.router.navigate(['/test-drives'], {
+      queryParams: {
+        vehicleId: this.car.id,
+      },
+    });
   }
-
 
   // =========================================
   // CONTACT
   // =========================================
 
   contactDealer(): void {
-
-    console.log(
-      'Contact dealer:',
-      this.car?.seller?.name
-    );
-
+    console.log('Contact dealer:', this.car?.seller?.name);
   }
-
 
   // =========================================
   // FAVORITE
   // =========================================
 
   toggleFavorite(): void {
-
     if (!this.car) {
       return;
     }
 
-
     this.favoriteService.toggle({
+      id: this.car.id,
 
-      id:
-        this.car.id,
+      name: `${this.car.brand} ${this.car.model}`,
 
-      name:
-        `${this.car.brand} ${this.car.model}`,
+      image: this.car.imageUrl ?? '',
 
-      image:
-        this.car.imageUrl ?? '',
+      price: this.car.price,
 
-      price:
-        this.car.price,
+      year: this.car.year,
 
-      year:
-        this.car.year,
+      stockQuantity: this.car.stockQuantity,
 
-      stockQuantity:
-        this.car.stockQuantity,
+      fuel: this.car.fuelType ?? '-',
 
-      fuel:
-        this.car.fuelType ?? '-',
-
-      transmission:
-        this.car.transmission ?? '-'
-
+      transmission: this.car.transmission ?? '-',
     });
-
   }
-
 }

@@ -39,13 +39,25 @@ export class VehicleService {
 
   getList(query: VehicleQuery): Observable<VehicleListResult> {
     let params = new HttpParams();
+
     for (const [key, value] of Object.entries(query)) {
-      if (value === undefined || value === null || value === '') continue;
-      if (Array.isArray(value) && value.length === 0) continue;
-      params = params.set(key, Array.isArray(value) ? value.join(',') : String(value));
+      if (value === undefined || value === null || value === '') {
+        continue;
+      }
+
+      if (Array.isArray(value) && value.length === 0) {
+        continue;
+      }
+
+      params = params.set(
+        key,
+        Array.isArray(value) ? value.join(',') : String(value),
+      );
     }
+
     return this.http.get<VehicleListResult>('/vehicles', { params });
   }
+
   create(vehicle: Omit<Vehicle, 'id'>): Observable<Vehicle> {
     return this.http.post<Vehicle>('/vehicles', vehicle);
   }
@@ -59,9 +71,13 @@ export class VehicleService {
     return this.http.get<Vehicle | undefined>(`/vehicles/${id}`);
   }
   getFeatured(limit = 4): Observable<Vehicle[]> {
-    return this.http.get<Vehicle[]>('/vehicles/featured', { params: { limit } });
+    return this.http.get<Vehicle[]>('/vehicles/featured', {
+      params: { limit },
+    });
   }
   getByIds(ids: number[]): Observable<Vehicle[]> {
-    return this.http.get<Vehicle[]>('/vehicles/selection', { params: { ids: ids.join(',') } });
+    return this.http.get<Vehicle[]>('/vehicles/selection', {
+      params: { ids: ids.join(',') },
+    });
   }
 }
