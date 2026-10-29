@@ -191,10 +191,9 @@
 
               [class.active]="
                 favoriteService.isFavorite(car.id)
-                  ? 'Xóa khỏi danh sách yêu thích'
-                  : 'Thêm vào danh sách yêu thích'
+                  ? 'Remove from favorites and comparison'
+                  : 'Add to favorites and comparison'
               "
-              [attr.aria-pressed]="favoriteService.isFavorite(car.id)"
               [class.active]="favoriteService.isFavorite(car.id)"
               (click)="toggleFavorite(car, $event)"
             >

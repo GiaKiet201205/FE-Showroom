@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BrandService } from '../../../core/services/brand/brand.service';
 
 import { Vehicle } from '../../../core/models/vehicle.model';
 import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
@@ -49,6 +50,7 @@ export class CarsListingComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private vehicleService: VehicleService,
+    private brandService: BrandService,
     public favoriteService: FavoriteService,
   ) {}
 

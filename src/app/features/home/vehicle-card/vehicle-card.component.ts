@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
 
 import { Vehicle } from '../../../core/models/vehicle.model';
+import { FavoriteService } from '../../../core/services/favorite.service';
 
 @Component({
   selector: 'app-vehicle-card',
