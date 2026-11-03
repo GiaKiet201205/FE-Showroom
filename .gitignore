@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Optional advanced testing
+/testing/node_modules/
+/testing/reports/
+/testing/test-results/
+/testing/playwright-report/
