@@ -52,7 +52,7 @@ export const MOCK_VEHICLES: Vehicle[] = [
 
     color: 'Blue',
 
-    imageUrl: '/images/car2.jpg',
+    imageUrl: '/images/car2.png',
 
     status: 'available',
 
