@@ -1,0 +1,25 @@
+{
+  "name": "showroom-advanced-testing",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test:unit": "node scripts/unit.cjs",
+    "test:unit:admin": "node scripts/unit.cjs --scope=admin",
+    "test:unit:user": "node scripts/unit.cjs --scope=user",
+    "test:unit:legacy": "node scripts/unit.cjs --legacy",
+    "test:e2e": "playwright test",
+    "test:e2e:admin": "playwright test --project=admin-*",
+    "test:e2e:user": "playwright test --project=user-*",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:demo": "node scripts/demo.cjs",
+    "test:e2e:demo:admin": "node scripts/demo.cjs --project=admin-*",
+    "test:e2e:demo:user": "node scripts/demo.cjs --project=user-*",
+    "report": "playwright show-report reports/playwright",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:admin": "npm run test:unit:admin && npm run test:e2e:admin",
+    "test:user": "npm run test:unit:user && npm run test:e2e:user"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

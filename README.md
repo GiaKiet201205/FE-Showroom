@@ -44,15 +44,15 @@ To execute unit tests with the [Karma](https://karma-runner.github.io) test runn
 ng test
 ```
 
-## Running end-to-end tests
+## Kiểm thử nâng cao (tùy chọn)
 
-For end-to-end (e2e) testing, run:
+Unit test component/service bằng Angular TestBed, E2E bằng Playwright và CI được
+đặt riêng trong [`testing/`](testing/README.md). Xem hướng dẫn tại đó để cài đặt,
+chạy test và đọc báo cáo. Phần này không bắt buộc khi chạy, build hoặc trình bày đồ án;
+CI chỉ chạy khi kích hoạt thủ công trong GitHub Actions.
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Test được tách theo vai trò: `testing/admin/` cho quản trị và `testing/user/` cho
+trang khách hàng. Có lệnh chạy và demo riêng cho từng nhóm trong hướng dẫn trên.
 
 ## Additional Resources
 

@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "..",
+    "outDir": "../out-tsc/advanced-spec",
+    "types": ["jasmine"]
+  },
+  "include": ["admin/unit/**/*.spec.ts", "user/unit/**/*.spec.ts", "../src/**/*.d.ts"]
+}

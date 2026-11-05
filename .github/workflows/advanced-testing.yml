@@ -1,0 +1,48 @@
+name: Advanced testing (optional)
+
+# Run manually from Actions. This workflow does not gate the project build/deploy.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Advanced tests (${{ matrix.suite }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [admin, user]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            testing/package-lock.json
+      - name: Install application dependencies
+        run: npm ci
+      - name: Install optional testing dependencies
+        run: npm ci --prefix testing
+      - name: Install Chromium and system libraries
+        working-directory: testing
+        run: npx playwright install --with-deps chromium
+      - name: Unit tests (TestBed)
+        id: unit
+        run: npm --prefix testing run test:unit:${{ matrix.suite }}
+      - name: End-to-end tests (Playwright)
+        if: ${{ !cancelled() && steps.unit.outcome != 'skipped' }}
+        run: npm --prefix testing run test:e2e:${{ matrix.suite }}
+      - name: Upload test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: advanced-testing-reports-${{ matrix.suite }}
+          path: testing/reports/
+          if-no-files-found: warn
+          retention-days: 7
