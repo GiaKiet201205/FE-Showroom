@@ -6,7 +6,7 @@ import {
   OnInit,
   computed,
   inject,
-  signal
+  signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,7 @@ import {
   distinctUntilChanged,
   finalize,
   switchMap,
-  tap
+  tap,
 } from 'rxjs';
 import { VehicleService } from '../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../core/models/vehicle.model';
@@ -33,7 +33,7 @@ import { Vehicle } from '../../../core/models/vehicle.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, ReactiveFormsModule, MatIconModule],
   templateUrl: './vehicles.component.html',
-  styleUrl: './vehicles.component.scss'
+  styleUrl: './vehicles.component.scss',
 })
 export class AdminVehiclesComponent implements OnInit {
   private vehicleService = inject(VehicleService);
@@ -47,12 +47,20 @@ export class AdminVehiclesComponent implements OnInit {
   page = signal(1);
   pageSize = 10;
 
-  totalPages = computed(() => Math.max(1, Math.ceil(this.total() / this.pageSize)));
-  pages = computed(() => Array.from({ length: this.totalPages() }, (_, index) => index + 1));
-  rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.total()));
+  totalPages = computed(() =>
+    Math.max(1, Math.ceil(this.total() / this.pageSize)),
+  );
+  pages = computed(() =>
+    Array.from({ length: this.totalPages() }, (_, index) => index + 1),
+  );
+  rangeEnd = computed(() =>
+    Math.min(this.page() * this.pageSize, this.total()),
+  );
 
   private brandService = inject(BrandService);
-  get brandOptions(): string[] { return this.brandService.getSnapshot().map(brand => brand.name); }
+  get brandOptions(): string[] {
+    return this.brandService.getSnapshot().map((brand) => brand.name);
+  }
   yearOptions = [2024, 2023, 2022, 2021];
 
   // ---------------------------------------------------------------------------
@@ -62,7 +70,7 @@ export class AdminVehiclesComponent implements OnInit {
     search: '',
     brand: 'all',
     status: 'all',
-    year: this.fb.nonNullable.control<string | number>('all')
+    year: this.fb.nonNullable.control<string | number>('all'),
   });
 
   /** Mỗi lần .next() là một lần tải lại danh sách (đổi lọc, đổi trang, sau khi lưu/xoá). */
@@ -82,13 +90,20 @@ export class AdminVehiclesComponent implements OnInit {
     model: ['', [Validators.required, Validators.maxLength(60)]],
     year: [
       this.currentYear,
-      [Validators.required, Validators.min(1900), Validators.max(this.currentYear + 1)]
+      [
+        Validators.required,
+        Validators.min(1900),
+        Validators.max(this.currentYear + 1),
+      ],
     ],
     price: [0, [Validators.required, Validators.min(1)]],
-    stockQuantity: [0, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
+    stockQuantity: [
+      0,
+      [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)],
+    ],
     color: ['', Validators.required],
     status: ['available', Validators.required],
-    imageUrl: ['', Validators.pattern(/^(https?:\/\/\S+)?$/)] // rỗng hoặc URL http(s)
+    imageUrl: ['', Validators.pattern(/^(https?:\/\/\S+)?$/)], // rỗng hoặc URL http(s)
   });
 
   /** Viết tắt cho template: f.brand.invalid, f.price.errors ... */
@@ -108,10 +123,10 @@ export class AdminVehiclesComponent implements OnInit {
             catchError(() => {
               this.loading.set(false);
               return EMPTY;
-            })
-          )
+            }),
+          ),
         ),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((res) => {
         this.vehicles.set(res.items);
@@ -124,7 +139,7 @@ export class AdminVehiclesComponent implements OnInit {
       .pipe(
         debounceTime(300),
         distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
         this.page.set(1);
@@ -138,17 +153,17 @@ export class AdminVehiclesComponent implements OnInit {
     this.reload$.next();
   }
 
-private buildQuery() {
-  const { search, brand, status, year } = this.filterForm.getRawValue();
-  return {
-    search,
-    brand: brand === 'all' ? undefined : brand,
-    status: status === 'all' ? undefined : status,
-    year: year === 'all' ? undefined : String(year), // đổi chỗ này
-    page: this.page(),
-    pageSize: this.pageSize
-  };
-}
+  private buildQuery() {
+    const { search, brand, status, year } = this.filterForm.getRawValue();
+    return {
+      search,
+      brand: brand === 'all' ? undefined : brand,
+      status: status === 'all' ? undefined : status,
+      year: year === 'all' ? undefined : String(year), // đổi chỗ này
+      page: this.page(),
+      pageSize: this.pageSize,
+    };
+  }
 
   goToPage(p: number): void {
     if (p < 1 || p > this.totalPages()) return;
@@ -165,7 +180,7 @@ private buildQuery() {
         next: () => this.loadVehicles(),
         error: () => {
           /* lỗi đã được errorInterceptor hiển thị, không reload như một thao tác thành công */
-        }
+        },
       });
   }
 
@@ -181,7 +196,7 @@ private buildQuery() {
       stockQuantity: 0,
       color: '',
       status: 'available',
-      imageUrl: ''
+      imageUrl: '',
     });
     this.showModal.set(true);
   }
@@ -208,14 +223,16 @@ private buildQuery() {
     const current = this.editingVehicle();
 
     const request$ = (
-      current ? this.vehicleService.update(current.id, data) : this.vehicleService.create(data)
+      current
+        ? this.vehicleService.update(current.id, data)
+        : this.vehicleService.create(data)
     ) as Observable<unknown>;
 
     this.saving.set(true);
     request$
       .pipe(
         finalize(() => this.saving.set(false)),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
@@ -224,7 +241,7 @@ private buildQuery() {
         },
         error: () => {
           /* giữ modal mở để người dùng thử lại; thông báo lỗi do errorInterceptor hiển thị */
-        }
+        },
       });
   }
 }
